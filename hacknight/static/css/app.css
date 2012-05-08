@@ -1,5 +1,6 @@
 body {
-  background: url('../img/concrete_wall.png?1336391375');
+  background-color: #203838;
+  background-image: url('../img/concrete_wall.png?1336391375');
   color: #ccc;
 }
 

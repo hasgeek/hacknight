@@ -1,0 +1,23 @@
+{% extends "baseframe.html" %}
+{% from "baseframe/components.html" import networkbar with context %}
+
+{% block headerbox %}
+  <header>
+    {{ networkbar(siteid=config['SITE_ID'], login=false, baseclass='hg-dark') }}
+    <div id="page-header" class="container">
+      <div id="logo"><a href="{{ url_for('index') }}" title="Home">{{ config['SITE_TITLE'] }}</a></div>
+    </div>
+  </header>
+{% endblock %}
+
+{% block baseheadline %}
+  {% block headline %}
+    <div class="page-header">
+      <h1>{{ self.title()|e }}</h1>
+    </div>
+  {% endblock %}
+{% endblock %}
+
+{% block basecontent %}
+  {% block content %}{% endblock %}
+{% endblock %}
