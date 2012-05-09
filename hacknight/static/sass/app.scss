@@ -6,6 +6,16 @@ body {
 	color: #ccc;
 }
 
+.jumbotron {
+	padding-top: 5%;
+	text-align: center;
+	h1 {
+		font-size: 120px;
+		line-height: 1.2;
+		margin-bottom: 20px;
+	}
+}
+
 footer .footer-inner {
 	background: transparent;
 }

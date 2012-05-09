@@ -1,13 +1,24 @@
 {% extends "layout.html" %}
+{% from "baseframe/components.html" import networkbar with context %}
 {% block titletags -%}
   <title>{% block title %}{{ config['SITE_TITLE'] }}{% endblock %}</title>
   <meta name="DC.title" content="{{ config['SITE_TITLE'] }}"/>
 {%- endblock %}
 
+{% block headerbox %}
+  <header>
+    {{ networkbar(siteid=config['SITE_ID'], login=false, baseclass='hg-dark') }}
+  </header>
+{% endblock %}
+
+{% block headline %}{% endblock %}
+
 {% block content %}
-
-<p>
-  Insert content here.
-</p>
-
+<div class="jumbotron">
+  <img src="{{ url_for('baseframe.static', filename='img/hasgeek-presents.png') }}" alt="HasGeek Presents">
+  <h1>Hacknight</h1>
+  <p style="text-transform: uppercase;">
+    Coming soon
+  </p>
+</div>
 {% endblock %}
