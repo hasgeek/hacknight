@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from hacknight.models import IdMixin, TimestampMixin, BaseNameMixin, BaseMixin
@@ -20,6 +21,7 @@ class OrganizationMembersEmail(db.Model, BaseMixin):
     __tablename__ = 'organizations_members_emails'
     member_id = db.Column(db.Integer, db.ForeignKey('organizations_members.id'), nullable=False)
     member = db.relationship(OrganizationMembers, primaryjoin=member_id == OrganizationMembers.id, backref=db.backref('organizations_members_email', cascade='all, delete-orphan'))
+    email = db.Column(db.Unicode(100), unique=True, nullable=False)
     is_primary = db.Column(db.Boolean, nullable=False, default = False)
 
 
