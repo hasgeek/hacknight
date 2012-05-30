@@ -1,0 +1,25 @@
+/* the humans responsible & colophon */
+/* humanstxt.org */
+
+/* TEAM */
+
+  Code Monkey: Kiran Jonnalagadda
+  Site: http://jace.zaiki.in/
+  Twitter: @jackerhack
+  Location: Bangalore, india
+
+  Fanboy #1: Nigel Babu
+  Site: http://nigelb.me/
+  Location: Bangalore, India
+
+/* THANKS */
+
+  Chief Husband Management Officer: Zainab Bawa
+  Twitter: @zainabbawa
+
+/* SITE */
+
+  Standards: HTML5, CSS3
+  Components: Flask, Twitter Bootstrap
+  Software: Python, TextMate, Mac OS X, Ubuntu, Vim, Gimp, Inkscape
+  Source: https://github.com/hasgeek

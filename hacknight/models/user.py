@@ -7,4 +7,4 @@ from hacknight.models import db
 __all__ = ['User']
 
 class User(db.Model, UserBase):
-    __tablename__ = 'user'
+    __tablename__ = 'users'

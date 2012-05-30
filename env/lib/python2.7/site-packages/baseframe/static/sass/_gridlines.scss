@@ -1,0 +1,98 @@
+/*
+ *	Grid Overlay for Twitter Bootstrap
+ *	Assumes a 1.692em baseline grid (22px/13px)
+ *
+ *  From http://plus.abitgone.co.uk/a-responsive-grid-for-twitter-bootstrap
+ */
+@media (min-width: 1200px) {
+    body {
+		background: -webkit-linear-gradient(
+						90deg, 
+						rgba(0,0,0,0.05), 
+						rgba(0,0,0,0.05) 	4.545%, 
+						rgba(0,0,0,0) 		4.545%, 
+						rgba(0,0,0,0) 		100%
+					),
+					-webkit-linear-gradient(
+						0deg,
+						rgba(0,0,0,0),
+						rgba(0,0,0,0) 		35%,
+						rgba(0,0,0,0.05)	35%,
+						rgba(0,0,0,0.05)	36%,
+						rgba(0,0,0,0)		36%,
+						rgba(0,0,0,0)		65%,
+						rgba(0,0,0,0.05)	65%,
+						rgba(0,0,0,0.05)	66%,
+						rgba(0,0,0,0)		66%,
+						rgba(0,0,0,0)		100%
+					);
+		//background-size: 1.692em 1.692em, 7.692em 7.692em; /* 7.692 - 2.308 = 5.384 */
+		background-size: 18px 18px, 7.692em 7.692em;
+		background-position: left top, center top;
+	}
+}
+@media (max-width: 1199px) and (min-width: 980px) {
+	body {
+		background: -webkit-linear-gradient(
+						90deg, 
+						rgba(0,0,0,0.05), 
+						rgba(0,0,0,0.05) 	4.545%, 
+						rgba(0,0,0,0) 		4.545%, 
+						rgba(0,0,0,0) 		100%
+					),
+					-webkit-linear-gradient(
+						0deg,
+						rgba(0,0,0,0),
+						rgba(0,0,0,0) 		37.5%,
+						rgba(0,0,0,0.05)	37.5%,
+						rgba(0,0,0,0.05)	38.75%,
+						rgba(0,0,0,0)		38.75%,
+						rgba(0,0,0,0)		62.5%,
+						rgba(0,0,0,0.05)	62.5%,
+						rgba(0,0,0,0.05)	63.75%,
+						rgba(0,0,0,0)		63.75%,
+						rgba(0,0,0,0)		100%
+					);
+		background-size: 1.692em 1.692em, 6.154em 6.154em;
+		background-position: left top, center top;
+	}
+}
+@media (max-width: 979px) and (min-width: 761px) {
+	body {
+		background: -webkit-linear-gradient(
+						90deg, 
+						rgba(0,0,0,0.05), 
+						rgba(0,0,0,0.05) 	4.545%, 
+						rgba(0,0,0,0) 		4.545%, 
+						rgba(0,0,0,0) 		100%
+					),
+					-webkit-linear-gradient(
+						0deg,
+						rgba(0,0,0,0),
+						rgba(0,0,0,0) 		32.25%,
+						rgba(0,0,0,0.05)	32.25%,
+						rgba(0,0,0,0.05)	33.87%,
+						rgba(0,0,0,0)		33.87%,
+						rgba(0,0,0,0)		64.52%,
+						rgba(0,0,0,0.05)	64.52%,
+						rgba(0,0,0,0.05)	66.13%,
+						rgba(0,0,0,0)		66.13%,
+						rgba(0,0,0,0)		100%
+					);
+		background-size: 1.692em 1.692em, 4.769em 4.769em;
+		background-position: left top, center top;
+	}
+}
+@media (max-width: 760px){
+	body {
+		background: -webkit-linear-gradient(
+						90deg, 
+						rgba(0,0,0,0.05), 
+						rgba(0,0,0,0.05) 	4.545%, 
+						rgba(0,0,0,0) 		4.545%, 
+						rgba(0,0,0,0) 		100%
+					);
+		background-size: 1.692em 1.692em;
+		background-position: left top;	
+	}
+}

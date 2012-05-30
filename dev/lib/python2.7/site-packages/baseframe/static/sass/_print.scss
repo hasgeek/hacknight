@@ -1,0 +1,106 @@
+@media print {
+    // No printing
+    .no-print {
+        display: none;
+    }
+    // Only show when printing
+    .print-only {
+        display: block;
+    }
+    img.print-only {
+        display: inline-block;
+    }
+    span.print-only {
+        display: inline;
+    }
+    table.print-only {
+        display: table;
+    }
+    // Make logo plain text when printing
+    #logo {
+        background: none;
+        text-indent: 0;
+        width: auto;
+        height: 1.5em;
+        line-height: 1.5em;
+        padding-top: 0.5em;
+        font-size: 30px;
+        font-weight: bold;
+        a {
+            color: black;
+        }
+    }
+    // Reset colors
+    body, code, pre, legend, label, h1, h2, h3 {
+        color: black;
+    }
+    .print-span1 {
+        width: 42px;
+    }
+    .print-span2 {
+        width: 104px;
+    }
+    .print-span3 {
+        width: 166px;
+    }
+    .print-span4 {
+        width: 228px;
+    }
+    .print-span5 {
+        width: 290px;
+    }
+    .print-span6 {
+        width: 352px;
+    }
+    .print-span7 {
+        width: 414px;
+    }
+    .print-span8 {
+        width: 476px;
+    }
+    .print-span9 {
+        width: 538px;
+    }
+    .print-span10 {
+        width: 600px;
+    }
+    .print-span11 {
+        width: 662px;
+    }
+    .print-span12, .container {
+        width: 724px;
+    }
+    .print-offset1 {
+        margin-left: 82px;
+    }
+    .print-offset2 {
+        margin-left: 144px;
+    }
+    .print-offset3 {
+        margin-left: 206px;
+    }
+    .print-offset4 {
+        margin-left: 268px;
+    }
+    .print-offset5 {
+        margin-left: 330px;
+    }
+    .print-offset6 {
+        margin-left: 392px;
+    }
+    .print-offset7 {
+        margin-left: 454px;
+    }
+    .print-offset8 {
+        margin-left: 516px;
+    }
+    .print-offset9 {
+        margin-left: 578px;
+    }
+    .print-offset10 {
+        margin-left: 640px;
+    }
+    .print-offset11 {
+        margin-left: 702px;
+    }
+}

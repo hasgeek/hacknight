@@ -1,0 +1,2 @@
+{% from "baseframe/components.html" import networkbar with context %}
+{{ networkbar(siteid=config['SITE_ID'], login=config['LASTUSER_CLIENT_ID'] and True or False) }}
