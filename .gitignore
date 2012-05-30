@@ -18,3 +18,5 @@ instance/development.py
 instance/production.py
 baseframe-packed.css
 baseframe-packed.js
+env/
+dev/
