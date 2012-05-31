@@ -10,6 +10,7 @@ from coaster import configureapp
 # First, make an app and config it
 
 app = Flask(__name__, instance_relative_config=True)
+app.secret_key = 'X4%\xc2,\xf7 1jq\xebi\xc6W\n\xe0\xfc\xd1\xfa\xd8o\xdf\xc2\x0b\x8c\xb1\xa3V\xb6\x10'
 configureapp(app, 'ENVIRONMENT')
 
 # Second, after config, import the models and views
@@ -30,9 +31,9 @@ assets.register('css_all', css)
 
 # Fourth, setup admin for the models
 
-from flask.ext import admin
+#from flask.ext import admin
 #from flask.ext.admin.datastore.sqlalchemy import SQLAlchemyDatastore
-from hacknight.views.login import lastuser
+#from hacknight.views.login import lastuser
 
 #admin_datastore = SQLAlchemyDatastore(hacknight.models, hacknight.models.db.session)
 #admin_blueprint = admin.create_admin_blueprint(admin_datastore,

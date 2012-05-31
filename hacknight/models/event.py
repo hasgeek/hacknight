@@ -8,6 +8,9 @@ from user import User
 __all__ = ['Event', 'EventLocation']
 #need to EventTurnOut, EventPayment
 
+#total hacknight size
+MAXIMUM_PARTICIPANTS_SIZE = 50
+
 class Event(db.Model, BaseNameMixin):
     __tablename__ = 'events'
     userid = db.Column(db.Integer, db.ForeignKey('users.userid'), nullable=False)
@@ -16,7 +19,7 @@ class Event(db.Model, BaseNameMixin):
     main_event_end_date = db.Column(db.DateTime, nullable=False)
     hacknight_start_date = db.Column(db.DateTime, nullable=False)
     hacknight_end_date = db.Column(db.DateTime, nullable=False)
-    maximum_participants = db.Column(db.Integer, default=50, nullable=False)
+    maximum_participants = db.Column(db.Integer, default=MAXIMUM_PARTICIPANTS, nullable=False)
     main_event_website = db.Column(db.Unicode(100), nullable=False, unique=True)
 
 
