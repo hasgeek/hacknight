@@ -9,12 +9,12 @@ __all__ = ['Event', 'EventLocation']
 #need to EventTurnOut, EventPayment
 
 #total hacknight size
-MAXIMUM_PARTICIPANTS_SIZE = 50
+MAXIMUM_PARTICIPANTS = 50
 
 class Event(db.Model, BaseNameMixin):
     __tablename__ = 'events'
     userid = db.Column(db.Integer, db.ForeignKey('users.userid'), nullable=False)
-    creator = db.relationship(User, primaryjoin=userid == User.userid, backref=db.backref('users', cascade='all, delete-orphan'))
+    evnt_creator = db.relationship(User, primaryjoin=userid == User.userid, backref=db.backref('users', cascade='all, delete-orphan'))
     main_event_start_date = db.Column(db.DateTime, nullable=False)
     main_event_end_date = db.Column(db.DateTime, nullable=False)
     hacknight_start_date = db.Column(db.DateTime, nullable=False)

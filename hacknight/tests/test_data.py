@@ -12,3 +12,10 @@ LOCATIONS = [{'place': 'CIS, Domlur, Bangalore', 'country': 'India'}, {'place': 
 
 EVENT_LOCATIONS = [{'name': 'fifthelephant2012', 'location': 'CIS, Domlur, Bangalore'}]
 
+PROJECTS = [{'name': 'Image Hijacker', 'title': 'Twitter Bot to fetch Image', 'description': 'this is my idea, I need more time to explain, but I am writing this because I want test to pass', 'event_name': 'fifthelephant2012', 'fullname': 'kracekumar', 'hacknight_bio': 'Pythonized Hacker, learning data manipulation'}]
+
+MENTORS = [{'fullname': 'kracekumar', 'project_name': 'Image Hijacker', 'mentor_bio': 'programmer since 14, Linux Geek, Hacker' }]
+
+PARTICIPANTS = [{'fullname': 'kracekumar', 'project_name': 'Image Hijacker'}]
+
+PAYMENTS = [{'fullname': 'kracekumar', 'event_name': 'fifthelephant2012'}]
