@@ -16,6 +16,8 @@ PROJECTS = [{'name': 'Image Hijacker', 'title': 'Twitter Bot to fetch Image', 'd
 
 MENTORS = [{'fullname': 'kracekumar', 'project_name': 'Image Hijacker', 'mentor_bio': 'programmer since 14, Linux Geek, Hacker' }]
 
-PARTICIPANTS = [{'fullname': 'kracekumar', 'project_name': 'Image Hijacker'}]
+PARTICIPANTS = [{'fullname': 'kracekumar', 'event_name': 'fifthelephant2012'}]
+
+PARTICIPANTS_PROJECTS = [{'userid': 'kRxvoscJQg6kCE3FWErj_w', 'project_name': 'Image Hijacker'}]
 
 PAYMENTS = [{'fullname': 'kracekumar', 'event_name': 'fifthelephant2012'}]
