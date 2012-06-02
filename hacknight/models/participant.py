@@ -7,7 +7,7 @@ from user import User
 from project import Project
 from event import Event 
 
-__all__ = ['Participant', 'ParticipantProject', 'Payment', 'PAYMENT_STATUS', 'PARTICIPANT_STATUS']
+__all__ = ['Participant', 'Payment', 'PAYMENT_STATUS', 'PARTICIPANT_STATUS']
 
 PAYMENT_STATUS = {
                 'paid': 1, 
@@ -24,15 +24,8 @@ PARTICIPANT_STATUS = {
 class Participant(db.Model, BaseMixin):
     __tablename__ = 'participants'
     userid = db.Column(db.Integer, db.ForeignKey('users.userid'), nullable=False)
-    event_id = db.Column(db.Integer, db.ForeignKey('events.id'), nullable=False)
-
-
-class ParticipantProject(db.Model, BaseMixin):
-    __tablename__ = 'participants_project'
-    pid = db.Column(db.Integer, db.ForeignKey('participants.id'), nullable=False)
     project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), nullable=False)
     status = db.Column(db.Integer, nullable=False, default = PARTICIPANT_STATUS['waiting'])
-
 
 class Payment(db.Model, BaseMixin):
     __tablename__ = 'payments'

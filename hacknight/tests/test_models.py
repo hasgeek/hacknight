@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from hacknight.models import db
-from hacknight.tests import Event, EventLocation, User, Location, Project, Mentor, Participant, Payment, ParticipantProject
+from hacknight.tests import Event, EventLocation, User, Location, Project, Mentor, Participant, Payment
 from hacknight.tests import MAXIMUM_PROJECT_SIZE
-from test_data import EVENTS, EVENT_LOCATIONS, USERS, LOCATIONS, PROJECTS, MENTORS, PARTICIPANTS, PAYMENTS, PARTICIPANTS_PROJECTS
+from test_data import EVENTS, EVENT_LOCATIONS, USERS, LOCATIONS, PROJECTS, MENTORS, PARTICIPANTS, PAYMENTS
 from nose.tools import ok_, assert_raises
 import sqlalchemy
 
@@ -76,19 +76,9 @@ def test_mentor():
 def test_participant():
     global db
     for participant in PARTICIPANTS:
-        event = db.session.query(Event).filter_by(name=participant['event_name']).first()
+        project = db.session.query(Project).filter_by(name=participant['project_name']).first()
         user = db.session.query(User).filter_by(fullname=participant['fullname']).first()
-        p = Participant(userid = user.userid, event_id = event.id)
-        db.session.add(p)
-    db.session.commit()
-    db.session.add(p)
-
-def test_participant_project():
-    global db
-    for pp in PARTICIPANTS_PROJECTS:
-        project = db.session.query(Project).filter_by(name=pp['project_name']).first()
-        participant = db.session.query(Participant).filter_by(userid=pp['userid']).first()
-        p = ParticipantProject(pid = participant.id, project_id = project.id)
+        p = Participant(userid = user.userid, project_id = project.id)
         db.session.add(p)
     db.session.commit()
     db.session.add(p)
@@ -122,15 +112,6 @@ def test_events_delete():
             db.session.delete(e)
     ok_(len(Event.query.all()), 0)
     
-def test_projects_delete():
-    global db
-    ok_(len(Project.query.all()), len(PROJECTS))
-    for project in PROJECTS:
-        p = db.session.query(Project).filter_by(userid=project['name']).first()
-        if p is not None:
-            db.session.delete(e)
-    ok_(len(Project.query.all()), 0)
-
 def test_teardown():
     global db
     db.session.expunge_all()
