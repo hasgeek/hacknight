@@ -1,29 +1,47 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from hacknight.models import IdMixin, BaseNameMixin
-from hacknight.models import db
-from user import User
+from hacknight.models import db, BaseNameMixin, BaseScopedNameMixin
 
-__all__ = ['Event', 'EventLocation']
+__all__ = ['Profile', 'Event', 'PROFILE_TYPE']
 #need to EventTurnOut, EventPayment
 
-#total hacknight size
-MAXIMUM_PARTICIPANTS = 50
 
-class Event(db.Model, BaseNameMixin):
-    __tablename__ = 'events'
-    userid = db.Column(db.Integer, db.ForeignKey('users.userid'), nullable=False)
-    evnt_creator = db.relationship(User, primaryjoin=userid == User.userid, backref=db.backref('users', cascade='all, delete-orphan'))
-    main_event_start_date = db.Column(db.DateTime, nullable=False)
-    main_event_end_date = db.Column(db.DateTime, nullable=False)
-    hacknight_start_date = db.Column(db.DateTime, nullable=False)
-    hacknight_end_date = db.Column(db.DateTime, nullable=False)
-    maximum_participants = db.Column(db.Integer, default=MAXIMUM_PARTICIPANTS, nullable=False)
-    main_event_website = db.Column(db.Unicode(100), nullable=False, unique=True)
+class PROFILE_TYPE:
+    UNDEFINED = 0
+    PERSON = 1
+    ORGANIZATION = 2
+    EVENTSERIES = 3
+
+profile_types = {
+    0: u"Undefined",
+    1: u"Person",
+    2: u"Organization",
+    3: u"Event Series",
+    }
 
 
-class EventLocation(db.Model, IdMixin):
-    __tablename__ = 'events_location'
-    event_id = db.Column(db.Integer, db.ForeignKey('events.id'), nullable=False, unique = True)
-    location_id = db.Column(db.Integer, db.ForeignKey('locations.id'), nullable=False, unique = True)
+class Profile(db.Model, BaseNameMixin):
+    __tablename__ = 'profile'
+
+    userid = db.Column(db.Unicode(22), nullable=False, unique=True)
+    description = db.Column(db.UnicodeText, default=u'', nullable=False)
+    type = db.Column(db.Integer, default=PROFILE_TYPE.UNDEFINED, nullable=False)
+
+    def type_label(self):
+        return profile_types.get(self.type, profile_types[0])
+
+
+class Event(db.Model, BaseScopedNameMixin):
+    __tablename__ = 'event'
+
+    profile_id = db.Column(db.Integer, db.ForeignKey('profile.id'))
+    profile = db.relationship(Profile)
+    parent = db.synonym('profile')
+
+    start_datetime = db.Column(db.DateTime, nullable=False)
+    end_datetime = db.Column(db.DateTime, nullable=False)
+    maximum_participants = db.Column(db.Integer, default=0, nullable=False)
+    website = db.Column(db.Unicode(250), default=u'', nullable=False)
+
+    __table_args__ = (db.UniqueConstraint('name', 'profile_id'),)
