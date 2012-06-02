@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #: Site title
-SITE_TITLE = 'HasGeek Hacknight'
+SITE_TITLE = 'Hacknight'
 #: Site id (for network bar)
 SITE_ID = 'hacknight'
 #: Timezone

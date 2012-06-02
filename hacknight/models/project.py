@@ -1,41 +1,32 @@
-#! /usr/bin/env python
 # -*- coding: utf-8- *-
 
-from hacknight.models import IdMixin, BaseNameMixin, BaseMixin
+from hacknight.models import BaseMixin, BaseScopedNameMixin
 from hacknight.models import db
-from user import User
-from event import Event 
+from hacknight.models.event import Event
+from hacknight.models.participant import Participant
 
-__all__ = ['Project', 'Mentor', 'PROJECT_TYPE', 'MAXIMUM_PROJECT_SIZE']
-
-#type of project.
-PROJECT_TYPE = {
-                'normal': 1,
-                'proposal': 2,
-                'secret': 3,
-                'complete': 4,
-                'incomplete': 5,
-                'called-off': 6
-                }
-
-#maximum project team size
-MAXIMUM_PROJECT_SIZE = 4
-
-class Project(db.Model, BaseNameMixin):
-    __tablename__ = 'projects'
-    description = db.Column(db.UnicodeText, nullable = False)
-    event_id = db.Column(db.Integer, db.ForeignKey('events.id'), nullable=False)
-    event = db.relationship(Event, primaryjoin=event_id == Event.id, backref=db.backref('events', cascade='all, delete-orphan'))
-    userid = db.Column(db.Integer, db.ForeignKey('users.userid'), nullable=False)
-    maximum_size = db.Column(db.Integer, default = MAXIMUM_PROJECT_SIZE, nullable = False)
-    type = db.Column(db.Integer, nullable = False, default = PROJECT_TYPE['normal'])
-    hacknight_bio = db.Column(db.UnicodeText)
+__all__ = ['Project']
 
 
-class Mentor(db.Model, BaseMixin):
-    __tablename__ = 'mentors'
-    userid = db.Column(db.Integer, db.ForeignKey('users.userid'), nullable=False)
-    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), nullable=False)
-    project = db.relationship(Project, primaryjoin=project_id == Project.id, backref=db.backref('projects', cascade='all, delete-orphan'))
-    mentor_bio = db.Column(db.UnicodeText)
-    
+class Project(db.Model, BaseScopedNameMixin):
+    __tablename__ = 'project'
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
+    event = db.relationship(Event,
+        backref=db.backref('projects', cascade='all, delete-orphan'))
+
+    description = db.Column(db.UnicodeText, nullable=False)
+    maximum_size = db.Column(db.Integer, default=0, nullable=False)
+    status = db.Column(db.Integer, nullable=False, default=0)
+
+    __table_args__ = (db.UniqueConstraint('name', 'event_id'),)
+
+
+class ProjectMember(db.Model, BaseMixin):
+    __tablename__ = 'project_member'
+    project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
+    project = db.relationship(Project, backref=db.backref('members', cascade='all, delete-orphan'))
+    participant_id = db.Column(db.Integer, db.ForeignKey('participant.id'), nullable=False)
+    participant = db.relationship(Participant, backref=db.backref('projects', cascade='all, delete-orphan'))
+
+    status = db.Column(db.Integer, nullable=False, default=0)
+    role = db.Column(db.Unicode(250), nullable=False, default=u'')

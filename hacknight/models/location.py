@@ -1,12 +1,14 @@
-#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from hacknight.models import BaseMixin
+from hacknight.models import BaseNameMixin
 from hacknight.models import db
 
-__all__ = ['Location']
+__all__ = ['Venue']
 
-class Location(db.Model, BaseMixin):
-    __tablename__ = 'locations'
-    place = db.Column(db.Unicode(250), nullable = False, unique = True)
-    country = db.Column(db.Unicode(50), default=u'india', nullable=False)
+
+class Venue(db.Model, BaseNameMixin):
+    __tablename__ = 'venue'
+    description = db.Column(db.UnicodeText, default=u'', nullable=False)
+    address = db.Column(db.UnicodeText, default=u'', nullable=False)
+    latitude = db.Column(db.Numeric, nullable=True)
+    longitude = db.Column(db.Numeric, nullable=True)

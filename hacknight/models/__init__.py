@@ -2,12 +2,12 @@
 
 from flask.ext.sqlalchemy import SQLAlchemy
 from hacknight import app
-from coaster.sqlalchemy import IdMixin, TimestampMixin, BaseMixin, BaseNameMixin
+from coaster.sqlalchemy import BaseMixin, BaseNameMixin, BaseScopedNameMixin
 
 db = SQLAlchemy(app)
 
-from .user import *
-from .event import *
-from .location import *
-from .project import *
-from .participant import *
+from hacknight.models.user import *
+from hacknight.models.event import *
+from hacknight.models.location import *
+from hacknight.models.project import *
+from hacknight.models.participant import *
