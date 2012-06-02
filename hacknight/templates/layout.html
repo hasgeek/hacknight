@@ -3,7 +3,7 @@
 
 {% block headerbox %}
   <header>
-    {{ networkbar(siteid=config['SITE_ID'], login=false, baseclass='hg-dark') }}
+    {{ networkbar(siteid=config['SITE_ID'], login=true, baseclass='hg-dark') }}
     <div id="page-header" class="container">
       <div id="logo"><a href="{{ url_for('index') }}" title="Home">{{ config['SITE_TITLE'] }}</a></div>
     </div>
