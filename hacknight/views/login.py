@@ -12,10 +12,10 @@ lastuser = LastUser(app)
 lastuser.init_usermanager(UserManager(db, User))
 
 
-@app.route('/login')
+@app.route('/login/')
 @lastuser.login_handler
 def login():
-    return {'scope': 'id organizations'}
+    return {'scope': 'id email organizations'}
 
 
 @app.route('/logout')
@@ -29,6 +29,13 @@ def logout():
 @lastuser.auth_handler
 def lastuserauth():
     # Save the user object
+    username = g.user.username or g.user.userid
+    user = User.query.filter_by(userid=g.user.userid).first()
+    if user is None:
+        user = User(userid = g.user.userid, 
+                 name = g.user.username or g.user.userid,
+                 fullname=g.user.fullname)
+        db.session.add(user)
     db.session.commit()
     return redirect(get_next_url())
 

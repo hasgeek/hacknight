@@ -40,6 +40,7 @@ def test_locations():
     assert_raises(sqlalchemy.exceptions.IntegrityError, db.session.commit())
 
 def test_event_locations():
+    global db
     for event_location in EVENT_LOCATIONS:
         event = db.session.query(Event).filter_by(name=event_location['name']).first()
         location = db.session.query(Location).filter_by(place=event_location['location']).first()
@@ -51,6 +52,7 @@ def test_event_locations():
 
 
 def test_project():
+    global db
     for project in PROJECTS:
         event = db.session.query(Event).filter_by(name=project['event_name']).first()
         user = db.session.query(User).filter_by(fullname=project['fullname']).first()
@@ -61,6 +63,7 @@ def test_project():
     assert_raises(sqlalchemy.exceptions.IntegrityError, db.session.commit())
 
 def test_mentor():
+    global db
     for mentor in MENTORS:
         project = db.session.query(Project).filter_by(name=mentor['project_name']).first()
         user = db.session.query(User).filter_by(fullname=mentor['fullname']).first()
@@ -71,6 +74,7 @@ def test_mentor():
     assert_raises(sqlalchemy.exceptions.IntegrityError, db.session.commit())
 
 def test_participant():
+    global db
     for participant in PARTICIPANTS:
         project = db.session.query(Project).filter_by(name=participant['project_name']).first()
         user = db.session.query(User).filter_by(fullname=participant['fullname']).first()
@@ -80,6 +84,7 @@ def test_participant():
     db.session.add(p)
 
 def test_payments():
+    global db
     for payment in PAYMENTS:
         event = db.session.query(Event).filter_by(name=payment['event_name']).first()
         user = db.session.query(User).filter_by(fullname=payment['fullname']).first()
@@ -87,3 +92,27 @@ def test_payments():
         db.session.add(p)
     db.session.commit()
     db.session.add(p)
+
+def test_users_delete():
+    global db
+    ok_(len(User.query.all()), len(USERS))
+    for user in USERS:
+        u = db.session.query(User).filter_by(userid=user['userid']).first()
+        if u is not None:
+            db.session.delete(u)
+    ok_(len(User.query.all()), 0)
+
+def test_events_delete():
+    global db
+    ok_(len(Event.query.all()), len(EVENTS))
+    for event in EVENTS:
+        e = db.session.query(Event).filter_by(userid=event['name']).first()
+        if e is not None:
+            # because if delete cascade is present event must have deleted already
+            db.session.delete(e)
+    ok_(len(Event.query.all()), 0)
+    
+def test_teardown():
+    global db
+    db.session.expunge_all()
+    db.drop_all()

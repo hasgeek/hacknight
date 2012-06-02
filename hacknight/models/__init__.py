@@ -6,6 +6,8 @@ from coaster.sqlalchemy import IdMixin, TimestampMixin, BaseMixin, BaseNameMixin
 
 db = SQLAlchemy(app)
 
-from hacknight.models.user import *
-from hacknight.models.event import *
-from hacknight.models.location import *
+from .user import *
+from .event import *
+from .location import *
+from .project import *
+from .participant import *
