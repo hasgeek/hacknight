@@ -81,3 +81,10 @@ def project_remove(profile, project, event):
         message=u"Delete '%s' ?" % (project.title))
 
 
+@app.route('/<profile>/<event>/projects', methods=["GET","POST"])
+@load_models((Profile, {'name':'profile'}, 'profile'),
+    (Event, {'name':'event'}, 'event'))
+def projects(profile, event):
+    projects = Project.query.filter_by(event_id=event.id)
+    return render_template('projects.html', projects=projects, event=event)
+
