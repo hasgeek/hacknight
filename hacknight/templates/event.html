@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block title %}{{ event.title }}{% endblock %}
+
+{% block content %}
+{{ event.description|safe }}
+<h2>Participants</h2>
+<p>
+	Need to add code for displaying participants
+</p>
+{% endblock %}
