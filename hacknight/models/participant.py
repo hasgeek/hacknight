@@ -6,7 +6,8 @@ from hacknight.models.event import Event
 
 __all__ = ['Participant']
 
-class Participant(db.Model, BaseMixin):
+
+class Participant(BaseMixin, db.Model):
     __tablename__ = 'participant'
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship(User)

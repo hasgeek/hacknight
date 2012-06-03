@@ -7,7 +7,7 @@ from hacknight.models.event import Profile
 __all__ = ['Venue']
 
 
-class Venue(db.Model, BaseNameMixin):
+class Venue(BaseNameMixin, db.Model):
     __tablename__ = 'venue'
     profile_id = db.Column(db.Integer, db.ForeignKey('profile.id'), nullable=False)
     profile = db.relationship(Profile)

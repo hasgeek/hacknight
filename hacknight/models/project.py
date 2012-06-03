@@ -1,6 +1,6 @@
 # -*- coding: utf-8- *-
 
-from hacknight.models import BaseMixin, BaseScopedNameMixin
+from hacknight.models import BaseMixin, BaseScopedIdNameMixin
 from hacknight.models import db
 from hacknight.models.event import Event
 from hacknight.models.participant import Participant
@@ -8,7 +8,7 @@ from hacknight.models.participant import Participant
 __all__ = ['Project', 'ProjectMember']
 
 
-class Project(db.Model, BaseScopedNameMixin):
+class Project(BaseScopedIdNameMixin, db.Model):
     __tablename__ = 'project'
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
     event = db.relationship(Event,
@@ -25,10 +25,10 @@ class Project(db.Model, BaseScopedNameMixin):
 
     @property
     def users(self):
-    	return [m.participant.user for m in self.members]
+        return [m.participant.user for m in self.members]
 
 
-class ProjectMember(db.Model, BaseMixin):
+class ProjectMember(BaseMixin, db.Model):
     __tablename__ = 'project_member'
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
     # project = db.relationship(Project, backref=db.backref('members', cascade='all, delete-orphan'))
