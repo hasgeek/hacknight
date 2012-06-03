@@ -5,7 +5,7 @@ from hacknight.models import db
 from hacknight.models.event import Event
 from hacknight.models.participant import Participant
 
-__all__ = ['Project']
+__all__ = ['Project', 'ProjectMember']
 
 
 class Project(db.Model, BaseScopedNameMixin):

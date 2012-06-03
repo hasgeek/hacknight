@@ -1,10 +1,9 @@
-#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from hacknight.models import db, BaseNameMixin, BaseScopedNameMixin
 
 __all__ = ['Profile', 'Event', 'PROFILE_TYPE']
-#need to EventTurnOut, EventPayment
+#need to add EventTurnOut, EventPayment later
 
 
 class PROFILE_TYPE:
