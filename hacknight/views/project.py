@@ -2,7 +2,7 @@
 
 from flask import render_template, g, abort, flash, url_for, request
 from coaster.views import load_model, load_models
-from baseframe.forms import render_redirect, render_form
+from baseframe.forms import render_form, render_redirect, ConfirmDeleteForm
 from hacknight import app
 from hacknight.models import db, Profile, Event, Project, ProjectMember, Participant
 from hacknight.models.event import profile_types
@@ -56,5 +56,28 @@ def project_edit(profile, project, event):
             return render_redirect(url_for('index'), code=303)
         return render_form(form=form, title=u"Edit project", submit=u"Save",
             cancel_url=url_for('index'), ajax=True)
+
+@app.route('/<profile>/<event>/projects/<project>/remove', methods=["GET", "POST"])
+@load_models((Profile, {'name':'profile'}, 'profile'),
+    (Project, {'name': 'project'}, 'project'),
+    (Event, {'name':'event'}, 'event'))
+@lastuser.requires_login
+def project_remove(profile, project, event):
+    if not lastuser.has_permission('siteadmin') and g.user not in project.users:
+        abort(403)
+    else:
+        form = ConfirmDeleteForm()
+    if form.validate_on_submit():
+        if 'delete' in request.form:
+            members = ProjectMember.query.filter_by(project_id=project.id).all()
+            print members
+            for member in members:
+                db.session.delete(member)
+            db.session.delete(project)
+            db.session.commit()
+            flash("Project removed", "success")
+        return render_redirect(url_for('index'), code=303)
+    return render_template('baseframe/delete.html', form=form, title=u"Confirm delete",
+        message=u"Delete '%s' ?" % (project.title))
 
 
