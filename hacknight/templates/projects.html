@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block title %}{{ event.title }}{% endblock %}
+
+{% block content %}
+<div id="tabs">
+          <table class="table">
+            <thead>
+              <th>#</th>
+              <th>Title</th>
+              <th>Proposer</th>
+              <th>+1</th>
+              <th>Comments</th>
+              <th>Submitted</th>
+            </thead>
+              {% for p in projects %}
+            <tbody>
+              <tr>
+                <td><a href="{{ url_for('index') }}">{{ p.id }}</a></td>
+                <td><a href="{{ url_for('index') }}"><strong>{{ p.title }}</strong></a></td>
+                  <td><a href="{{ url_for('index') }}">{{ p.members.filter_by(status=0).first().participant.user.fullname }}</a></td>
+                  <td>10</td>
+                  <td>50</td>
+                  <td><a href="{{ url_for('index') }}">{{ p.created_at.strftime("%a, %b %e") }}</a></td>
+                </tr>
+              {%- else -%}
+                <tr>
+                  <td><em>(No events found)</em></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+{% endblock %}

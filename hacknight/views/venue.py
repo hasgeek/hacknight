@@ -30,8 +30,7 @@ def venue_new():
     if form.validate_on_submit():
         venue = Venue()
         form.populate_obj(venue)
-        if not venue.name:
-            venue.make_name()
+        venue.make_name()
         db.session.add(venue)
         db.session.commit()
         flash(u"You have created a new venue", "success")
@@ -50,8 +49,7 @@ def venue_edit(venue):
     form.profile_id.choices = [(p.id, p.title) for p in g.user.profiles]
     if form.validate_on_submit():
         form.populate_obj(venue)
-        if not venue.name:
-            venue.make_name()
+        venue.make_name()
         db.session.commit()
         flash(u"You have edited details for venue %s" % venue.title, "success")
         return render_redirect(url_for('venue_view', venue=venue.name), code=303)

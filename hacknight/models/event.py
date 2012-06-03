@@ -20,7 +20,7 @@ profile_types = {
     }
 
 
-class Profile(db.Model, BaseNameMixin):
+class Profile(BaseNameMixin, db.Model):
     __tablename__ = 'profile'
 
     userid = db.Column(db.Unicode(22), nullable=False, unique=True)
@@ -31,7 +31,7 @@ class Profile(db.Model, BaseNameMixin):
         return profile_types.get(self.type, profile_types[0])
 
 
-class Event(db.Model, BaseScopedNameMixin):
+class Event(BaseScopedNameMixin, db.Model):
     __tablename__ = 'event'
 
     profile_id = db.Column(db.Integer, db.ForeignKey('profile.id'))

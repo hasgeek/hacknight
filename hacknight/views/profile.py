@@ -26,14 +26,12 @@ def event_view(profile, event):
 
 @app.route('/<profile>/new', methods=['GET', 'POST'])
 @lastuser.requires_login
-def create_event(profile):
+def event_new(profile):
     form = EventForm()
     if form.validate_on_submit():
         event = Event()
         form.populate_obj(event)
-        if not event.name:
-            event.make_name()
-            
+        event.make_name()
         db.session.add(event)
         db.session.commit()
         flash(u"You have created new event", "success")
