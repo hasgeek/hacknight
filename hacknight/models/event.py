@@ -38,6 +38,7 @@ class Event(db.Model, BaseScopedNameMixin):
     profile = db.relationship(Profile)
     parent = db.synonym('profile')
 
+    description = db.Column(db.UnicodeText, default=u'', nullable=False)
     start_datetime = db.Column(db.DateTime, nullable=False)
     end_datetime = db.Column(db.DateTime, nullable=False)
     maximum_participants = db.Column(db.Integer, default=0, nullable=False)
