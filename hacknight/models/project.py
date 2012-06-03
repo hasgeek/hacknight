@@ -13,18 +13,25 @@ class Project(db.Model, BaseScopedNameMixin):
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
     event = db.relationship(Event,
         backref=db.backref('projects', cascade='all, delete-orphan'))
-
+    parent = db.synonym('event')
     description = db.Column(db.UnicodeText, nullable=False)
     maximum_size = db.Column(db.Integer, default=0, nullable=False)
     status = db.Column(db.Integer, nullable=False, default=0)
 
+    members = db.relationship('ProjectMember', backref='project',
+                      lazy='dynamic')
+
     __table_args__ = (db.UniqueConstraint('name', 'event_id'),)
+
+    @property
+    def users(self):
+    	return [m.participant.user for m in self.members]
 
 
 class ProjectMember(db.Model, BaseMixin):
     __tablename__ = 'project_member'
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
-    project = db.relationship(Project, backref=db.backref('members', cascade='all, delete-orphan'))
+    # project = db.relationship(Project, backref=db.backref('members', cascade='all, delete-orphan'))
     participant_id = db.Column(db.Integer, db.ForeignKey('participant.id'), nullable=False)
     participant = db.relationship(Participant, backref=db.backref('projects', cascade='all, delete-orphan'))
 
