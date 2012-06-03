@@ -2,7 +2,7 @@
 
 from flask.ext.sqlalchemy import SQLAlchemy
 from hacknight import app
-from coaster.sqlalchemy import BaseMixin, BaseNameMixin, BaseScopedNameMixin
+from coaster.sqlalchemy import BaseMixin, BaseNameMixin, BaseScopedNameMixin, BaseScopedIdNameMixin
 
 db = SQLAlchemy(app)
 
