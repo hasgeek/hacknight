@@ -57,7 +57,7 @@ def event_edit(profile, event):
         flash(u"You have edited details for event %s" % event.title, "success")
         return render_redirect(url_for('event_view', event=event.name, profile=profile.name), code=303)
     return render_form(form=form, title="Edit Event", submit=u"Save",
-        cancel_url=url_for('event_view', event=event.name), ajax=False)
+        cancel_url=url_for('event_view', event=event.name, profile=profile.name), ajax=False)
 
 @app.route('/<profile>/<event>/delete', methods=['GET', 'POST'])
 @lastuser.requires_login
