@@ -8,6 +8,6 @@ db = SQLAlchemy(app)
 
 from hacknight.models.user import *
 from hacknight.models.event import *
-from hacknight.models.location import *
+from hacknight.models.venue import *
 from hacknight.models.project import *
 from hacknight.models.participant import *

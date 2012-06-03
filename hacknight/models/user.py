@@ -21,5 +21,5 @@ class User(db.Model, UserBase):
 
     @property
     def profiles(self):
-        return [self.channel] + Profile.query.filter(
+        return [self.profile] + Profile.query.filter(
             Profile.userid.in_(self.organizations_owned_ids())).order_by('title').all()
