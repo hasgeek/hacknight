@@ -5,8 +5,9 @@ from coaster.views import load_model
 from baseframe.forms import render_redirect, render_form
 from hacknight import app
 from hacknight.models import db, Profile
-from hacknight.models.event import profile_types
+from hacknight.models.event import profile_types, Event
 from hacknight.forms.profile import ProfileForm
+from hacknight.forms.event import EventForm
 from hacknight.views.login import lastuser
 
 
@@ -14,6 +15,23 @@ from hacknight.views.login import lastuser
 @load_model(Profile, {'name': 'profile'}, 'profile')
 def profile_view(profile):
     return render_template('profile.html', profile=profile)
+
+
+@app.route('/<profile>/new')
+@lastuser.requires_login
+def create_event(profile):
+    form = EventForm()
+    if form.validate_on_submit():
+        event = Event()
+        form.populate_obj(event)
+        if not event.name:
+            event.make_name()
+        db.session.add(event)
+        db.session.commit()
+        flash(u"You have created new event", "success")
+        return render_redirect(url_for('event_view', event=event.name), code=303)
+    return render_form(form=form, title="New Event", submit=u"Create",
+        cancel_url=url_for('profile_view', profile=profile), ajax=False)
 
 
 @app.route('/<profile>/edit', methods=['GET', 'POST'])

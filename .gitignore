@@ -1,6 +1,6 @@
 .DS_Store
 *.pyc
-test.db
+*.db
 *.wpr
 .project
 .pydevproject
