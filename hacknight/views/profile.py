@@ -16,6 +16,12 @@ def profile_view(profile):
     return render_template('profile.html', profile=profile)
 
 
+@app.route('/<profile>/new')
+@load_model(Profile, {'name': 'profile'}, 'profile')
+def profile_view(profile):
+    return render_template('profile.html', profile=profile)
+
+
 @app.route('/<profile>/edit', methods=['GET', 'POST'])
 @lastuser.requires_login
 @load_model(Profile, {'name': 'profile'}, 'profile')
