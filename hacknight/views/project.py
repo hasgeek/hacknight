@@ -26,7 +26,6 @@ def project_new(profile, event, form=None):
 		project = Project()
 		form.populate_obj(project)
 		project.make_name()
-		project.profile_id = g.user
 		project.event_id = event.id 
 		db.session.add(project)
 		db.session.commit()
