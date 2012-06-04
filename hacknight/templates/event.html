@@ -2,9 +2,17 @@
 {% block title %}{{ event.title }}{% endblock %}
 
 {% block content %}
-{{ event.description|safe }}
+{{ event.description|safe }} 
+<button class="btn" data-toggle="button">Join</button>
+<h3> Details </h3>
+Start Date: {{ event.start_datetime }} <br/>
+End Date: {{ event.end_datetime }} <br/> 
+<div style="float:right">
 <h2>Participants</h2>
 <p>
-	Need to add code for displaying participants
+	{% for participant in participants %}
+        {{ participant.user.fullname }}
+    {% endfor %}
 </p>
+</div>
 {% endblock %}

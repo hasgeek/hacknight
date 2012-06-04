@@ -19,7 +19,7 @@ def project_new(profile, event, form=None):
 		if form == None:
 			form = ProjectForm()
 			return render_form(form=form, title=u"New Project", submit=u"Save",
-		cancel_url=url_for('index'), ajax=True)
+		cancel_url=url_for('index'), ajax=False)
 	
 	if request.method=="POST":
 		form = ProjectForm()
@@ -69,7 +69,6 @@ def project_remove(profile, project, event):
 	if form.validate_on_submit():
 		if 'delete' in request.form:
 			members = ProjectMember.query.filter_by(project_id=project.id).all()
-			print members
 			for member in members:
 				db.session.delete(member)
 			db.session.delete(project)
