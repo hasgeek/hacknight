@@ -26,23 +26,6 @@ def event_view(profile, event):
     participants = Participant.query.filter_by(event_id = event.id) 
     return render_template('event.html', event=event, timezone=event.start_datetime.strftime("%Z"), participants=participants)
 
-@app.route('/<profile>/new', methods=['GET', 'POST'])
-@lastuser.requires_login
-def event_new(profile):
-    form = EventForm()
-    if form.validate_on_submit():
-        event = Event()
-        form.populate_obj(event)
-        event.make_name()
-        event.start_datetime = event.start_datetime.replace(tzinfo=pytz.timezone(event.event_timezone))
-        event.end_datetime = event.end_datetime.replace(tzinfo=pytz.timezone(event.event_timezone))
-        db.session.add(event)
-        db.session.commit()
-        flash(u"You have created new event", "success")
-        values={'profile': profile, 'event': event.name}
-        return render_redirect(url_for('event_view', **values), code=303)
-    return render_form(form=form, title="New Event", submit=u"Create",
-        cancel_url=url_for('profile_view', profile=profile), ajax=False)
 
 
 @app.route('/<profile>/<event>/edit', methods=['GET', 'POST'])
