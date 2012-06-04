@@ -18,48 +18,6 @@ def profile_view(profile):
     return render_template('profile.html', profile=profile)
 
 
-@app.route('/<profile>/<event>', methods=["GET"])
-@load_models(
-  (Profile, {'name': 'profile'}, 'profile'),
-  (Event, {'name': 'event'}, 'event'))
-def event_view(profile, event):
-    participants = Participant.query.filter_by(event_id = event.id) 
-    return render_template('event.html', event=event, timezone=event.start_datetime.strftime("%Z"), participants=participants)
-
-
-
-@app.route('/<profile>/<event>/edit', methods=['GET', 'POST'])
-@lastuser.requires_login
-@load_models(
-  (Profile, {'name': 'profile'}, 'profile'),
-  (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
-def event_edit(profile, event):
-    if not lastuser.has_permission('siteadmin') and event.profile.userid not in g.user.user_organization_ids():
-        abort(403)
-    form = EventForm(obj=event)
-    if form.validate_on_submit():
-        form.populate_obj(event)
-        event.make_name()
-        db.session.commit()
-        flash(u"You have edited details for event %s" % event.title, "success")
-        return render_redirect(url_for('event_view', event=event.name, profile=profile.name), code=303)
-    return render_form(form=form, title="Edit Event", submit=u"Save",
-        cancel_url=url_for('event_view', event=event.name, profile=profile.name), ajax=False)
-
-@app.route('/<profile>/<event>/delete', methods=['GET', 'POST'])
-@lastuser.requires_login
-@load_models(
-  (Profile, {'name': 'profile'}, 'profile'),
-  (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
-def event_delete(profile, event):
-    if not lastuser.has_permission('siteadmin') and event.profile.userid not in g.user.user_organization_ids():
-        abort(403)
-    return render_delete_sqla(event, db, title=u"Confirm delete",
-        message=u"Delete venue '%s'? This cannot be undone." % event.title,
-        success=u"You have deleted playlist '%s'." % event.title,
-         next=url_for('profile_view'))
-
-
 @app.route('/<profile>/edit', methods=['GET', 'POST'])
 @lastuser.requires_login
 @load_model(Profile, {'name': 'profile'}, 'profile')

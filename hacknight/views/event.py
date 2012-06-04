@@ -2,7 +2,7 @@
 
 from flask import render_template, g, abort, flash, url_for
 from coaster.views import load_model, load_models
-from baseframe.forms import render_redirect, render_form
+from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app
 from hacknight.models import db, Profile
 from hacknight.models.event import profile_types, Event
@@ -22,21 +22,24 @@ def event_view(profile, event):
 
 @app.route('/<profile>/new', methods=['GET', 'POST'])
 @lastuser.requires_login
+@load_model(Profile, {'name': 'profile'}, 'profile')
 def event_new(profile):
     form = EventForm()
+    #p = Profile.query.filter_by(name=profile).first()
     if form.validate_on_submit():
         event = Event()
         form.populate_obj(event)
         event.make_name()
         event.start_datetime = event.start_datetime.replace(tzinfo=pytz.timezone(event.event_timezone))
         event.end_datetime = event.end_datetime.replace(tzinfo=pytz.timezone(event.event_timezone))
+        event.profile_id = profile.id
         db.session.add(event)
         db.session.commit()
         flash(u"You have created new event", "success")
         values={'profile': profile, 'event': event.name}
         return render_redirect(url_for('event_view', **values), code=303)
     return render_form(form=form, title="New Event", submit=u"Create",
-        cancel_url=url_for('profile_view', profile=profile), ajax=False)
+        cancel_url=url_for('profile_view', profile=profile.name), ajax=False)
 
 @app.route('/<profile>/<event>/edit', methods=['GET', 'POST'])
 @lastuser.requires_login
@@ -65,7 +68,7 @@ def event_delete(profile, event):
     if not lastuser.has_permission('siteadmin') and event.profile.userid not in g.user.user_organization_ids():
         abort(403)
     return render_delete_sqla(event, db, title=u"Confirm delete",
-        message=u"Delete venue '%s'? This cannot be undone." % event.title,
-        success=u"You have deleted playlist '%s'." % event.title,
-         next=url_for('profile_view'))
+        message=u"Delete Event '%s'? This cannot be undone." % event.title,
+        success=u"You have deleted an event '%s'." % event.title)
+#         next=url_for('profile_view'))
 

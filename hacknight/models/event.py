@@ -34,7 +34,7 @@ class Profile(BaseNameMixin, db.Model):
 class Event(BaseScopedNameMixin, db.Model):
     __tablename__ = 'event'
 
-    profile_id = db.Column(db.Integer, db.ForeignKey('profile.id'))
+    profile_id = db.Column(db.Integer, db.ForeignKey('profile.id'), nullable=False)
     profile = db.relationship(Profile)
     parent = db.synonym('profile')
 
