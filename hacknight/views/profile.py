@@ -6,6 +6,7 @@ from baseframe.forms import render_redirect, render_form
 from hacknight import app
 from hacknight.models import db, Profile
 from hacknight.models.event import profile_types, Event
+from hacknight.models.participant import Participant
 from hacknight.forms.profile import ProfileForm
 from hacknight.forms.event import EventForm
 from hacknight.views.login import lastuser
@@ -22,7 +23,8 @@ def profile_view(profile):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event'}, 'event'))
 def event_view(profile, event):
-    return render_template('event.html', event=event)
+    participants = Participant.query.filter_by(event_id = event.id) 
+    return render_template('event.html', event=event, timezone=event.start_datetime.strftime("%Z"), participants=participants)
 
 @app.route('/<profile>/new', methods=['GET', 'POST'])
 @lastuser.requires_login
