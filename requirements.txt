@@ -4,3 +4,4 @@ https://github.com/hasgeek/baseframe/zipball/master
 Flask-SQLAlchemy
 https://github.com/hasgeek/flask-lastuser/zipball/master
 nose
+pytz

@@ -9,7 +9,7 @@ from hacknight.models.event import profile_types, Event
 from hacknight.forms.profile import ProfileForm
 from hacknight.forms.event import EventForm
 from hacknight.views.login import lastuser
-
+import pytz
 
 @app.route('/<profile>')
 @load_model(Profile, {'name': 'profile'}, 'profile')
@@ -32,6 +32,8 @@ def event_new(profile):
         event = Event()
         form.populate_obj(event)
         event.make_name()
+        event.start_datetime = event.start_datetime.replace(tzinfo=pytz.timezone(event.event_timezone))
+        event.end_datetime = event.end_datetime.replace(tzinfo=pytz.timezone(event.event_timezone))
         db.session.add(event)
         db.session.commit()
         flash(u"You have created new event", "success")
