@@ -36,7 +36,7 @@ def event_new(profile):
         db.session.add(event)
         db.session.commit()
         flash(u"You have created new event", "success")
-        values={'profile': profile, 'event': event.name}
+        values={'profile': profile.name, 'event': event.name}
         return render_redirect(url_for('event_view', **values), code=303)
     return render_form(form=form, title="New Event", submit=u"Create",
         cancel_url=url_for('profile_view', profile=profile.name), ajax=False)
@@ -65,10 +65,10 @@ def event_edit(profile, event):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_delete(profile, event):
-    if not lastuser.has_permission('siteadmin') and event.profile.userid not in g.user.user_organization_ids():
+    if not lastuser.has_permission('siteadmin') and profile.userid not in g.user.user_organization_ids():
         abort(403)
     return render_delete_sqla(event, db, title=u"Confirm delete",
         message=u"Delete Event '%s'? This cannot be undone." % event.title,
-        success=u"You have deleted an event '%s'." % event.title)
-#         next=url_for('profile_view'))
+        success=u"You have deleted an event '%s'." % event.title,
+         next=url_for('profile_view', profile=profile.name))
 
