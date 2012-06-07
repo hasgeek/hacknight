@@ -5,10 +5,11 @@ from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app
 from hacknight.models import db, Profile
-from hacknight.models.event import profile_types, Event
+from hacknight.models.event import profile_types, Event, EventStatus
 from hacknight.models.participant import Participant
 from hacknight.forms.event import EventForm
 from hacknight.views.login import lastuser
+from hacknight.views.workflow import EventWorkflow
 import pytz
 
 
@@ -47,17 +48,34 @@ def event_new(profile):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_edit(profile, event):
-    if not lastuser.has_permission('siteadmin') and event.profile.userid not in g.user.user_organization_ids():
+    workflow = event.workflow()
+    if not workflow.can_edit():
         abort(403)
     form = EventForm(obj=event)
     if form.validate_on_submit():
         form.populate_obj(event)
         event.make_name()
+        db.session.add(event)
         db.session.commit()
         flash(u"You have edited details for event %s" % event.title, "success")
         return render_redirect(url_for('event_view', event=event.name, profile=profile.name), code=303)
     return render_form(form=form, title="Edit Event", submit=u"Save",
         cancel_url=url_for('event_view', event=event.name, profile=profile.name), ajax=False)
+
+@app.route('/<profile>/<event>/cancel', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
+def event_cancel(profile, event):
+    workflow = event.workflow()
+    if not workflow.can_delete():
+        abort(403)
+    event.status = EventStatus.CANCELLED
+    db.session.add(event)
+    db.session.commit()
+    flash(u"You have cancelled event %s" % event.title, "success")
+    return render_redirect(url_for('profile_view', profile=profile.name), code=303)
 
 @app.route('/<profile>/<event>/delete', methods=['GET', 'POST'])
 @lastuser.requires_login
@@ -65,7 +83,8 @@ def event_edit(profile, event):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_delete(profile, event):
-    if not lastuser.has_permission('siteadmin') and profile.userid not in g.user.user_organization_ids():
+    workflow = event.workflow()
+    if not workflow.can_delete():
         abort(403)
     return render_delete_sqla(event, db, title=u"Confirm delete",
         message=u"Delete Event '%s'? This cannot be undone." % event.title,

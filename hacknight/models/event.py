@@ -2,7 +2,7 @@
 
 from hacknight.models import db, BaseNameMixin, BaseScopedNameMixin
 
-__all__ = ['Profile', 'Event', 'PROFILE_TYPE']
+__all__ = ['Profile', 'Event', 'EventStatus', 'PROFILE_TYPE']
 #need to add EventTurnOut, EventPayment later
 
 
@@ -18,6 +18,17 @@ profile_types = {
     2: u"Organization",
     3: u"Event Series",
     }
+
+
+class EventStatus:
+    DRAFT = 0
+    PUBLISHED = 1
+    ACTIVE = 2
+    COMPLETED = 3
+    CANCELLED = 4
+    CLOSED = 5
+    REJECTED = 6
+    WITHDRAWN = 7
 
 
 class Profile(BaseNameMixin, db.Model):
@@ -42,6 +53,7 @@ class Event(BaseScopedNameMixin, db.Model):
     start_datetime = db.Column(db.DateTime, nullable=False)
     end_datetime = db.Column(db.DateTime, nullable=False)
     maximum_participants = db.Column(db.Integer, default=0, nullable=False)
-    website = db.Column(db.Unicode(250), default=u'', nullable=False)
+    website = db.Column(db.Unicode(250), default=u'', nullable=False) 
+    status = db.Column(db.Integer, nullable=False, default=EventStatus.DRAFT)
 
     __table_args__ = (db.UniqueConstraint('name', 'profile_id'),)
