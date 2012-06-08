@@ -6,9 +6,10 @@ from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app
 from hacknight.models import db, Profile
 from hacknight.models.event import Event, EventStatus
-from hacknight.models.participant import Participant
+from hacknight.models.participant import Participant, ParticipantStatus
 from hacknight.forms.event import EventForm
 from hacknight.views.login import lastuser
+import hacknight.views.workflow 
 import pytz
 
 
@@ -29,6 +30,7 @@ def event_new(profile):
         event = Event()
         form.populate_obj(event)
         event.make_name()
+        #Storing native timezone detail might not be good idea, need to revisit
         event.start_datetime = event.start_datetime.replace(tzinfo=pytz.timezone(event.event_timezone))
         event.end_datetime = event.end_datetime.replace(tzinfo=pytz.timezone(event.event_timezone))
         event.profile_id = profile.id
@@ -60,6 +62,23 @@ def event_edit(profile, event):
     return render_form(form=form, title="Edit Event", submit=u"Save",
         cancel_url=url_for('event_view', event=event.name, profile=profile.name), ajax=False)
 
+@app.route('/<profile>/<event>/manage', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
+def event_open(profile, event):
+    workflow = event.workflow()
+    if not workflow.can_open():
+        abort(403)
+    pending_participants = Participant.query.filter_by(status=ParticipantStatus.PENDING) 
+    confirmed_participants = Participant.query.filter_by(status=ParticipantStatus.CONFIRMED) 
+#    workflow.open()
+#    db.session.add(event)
+#    db.session.commit()
+#    flash(u"You have edited details for event %s" % event.title, "success")
+    return render_redirect(url_for('event_view', event=event.name, profile=profile.name), code=303)
+
 @app.route('/<profile>/<event>/publish', methods=['GET', 'POST'])
 @lastuser.requires_login
 @load_models(
@@ -69,7 +88,7 @@ def event_publish(profile, event):
     workflow = event.workflow()
     if not workflow.can_edit():
         abort(403)
-    event.status = EventStatus.PUBLISHED
+    workflow.open()
     db.session.add(event)
     db.session.commit()
     flash(u"You have published the event %s" % event.title, "success")
