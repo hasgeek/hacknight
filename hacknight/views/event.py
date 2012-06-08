@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, g, abort, flash, url_for
+from flask import render_template, abort, flash, url_for
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app
 from hacknight.models import db, Profile
-from hacknight.models.event import profile_types, Event, EventStatus
+from hacknight.models.event import Event, EventStatus
 from hacknight.models.participant import Participant
 from hacknight.forms.event import EventForm
 from hacknight.views.login import lastuser
-from hacknight.views.workflow import EventWorkflow
 import pytz
 
 
@@ -26,7 +25,6 @@ def event_view(profile, event):
 @load_model(Profile, {'name': 'profile'}, 'profile')
 def event_new(profile):
     form = EventForm()
-    #p = Profile.query.filter_by(name=profile).first()
     if form.validate_on_submit():
         event = Event()
         form.populate_obj(event)
@@ -61,6 +59,21 @@ def event_edit(profile, event):
         return render_redirect(url_for('event_view', event=event.name, profile=profile.name), code=303)
     return render_form(form=form, title="Edit Event", submit=u"Save",
         cancel_url=url_for('event_view', event=event.name, profile=profile.name), ajax=False)
+
+@app.route('/<profile>/<event>/publish', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
+def event_publish(profile, event):
+    workflow = event.workflow()
+    if not workflow.can_edit():
+        abort(403)
+    event.status = EventStatus.PUBLISHED
+    db.session.add(event)
+    db.session.commit()
+    flash(u"You have published the event %s" % event.title, "success")
+    return render_redirect(url_for('event_view', event=event.name, profile=profile.name), code=303)
 
 @app.route('/<profile>/<event>/cancel', methods=['GET', 'POST'])
 @lastuser.requires_login

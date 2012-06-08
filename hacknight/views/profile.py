@@ -1,16 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from flask import render_template, g, abort, flash, url_for
-from coaster.views import load_model, load_models
+from coaster.views import load_model
 from baseframe.forms import render_redirect, render_form
 from hacknight import app
 from hacknight.models import db, Profile
-from hacknight.models.event import profile_types, Event
-from hacknight.models.participant import Participant
+from hacknight.models.event import profile_types
 from hacknight.forms.profile import ProfileForm
-from hacknight.forms.event import EventForm
 from hacknight.views.login import lastuser
-import pytz
 
 @app.route('/<profile>')
 @load_model(Profile, {'name': 'profile'}, 'profile')
