@@ -6,3 +6,4 @@ https://github.com/hasgeek/flask-lastuser/zipball/master
 nose
 pytz
 https://github.com/jace/pydocflow/zipball/master
+ordereddict
