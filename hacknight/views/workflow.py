@@ -5,7 +5,7 @@ from coaster.docflow import DocumentWorkflow, WorkflowState, WorkflowStateGroup
 from hacknight.models.participant import Participant, ParticipantStatus
 from hacknight.models.event import Event, EventStatus
 from hacknight.views.login import lastuser
-
+from hacknight.models import db
 
 class ParticipantWorkflow(DocumentWorkflow):
     """
@@ -102,6 +102,7 @@ class EventWorkflow(DocumentWorkflow):
      #: States in which an owner can edit
     editable = WorkflowStateGroup([draft, active], title=u"Editable")
     public = WorkflowStateGroup([active,closed],title=u"Public")
+    openit = WorkflowStateGroup([draft],title=u"Open it")
     #: States in which a reviewer can view
     reviewable = WorkflowStateGroup([draft, active, closed, rejected, completed],
                                     title=u"Reviewable")
@@ -124,8 +125,7 @@ class EventWorkflow(DocumentWorkflow):
         """
         Open the Geekup.
         """
-        # Update timestamp
-        self.document.datetime = datetime.utcnow()
+        self.document.status = EventStatus.PUBLISHED
     
     @draft.transition(cancelled, 'owner', title=u"Cancel", category="warning",
         description=u"Cancel the Geekup, before opening.", view="event_cancel" )
@@ -194,6 +194,11 @@ class EventWorkflow(DocumentWorkflow):
         """
         return 'owner' in self.permissions() and self.editable()        
 
+    def can_open(self):
+        """
+        Can the current user edit this?
+        """
+        return 'owner' in self.permissions() and self.openit()        
     def can_delete(self):
         """
         Can the current user edit this?
