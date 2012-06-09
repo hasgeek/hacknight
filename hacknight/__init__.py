@@ -24,7 +24,7 @@ app.register_blueprint(baseframe)
 assets = Environment(app)
 js = Bundle(baseframe_js)
 css = Bundle(baseframe_css,
-             'css/app.css')
+             'css/app.css', 'css/funnel.css')
 assets.register('js_all', js)
 assets.register('css_all', css)
 

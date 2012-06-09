@@ -4,12 +4,30 @@ from hacknight.models import BaseMixin, BaseScopedIdNameMixin
 from hacknight.models import db
 from hacknight.models.event import Event
 from hacknight.models.participant import Participant
+from hacknight.models.user import User
+from hacknight.models.vote import Vote, VoteSpace
 
 __all__ = ['CommentSpace', 'Comment']
 
-class CommentSpace(db.Model, BaseMixin):
+# What is this VoteSpace or CommentSpace attached to?
+class SPACETYPE:
+    PROPOSALSPACE = 0
+    PROPOSALSPACESECTION = 1
+    PROPOSAL = 2
+    COMMENT = 3
+
+
+
+class COMMENTSTATUS:
+    PUBLIC = 0
+    SCREENED = 1
+    HIDDEN = 2
+    SPAM = 3
+    DELETED = 4  # For when there are children to be preserved
+
+
+class CommentSpace(BaseMixin, db.Model):
     __tablename__ = 'commentspace'
-    type = db.Column(db.Integer, nullable=True)
     count = db.Column(db.Integer, default=0, nullable=False)
 
     def __init__(self, **kwargs):
@@ -17,7 +35,7 @@ class CommentSpace(db.Model, BaseMixin):
         self.count = 0
 
 
-class Comment(db.Model, BaseMixin):
+class Comment(BaseMixin, db.Model):
     __tablename__ = 'comment'
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     user = db.relationship(User, primaryjoin=user_id == User.id,
