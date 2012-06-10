@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, abort, flash, url_for
+from flask import render_template, abort, flash, url_for, g
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app
 from hacknight.models import db, Profile
 from hacknight.models.event import Event, EventStatus
 from hacknight.models.participant import Participant, ParticipantStatus
-from hacknight.forms.event import EventForm
+from hacknight.forms.event import EventForm, EventManagerForm
 from hacknight.views.login import lastuser
 import hacknight.views.workflow 
 import pytz
@@ -73,11 +73,41 @@ def event_open(profile, event):
         abort(403)
     pending_participants = Participant.query.filter_by(status=ParticipantStatus.PENDING) 
     confirmed_participants = Participant.query.filter_by(status=ParticipantStatus.CONFIRMED) 
+    form = EventManagerForm()
+    form.make_participants(pending_participants)
+    if form.validate_on_submit():
+        raise
+    return render_form(form=form, title="Manage", submit=u"Create",
+        cancel_url=url_for('profile_view', profile=profile.name), ajax=False)
+    
 #    workflow.open()
 #    db.session.add(event)
 #    db.session.commit()
 #    flash(u"You have edited details for event %s" % event.title, "success")
-    return render_redirect(url_for('event_view', event=event.name, profile=profile.name), code=303)
+#    return render_redirect(url_for('event_view', event=event.name, profile=profile.name), code=303)
+
+@app.route('/<profile>/<event>/apply', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
+def event_apply(profile, event):
+    user_id = g.user.id
+    participant = Participant.query.filter_by(event_id=event.id,user_id=user_id).first()
+    p = Participant()
+    if not participant:
+        total_participants = Participant.query.filter_by(event_id=event.id).count()
+        participant = Participant()
+        participant.user_id=user_id
+        participant.event_id=event.id
+        participant.status=ParticipantStatus.PENDING if event.maximum_participants < total_participants else ParticipantStatus.WL
+        db.session.add(participant)
+        db.session.commit()
+        flash(u"{0} is added to queue for the event{1}, you will be notified by Event manager".format(g.user.fullname, event.name), "success")
+    else:
+        flash(u"{0} is already in the list, be patient ! ".format(g.user.fullname, event.name), "error")
+    values={'profile': profile.name, 'event': event.name}
+    return render_redirect(url_for('event_view', **values), code=303)
 
 @app.route('/<profile>/<event>/publish', methods=['GET', 'POST'])
 @lastuser.requires_login
@@ -88,7 +118,7 @@ def event_publish(profile, event):
     workflow = event.workflow()
     if not workflow.can_edit():
         abort(403)
-    workflow.open()
+    workflow.openit()
     db.session.add(event)
     db.session.commit()
     flash(u"You have published the event %s" % event.title, "success")
