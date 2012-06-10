@@ -12,6 +12,7 @@ class ParticipantStatus:
     CONFIRMED = 2
     REJECTED = 3
     WITHDRAWN = 4
+    OWNER = 5
 
 class Participant(BaseMixin, db.Model):
     __tablename__ = 'participant'
@@ -21,3 +22,4 @@ class Participant(BaseMixin, db.Model):
     event = db.relationship(Event, backref=db.backref('participants', cascade='all, delete-orphan'))
     status = db.Column(db.Integer, default=ParticipantStatus.PENDING, nullable=False)
     mentor = db.Column(db.Boolean, default=False, nullable=False)
+

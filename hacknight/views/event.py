@@ -36,6 +36,12 @@ def event_new(profile):
         event.profile_id = profile.id
         db.session.add(event)
         db.session.commit()
+        participant = Participant()
+        participant.user_id = g.user.id
+        participant.event_id = event.id
+        participant.status = ParticipantStatus.OWNER
+        db.session.add(participant)
+        db.session.commit()
         flash(u"You have created new event", "success")
         values={'profile': profile.name, 'event': event.name}
         return render_redirect(url_for('event_view', **values), code=303)
@@ -108,6 +114,34 @@ def event_apply(profile, event):
         flash(u"{0} is already in the list, be patient ! ".format(g.user.fullname, event.name), "error")
     values={'profile': profile.name, 'event': event.name}
     return render_redirect(url_for('event_view', **values), code=303)
+
+@app.route('/<profile>/<event>/withdraw', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
+def event_withdraw(profile, event):
+    user_id = g.user.id
+    participant = Participant.query.filter_by(event_id=event.id,user_id=user_id).first()
+    if participant:
+        workflow = participant.workflow()
+        if not workflow.can_withdraw():
+            abort(403)
+        withdraw_call = {
+                         0: workflow.withdraw_pending,
+                         1: workflow.withdraw_waiting_list,
+                         2: workflow.withdraw_confirmed,
+                         3: workflow.withdraw_rejected,
+                         }
+        try:
+            withdraw_call[participant.status]()
+        except KeyError:
+            pass
+        flash(u"{0} is withdrawn from the event{1}".format(g.user.fullname, event.name), "success")
+        values={'profile': profile.name, 'event': event.name}
+        return render_redirect(url_for('event_view', **values), code=303)
+    else:
+        abort(403)
 
 @app.route('/<profile>/<event>/publish', methods=['GET', 'POST'])
 @lastuser.requires_login
