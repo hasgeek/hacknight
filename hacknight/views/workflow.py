@@ -126,11 +126,19 @@ class EventWorkflow(DocumentWorkflow):
     
     @draft.transition(cancelled, 'owner', title=u"Cancel", category="warning",
         description=u"Cancel the Geekup, before opening.", view="event_cancel" )
-    def cancel(self):
+    def cancel_draft(self):
         """
         Cancel the Geekup
         """
-        pass
+        self.document.status = EventStatus.CANCELLED
+
+    @active.transition(cancelled, 'owner', title=u"Cancel", category="warning",
+        description=u"Cancel the Geekup, before opening.", view="event_cancel" )
+    def cancel_active(self):
+        """
+        Cancel the Geekup
+        """
+        self.document.status = EventStatus.CANCELLED
 
     @draft.transition(rejected, 'owner', title=u"Rejected", category="danger",
         description=u"Reject the Geekup proposed by someone else", view="event_reject")

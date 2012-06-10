@@ -165,9 +165,17 @@ def event_publish(profile, event):
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_cancel(profile, event):
     workflow = event.workflow()
-    if not workflow.can_delete():
+    if not workflow.can_edit():
         abort(403)
-    event.status = EventStatus.CANCELLED
+    call = {
+            0: workflow.cancel_draft,
+            2: workflow.cancel_active
+            }
+    try:
+        call[event.status]()
+    except KeyError:
+        pass
+
     db.session.add(event)
     db.session.commit()
     flash(u"You have cancelled event %s" % event.title, "success")
