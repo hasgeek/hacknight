@@ -5,7 +5,6 @@ from coaster.docflow import DocumentWorkflow, WorkflowState, WorkflowStateGroup
 from hacknight.models.participant import Participant, ParticipantStatus
 from hacknight.models.event import Event, EventStatus
 from hacknight.views.login import lastuser
-from hacknight.models import db
 
 class ParticipantWorkflow(DocumentWorkflow):
     """
@@ -14,8 +13,6 @@ class ParticipantWorkflow(DocumentWorkflow):
 
     state_attr = 'status'
     pending = WorkflowState(ParticipantStatus.PENDING, title=u'pending', 
-        description=u'State for participants who are interested, but waiting for event owner approval')
-    confirmed = WorkflowState(ParticipantStatus.PENDING, title=u'pending', 
         description=u'State for participants who are interested, but waiting for event owner approval')
     waiting_list = WorkflowState(ParticipantStatus.WL, title=u'Waiting List', 
         description=u'State for participants who are interested but we dont have seats')
@@ -121,11 +118,12 @@ class EventWorkflow(DocumentWorkflow):
 
     @draft.transition(active, 'owner', title=u"Open", category="primary",
         description=u"Open the Geekup for registrations.", view="event_open")
-    def open(self):
+    def openit(self):
         """
         Open the Geekup.
         """
-        self.document.status = EventStatus.PUBLISHED
+        if not self.document.status == EventStatus.PUBLISHED:
+            self.document.status = EventStatus.PUBLISHED
     
     @draft.transition(cancelled, 'owner', title=u"Cancel", category="warning",
         description=u"Cancel the Geekup, before opening.", view="event_cancel" )

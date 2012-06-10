@@ -23,3 +23,8 @@ class EventForm(Form):
     start_datetime = wtf.DateTimeField("StartDateTime", description="Hacknight Start DateTime", validators=[wtf.Required()])
     end_datetime = wtf.DateTimeField("EndDateTime", description="Hacknight End DateTime", validators=[wtf.Required(), ValidateEvent.date])
     website = wtf.TextField("Website",description="Main Event Website", validators=[wtf.Optional()])
+
+class EventManagerForm(Form):
+    def make_participants(participants):
+        participants = wtf.SelectMultipleField("Select participant to confirm", description="Select participant to confirm")
+
