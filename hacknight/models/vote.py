@@ -4,10 +4,11 @@ from hacknight.models import BaseMixin, BaseScopedIdNameMixin
 from hacknight.models import db
 from hacknight.models.event import Event
 from hacknight.models.participant import Participant
+from hacknight.models.user import User
 
 __all__ = ['VoteSpace', 'Vote']
 
-class VoteSpace(db.Model, BaseMixin):
+class VoteSpace(BaseMixin, db.Model):
     __tablename__ = 'votespace'
     type = db.Column(db.Integer, nullable=True)
     count = db.Column(db.Integer, default=0, nullable=False)
@@ -38,7 +39,7 @@ class VoteSpace(db.Model, BaseMixin):
         return Vote.query.filter_by(user=user, votespace=self).first()
 
 
-class Vote(db.Model, BaseMixin):
+class Vote(BaseMixin, db.Model):
     __tablename__ = 'vote'
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship(User, primaryjoin=user_id == User.id,
@@ -49,3 +50,4 @@ class Vote(db.Model, BaseMixin):
     votedown = db.Column(db.Boolean, default=False, nullable=False)
 
     __table_args__ = (db.UniqueConstraint("user_id", "votespace_id"), {})
+

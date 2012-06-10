@@ -12,6 +12,7 @@ from hacknight.views.login import lastuser
 @app.route('/<profile>')
 @load_model(Profile, {'name': 'profile'}, 'profile')
 def profile_view(profile):
+    print profile.name
     return render_template('profile.html', profile=profile)
 
 
