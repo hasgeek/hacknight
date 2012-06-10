@@ -106,7 +106,7 @@ def project_remove(profile, project, event):
 			flash("Project removed", "success")
 			return render_redirect(url_for('index'), code=303)
 	return render_template('baseframe/delete.html', form=form, title=u"Confirm delete",
-		message=u"Delete '%s' ?" % (project.title))
+		message=u"Delete '%s' ? It will remove comments, votes and all information related to the project. This operation cannot be undone." % (project.title))
 
 
 @app.route('/<profile>/<event>/projects', methods=["GET","POST"])
