@@ -1,8 +1,26 @@
 {% extends "layout.html" %}
-{% block title %}{{ profile.title }}{% endblock %}
+{% block title %}My profile{% endblock %}
 
 {% block content %}
-<div class="hero">
-	{{ profile.name }}
+  <div class="row">
+
+	<div class="span10 hero-unit">
+	<h1> {{ profile.title }} </h1>
+	<h2> <p>{{ profile.description|safe }}<p> </h2>
+	</div>	
 </div>
+<div class="row">
+
+{% for e in events %}
+<a href="{{ url_for('event_view', profile=profile.name, event=e.name) }}">
+	<div class="span3">
+      <ul class="well nav nav-list section">
+        <li class="nav-header">{{ e.title }}</li>
+        <li>{{ e.start_datetime.strftime("%a, %b %e") }} </li>
+        <li>{{ e.website }}</li>
+    </ul>
+    </div> 
+    </a>
+{% endfor %}
+
 {% endblock %}

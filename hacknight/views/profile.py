@@ -1,19 +1,25 @@
 # -*- coding: utf-8 -*-
 
 from flask import render_template, g, abort, flash, url_for
-from coaster.views import load_model
+from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form
 from hacknight import app
-from hacknight.models import db, Profile
+from hacknight.models import db, Profile, User
 from hacknight.models.event import profile_types
 from hacknight.forms.profile import ProfileForm
 from hacknight.views.login import lastuser
+from markdown import markdown
+from hacknight.models.participant import Participant
 
 @app.route('/<profile>')
 @load_model(Profile, {'name': 'profile'}, 'profile')
 def profile_view(profile):
-    print profile.name
-    return render_template('profile.html', profile=profile)
+    user = User.query.filter_by(userid=profile.userid).first()
+    participants = Participant.query.filter_by(user_id=user.id).all()
+    events = []
+    for participant in participants:
+        events.append(participant.event)
+    return render_template('profile.html', profile=profile,events=events ,description=markdown(profile.description, safe_mode='escape'))
 
 
 @app.route('/<profile>/edit', methods=['GET', 'POST'])
