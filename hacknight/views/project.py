@@ -135,7 +135,7 @@ def project_show(profile,project,event):
                 comment = Comment(user=g.user, commentspace=project.comments, message=commentform.message.data)
                 if commentform.parent_id.data:
                     parent = Comment.query.get(int(commentform.parent_id.data))
-                    if parent and parent.commentspace == proposal.comments:
+                    if parent and parent.commentspace == project.comments:
                         comment.parent = parent
                 comment.message_html = markdown(comment.message)
                 project.comments.count += 1
@@ -152,7 +152,7 @@ def project_show(profile,project,event):
             if comment:
                 if comment.user == g.user:
                     comment.delete()
-                    proposal.comments.count -= 1
+                    project.comments.count -= 1
                     db.session.commit()
                     flash("Your comment was deleted.", "info")
                 else:
@@ -252,6 +252,25 @@ def votedowncomment(profile, project, event, comment):
     flash("Your vote has been recorded", "info")
     return redirect(url_for('project_show',profile=profile.name, project=project.name, event=event.name))
 
+@app.route('/<profile>/<event>/projects/<project>/comments/<int:cid>/json')
+@load_models((Profile, {'name':'profile'}, 'profile'),
+    (Project, {'name': 'project'}, 'project'),
+    (Event, {'name':'event'}, 'event'),
+    (Comment, {'id':'cid'}, 'comment'))
+def jsoncomment(profile, project, event):
+    if not event:
+        abort(404)
+    if not project:
+        abort(404)
+    if not comment:
+        abort(404)
+
+    comment = Comment.query.get(cid)
+    if comment:
+        return jsonp(message=comment.message)
+    else:
+        return jsonp(message='')
+
 
 # FIXME: This voting method uses GET but makes db changes. Not correct. Should be POST
 @app.route('/<profile>/<event>/projects/<project>/comments/<int:cid>/cancelvote')
@@ -287,7 +306,7 @@ def nextsession(profile, project, event):
     if next:
         return redirect(url_for('project_show',profile=profile.name, project=next.name, event=event.name))
     else:
-        flash("You were at the last proposal", "info")
+        flash("You were at the last project", "info")
         return redirect(url_for('project_show',profile=profile.name, project=project.name, event=event.name))
 
 
@@ -305,6 +324,6 @@ def prevsession(profile, project, event):
     if prev:
         return redirect(url_for('project_show',profile=profile.name, project=prev.name, event=event.name))
     else:
-        flash("You were at the first proposal", "info")
+        flash("You were at the first project", "info")
         return redirect(url_for('project_show',profile=profile.name, project=project.name, event=event.name))
 

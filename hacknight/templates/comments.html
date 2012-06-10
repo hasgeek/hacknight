@@ -29,7 +29,7 @@
           <span class="commenter {%- if comment.user == document.user %} selected{% endif %}">{{ comment.user.fullname }}</span>
           {{ comment.created_at.strftime("%a, %b %e") }}
           {%- if comment.edited_at %}
-            (edited {{ comment.edited_at }})
+            (edited {{ comment.edited_at.strftime("%a, %b %e") }})
           {%- endif %}
         {%- endif %}
       </div>

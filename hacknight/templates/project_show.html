@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% from "comments.html" import commenttree %}
+{% from "forms.html" import renderform, ajaxform %}
 
 {% block title %}{{ project.title }}{% endblock %}
 
@@ -113,4 +114,11 @@
     {% endif %}
   </div>
 </div>
+{% endblock %}
+
+{% block footerscripts %}
+<script type="text/javascript">
+  $(function() {
+    commentsInit("{{ request.base_url }}")});
+    </script>
 {% endblock %}
