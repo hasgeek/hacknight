@@ -362,3 +362,21 @@ ul.cardset li a .body, ul.cardset li a:hover .body, ul.cardset li a:active .body
   overflow: hidden;
   border-top: 1px solid #e8e8e8;
 }
+
+.eventhead h1 {
+  display: inline;
+  margin: 0 1em 0 0;
+}
+dl.bar dt:after {
+  content: ":";
+}
+
+dl.bar dt {
+  margin: 0 0.5em 0 0;
+}
+
+dl.bar dd {
+  margin: 0 1em 0 0;
+  text-indent: 0;
+}
+
