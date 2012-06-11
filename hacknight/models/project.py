@@ -30,6 +30,14 @@ class Project(BaseScopedIdNameMixin, db.Model):
 
     __table_args__ = (db.UniqueConstraint('name', 'event_id'),)
 
+    def __init__(self, event_id, description, maximum_size=0, status=0, votes_id, comments_id):
+        self.event_id = event_id
+        self.description = description
+        self.maximum_size = maximum_size
+        self.status = status
+        self.votes_id = votes_id
+        self.comments_id = comments_id
+
     @property
     def users(self):
         return [m.participant.user for m in self.members]
@@ -58,3 +66,9 @@ class ProjectMember(BaseMixin, db.Model):
 
     status = db.Column(db.Integer, nullable=False, default=0)
     role = db.Column(db.Unicode(250), nullable=False, default=u'')
+
+    def __init__(self, project_id, participant_id, status=0, role=u''):
+        self.project_id = project_id
+        self.participant_id = participant_id
+        self.status = status
+        self.role = role

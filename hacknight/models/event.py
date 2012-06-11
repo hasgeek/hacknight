@@ -38,6 +38,10 @@ class Profile(BaseNameMixin, db.Model):
     description = db.Column(db.UnicodeText, default=u'', nullable=False)
     type = db.Column(db.Integer, default=PROFILE_TYPE.UNDEFINED, nullable=False)
 
+    def __init__(self, userid, description):
+        self.userid = userid
+        self.description = description
+
     def type_label(self):
         return profile_types.get(self.type, profile_types[0])
 
@@ -57,3 +61,12 @@ class Event(BaseScopedNameMixin, db.Model):
     status = db.Column(db.Integer, nullable=False, default=EventStatus.DRAFT)
 
     __table_args__ = (db.UniqueConstraint('name', 'profile_id'),)
+
+    def __init__(self, profile_id, description, start_datetime, end_datetime, maximum_participants=0, website=u'', status=EventStatus.DRAFT):
+        self.profile_id = profile_id
+        self.description = description
+        self.start_datetime = start_datetime
+        self.end_datetime = end_datetime
+        self.maximum_participants = maximum_participants
+        self.website = website
+        self.status = status
