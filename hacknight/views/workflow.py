@@ -37,10 +37,10 @@ class ParticipantWorkflow(DocumentWorkflow):
         """
             Permissions available to current user.
         """
-        base_permissions = super(EventWorkflow,self).permissions()
-        if self.document.profile.userid == g.user.userid:
-            base_permissions.append('owner')
-            base_permissions.extend(lastuser.permissions())
+        base_permissions = super(ParticipantWorkflow,self).permissions()
+        raise
+        base_permissions.append('participant')
+        base_permissions.extend(lastuser.permissions())
         return base_permissions
     
     @waiting_list.transition(pending, 'owner', title=u'move to pending list', 
@@ -54,30 +54,29 @@ class ParticipantWorkflow(DocumentWorkflow):
     def pending_to_confirm(self):
         pass
 
-    @confirmed.transition(withdrawn, 'owner', title=u'withdrawn from confimed', 
-       description=u"Withdraw from hacknight", view="")
-    def withdraw_from_hacknight(self):
-        pass
+    @confirmed.transition(withdrawn, 'participant', title=u'withdrawn from confimed', 
+       description=u"Withdraw from hacknight", view="withdraw_confirm")
+    def withdraw_confirmed(self):
+        self.document.status = ParticipantStatus.WITHDRAWN
  
-    @pending.transition(withdrawn, 'owner', title=u'withdrawnfrom pending', 
-       description=u"Withdraw from hacknight", view="")
-    def withdraw_from_hacknight(self):
-        pass
+    @pending.transition(withdrawn, 'participant', title=u'withdrawnfrom pending', 
+       description=u"Withdraw from hacknight", view="withdraw_pending")
+    def withdraw_pending(self):
+        self.document.status = ParticipantStatus.WITHDRAWN
 
-    @waiting_list.transition(withdrawn, 'owner', title=u'withdrawn from waiting', 
-       description=u"Withdraw from hacknight", view="")
-    def withdraw_from_hacknight(self):
-        pass
+    @waiting_list.transition(withdrawn, 'participant', title=u'withdrawn from waiting', 
+       description=u"Withdraw from hacknight", view="withdraw_waiting_list")
+    def withdraw_waiting_list(self):
+        self.document.status = ParticipantStatus.WITHDRAWN
 
-    @waiting_list.transition(rejected, 'owner', title=u'rejected state from waiting list', 
-       description=u"Rejected from hacknight", view="")
-    def rejected_from_hacknight(self):
-        pass
+    @rejected.transition(withdrawn, 'participant', title=u'withdrawn from waiting', 
+       description=u"Withdraw from hacknight", view="withdraw_rejected")
+    def withdraw_rejected(self):
+        self.document.status = ParticipantStatus.WITHDRAWN
 
-    @pending.transition(rejected, 'owner', title=u'rejected from pending', 
-       description=u"Withdraw from hacknight", view="")
-    def withdraw_from_hacknight(self):
-        pass
+
+    def can_withdraw(self):
+        return True if self.document.status is not ParticipantStatus.WITHDRAWN else False
 
 
 ParticipantWorkflow.apply_on(Participant)
@@ -127,11 +126,19 @@ class EventWorkflow(DocumentWorkflow):
     
     @draft.transition(cancelled, 'owner', title=u"Cancel", category="warning",
         description=u"Cancel the Geekup, before opening.", view="event_cancel" )
-    def cancel(self):
+    def cancel_draft(self):
         """
         Cancel the Geekup
         """
-        pass
+        self.document.status = EventStatus.CANCELLED
+
+    @active.transition(cancelled, 'owner', title=u"Cancel", category="warning",
+        description=u"Cancel the Geekup, before opening.", view="event_cancel" )
+    def cancel_active(self):
+        """
+        Cancel the Geekup
+        """
+        self.document.status = EventStatus.CANCELLED
 
     @draft.transition(rejected, 'owner', title=u"Rejected", category="danger",
         description=u"Reject the Geekup proposed by someone else", view="event_reject")

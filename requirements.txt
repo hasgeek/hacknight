@@ -7,3 +7,4 @@ nose
 pytz
 https://github.com/jace/pydocflow/zipball/master
 ordereddict
+fabric
