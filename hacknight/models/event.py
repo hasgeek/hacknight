@@ -38,9 +38,10 @@ class Profile(BaseNameMixin, db.Model):
     description = db.Column(db.UnicodeText, default=u'', nullable=False)
     type = db.Column(db.Integer, default=PROFILE_TYPE.UNDEFINED, nullable=False)
 
-    def __init__(self, userid, description):
+    def __init__(self, userid, description, _type=PROFILE_TYPE.UNDEFINED):
         self.userid = userid
         self.description = description
+        self.type = _type
 
     def type_label(self):
         return profile_types.get(self.type, profile_types[0])

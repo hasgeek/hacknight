@@ -31,14 +31,14 @@ class Project(BaseScopedIdNameMixin, db.Model):
 
     __table_args__ = (db.UniqueConstraint('name', 'event_id'),)
 
-    def __init__(self, event_id, description, maximum_size=0, status=0, votes_id, comments_id):
+    def __init__(self, event_id, description, maximum_size=0, status=0, votes_id, comments_id, objectives):
         self.event_id = event_id
         self.description = description
         self.maximum_size = maximum_size
         self.status = status
         self.votes_id = votes_id
         self.comments_id = comments_id
-
+        self.objectives = objectives #Just added this because I dont want code to break, will contiune with disc in github
     @property
     def users(self):
         return [m.participant.user for m in self.members]
