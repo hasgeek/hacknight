@@ -17,8 +17,31 @@
 <div class="jumbotron">
   <img src="{{ url_for('baseframe.static', filename='img/hasgeek-presents.png') }}" alt="HasGeek Presents">
   <h1>Hacknight</h1>
-  <p style="text-transform: uppercase;">
+  <!-- <p style="text-transform: uppercase;">
     Coming soon
-  </p>
+  </p> -->
 </div>
+<div class="row">
+{% if events %}
+{% for e in events %}
+<a href="{{ url_for('event_view', profile=e.profile.name, event=e.name) }}">
+  <div class="span4">
+      <ul class="cardset">
+        <li>
+          <div class="title"> 
+            <h2>{{ e.title }}</h2>
+        <h3>{{ e.start_datetime.strftime("%a, %b %e") }}</h3></div>
+<div class="body">
+  <p>{{ e.website|safe }}</p>
+  <p>{{ e.description|safe }}</p>
+        </li>
+    </ul>
+    </div> 
+    </a>
+{% endfor %}
+{% else %}
+<div class="span6">
+  <h2> No events found </h2>
+</div>
+{% endif %}
 {% endblock %}
