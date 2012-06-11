@@ -7,6 +7,7 @@ from hacknight import app
 from hacknight.models import db, Profile
 from hacknight.models.event import Event, EventStatus
 from hacknight.models.participant import Participant, ParticipantStatus
+from hacknight.models.project import Project
 from hacknight.forms.event import EventForm, EventManagerForm
 from hacknight.views.login import lastuser
 import hacknight.views.workflow 
@@ -18,8 +19,9 @@ import pytz
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event'}, 'event'))
 def event_view(profile, event):
+    projects = Project.query.filter_by(event_id=event.id)
     participants = Participant.query.filter_by(event_id = event.id) 
-    return render_template('event.html', event=event, timezone=event.start_datetime.strftime("%Z"), participants=participants)
+    return render_template('event.html', profile=profile, event=event, projects=projects, timezone=event.start_datetime.strftime("%Z"), participants=participants)
 
 @app.route('/<profile>/new', methods=['GET', 'POST'])
 @lastuser.requires_login

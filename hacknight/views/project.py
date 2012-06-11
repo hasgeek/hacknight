@@ -24,10 +24,11 @@ def project_new(profile, event, form=None):
 		if form == None:
 			form = ProjectForm()
 			return render_form(form=form, title=u"New Project", submit=u"Save",
-		cancel_url=url_for('index'), ajax=False)
+		cancel_url=url_for('index'), ajax=True)
 	
-		if request.method=="POST":
-			form = ProjectForm()
+	if request.method=="POST":
+		form = ProjectForm()
+		if form.validate_on_submit():
 			project = Project()
 			votespace = VoteSpace()
 			votespace.type= 0
@@ -51,7 +52,9 @@ def project_new(profile, event, form=None):
 			db.session.add(project_member)
 			db.session.commit()
 			flash("Project saved")
-			return render_redirect(url_for('index'), code=303)
+			return render_redirect(url_for('project_show', profile=profile.name,project=project.name,event=event.name))
+		return render_form(form=form, title="New Project", submit=u"Create", cancel_url=url_for('profile_view', profile=profile.name), ajax=True)
+
 
 
 @app.route('/<profile>/<event>/projects/<project>/edit', methods=['GET', 'POST'])
@@ -108,13 +111,6 @@ def project_remove(profile, project, event):
 	return render_template('baseframe/delete.html', form=form, title=u"Confirm delete",
 		message=u"Delete '%s' ? It will remove comments, votes and all information related to the project. This operation cannot be undone." % (project.title))
 
-
-@app.route('/<profile>/<event>/projects', methods=["GET","POST"])
-@load_models((Profile, {'name':'profile'}, 'profile'),
-	(Event, {'name':'event'}, 'event'))
-def projects(profile, event):
-	projects = Project.query.filter_by(event_id=event.id)
-	return render_template('projects.html', projects=projects, event=event)
 
 @app.route('/<profile>/<event>/projects/<project>', methods=["GET","POST"])
 @load_models((Profile, {'name':'profile'}, 'profile'),

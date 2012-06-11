@@ -17,3 +17,16 @@ body {
 footer .footer-inner {
   background: transparent;
 }
+
+label {
+ color: #EEEEEE;
+ display: inline-block;
+}
+
+ul#status {
+  list-style: none;
+}
+
+.form-actions {
+  background-color: #333333;
+}

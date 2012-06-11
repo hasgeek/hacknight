@@ -109,7 +109,7 @@
   padding-left: 1em;
 }
 .infosheet .votebox .choices {
-  font-size: 200%;
+  font-[-]size: 200%;
 }
 .infosheet .votebox .choices span.score {
   font-family: inconsolata-1, inconsolata-2, Inconsolata, monospace;
@@ -156,8 +156,8 @@
 .infosheet .section h2 {
   font-size: 100%;
   background: #d9e8f0;
-  padding: 0.25em 0.5em;
-  margin: 0 -0.5em;
+  padding: 0.15em 0.5em;
+  margin: 1em -0.5em;
   color: #444444;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
@@ -165,6 +165,7 @@
   -ms-border-radius: 3px;
   -khtml-border-radius: 3px;
   border-radius: 3px;
+  line-height: 1.5em; 
 }
 .infosheet .section h1 + p, .infosheet .section h1 + ul, .infosheet .section h1 + ol, .infosheet .section h2 + p, .infosheet .section h2 + ul, .infosheet .section h2 + ol {
   margin-top: 0.5em;
@@ -296,3 +297,87 @@
   color: #816894;
   text-decoration: none;
 }
+
+
+ul.cardset {
+  *zoom: 1;
+  list-style: none;
+  margin: 1.5em 0 1em 0;
+  padding: 0;
+}
+ul.cardset:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+ul.cardset li {
+  background: #fff;
+  vertical-align: top;
+  margin: 0 0.5em 0.5em 0;
+  padding: 0;
+  width: 300px;
+  border: 1px solid #afafaf;
+  display: block;
+  float: left;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -o-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.1) inset;
+  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.1) inset;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.1) inset;
+}
+ul.cardset li:hover {
+  background: #f6f6f6;
+}
+ul.cardset li a, ul.cardset li a:hover, ul.cardset li a:active, ul.cardset li a:visited {
+  color: inherit;
+  display: block;
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+}
+ul.cardset li a .title, ul.cardset li a:hover .title, ul.cardset li a:active .title, ul.cardset li a:visited .title {
+  display: block;
+  padding: 0 1em;
+  height: 5.5em;
+  overflow: hidden;
+}
+ul.cardset li a .title h2, ul.cardset li a:hover .title h2, ul.cardset li a:active .title h2, ul.cardset li a:visited .title h2 {
+  color: #816894;
+  margin: 0.5em 0 0 0;
+  font-size: 130%;
+}
+ul.cardset li a .title h3, ul.cardset li a:hover .title h3, ul.cardset li a:active .title h3, ul.cardset li a:visited .title h3 {
+  margin: 0.5em 0 0 0;
+  font-size: 80%;
+  color: #666;
+  font-weight: normal;
+}
+ul.cardset li a .body, ul.cardset li a:hover .body, ul.cardset li a:active .body, ul.cardset li a:visited .body {
+  display: block;
+  padding: 0 1em;
+  height: 7em;
+  overflow: hidden;
+  border-top: 1px solid #e8e8e8;
+}
+
+.eventhead h1 {
+  display: inline;
+  margin: 0 1em 0 0;
+}
+dl.bar dt:after {
+  content: ":";
+}
+
+dl.bar dt {
+  margin: 0 0.5em 0 0;
+}
+
+dl.bar dd {
+  margin: 0 1em 0 0;
+  text-indent: 0;
+}
+

@@ -2,13 +2,14 @@
 {% from "comments.html" import commenttree %}
 {% from "forms.html" import renderform, ajaxform %}
 
-{% block title %}{{ project.title }}{% endblock %}
-
+{% block title %}{{ project.title }} &mdash; {{ event.title }}{% endblock %}
+{% block headline %}{% endblock %}
 {% block content %}
-{#<p style="margin-top: 0; font-size: 80%;">
-  <a href="{{ url_for('index') }}">&larr; Return to {{ event.title }}</a>
+
+<p style="margin-top: 0; font-size: 80%;">
+  <a href="{{ url_for('event_view', profile=profile.name, event=event.name) }}">&larr; Return to {{ event.title }}</a>
   {% if g.user in project.users %}| <a href="{{ url_for('project_edit', profile=profile.name, event=event.name, project=project.name) }}">Edit this &rarr;</a>{% endif %}
-</p>#}
+</p>
 <div class="infosheet">
   <div class="leftear">
     {%- if project.getprev() -%}
@@ -68,6 +69,13 @@
       <g:plusone size="medium"></g:plusone>
       <iframe class="facebooklike" src="http://www.facebook.com/plugins/like.php?app_id=114496105304651&amp;href={{ request.url }}&amp;send=false&amp;layout=button_count&amp;width=150&amp;show_faces=false&amp;action=recommend&amp;colorscheme=light&amp;font&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:150px; height:21px;" allowTransparency="true"></iframe>
     </div>
+  </div>
+  
+  <div class="section">
+    <h2>Objective</h2>
+    <p>Lorem Ipsum</p>
+    <h2>Description</h2>
+    <p>{{ project.description|safe }}</p>
   </div>
   
   <div class="section">

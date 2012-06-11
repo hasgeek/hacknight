@@ -22,6 +22,7 @@ class EventForm(Form):
     event_timezone = wtf.SelectField(u"Event Time Zone", choices=timezone_list, default="Asia/Kolkatta") 
     start_datetime = wtf.DateTimeField("StartDateTime", description="Hacknight Start DateTime", validators=[wtf.Required()])
     end_datetime = wtf.DateTimeField("EndDateTime", description="Hacknight End DateTime", validators=[wtf.Required(), ValidateEvent.date])
+    ticket_price = wtf.TextField("Ticket Price", description="Ticket price, to be paid at the venue.")
     website = wtf.TextField("Website",description="Main Event Website", validators=[wtf.Optional()])
 
 class EventManagerForm(Form):

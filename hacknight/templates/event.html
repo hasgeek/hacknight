@@ -1,18 +1,69 @@
 {% extends "layout.html" %}
+
 {% block title %}{{ event.title }}{% endblock %}
 
 {% block content %}
-{{ event.description|safe }} 
-<button class="btn" data-toggle="button">Join</button>
-<h3> Details </h3>
-Start Date: {{ event.start_datetime }} <br/>
-End Date: {{ event.end_datetime }} <br/> 
-<div style="float:right">
-<h2>Participants</h2>
-<p>
-	{% for participant in participants %}
-        {{ participant.user.fullname }}
-    {% endfor %}
-</p>
+<div id="main">
+  <div class="eventhead row">
+    <div class="span12">  
+      <h1> {{ event.title }}</h1>          
+      <button class="btn btn-primary" data-toggle="button">Apply Now</button>
+    
+      <dl class="bar">
+          <dt>When</dt>
+          <dd>{{ event.start_datetime }} to {{ event.end_datetime }}</dd>
+          <dt>Where</dt>
+          <dd>Bangalore</dd>
+      </dl>
+      <p> {{ event.description|safe }} </p>
+    </div>
+      
+
+  </div>
+
+  <div class="row">
+    <div id="tabs" class="span12">
+              <h2>Team Proposals</h2>
+              <table class="table">
+                <thead>
+                  <th>#</th>
+                  <th>Title</th>
+                  <th>Proposer</th>
+                  <th>+1</th>
+                  <th>Comments</th>
+                  <th>Submitted</th>
+                </thead>
+                {% for p in projects %}
+                <tbody>
+                  <tr>
+                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.id }}</a></td>
+                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}"	><strong>{{ p.title }}</strong></a></td>
+                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.members.filter_by(status=0).first().participant.user.fullname }}</a></td>
+                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.votes.count }}</a></td>
+                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.comments.count }}</a></td>
+                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.created_at.strftime("%a, %b %e") }}</a></td>
+                  </tr>
+                  {%- else -%}
+                   <tr>
+                      <td><em>(No events found)</em></td>
+                   </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="span12">
+      <h2>Participants</h2>
+      <p>
+        {% for participant in participants %}
+              {{ participant.user.fullname }}
+          {% endfor %}
+      </p>
+    </div>
+  </div>
+
+
 </div>
 {% endblock %}
