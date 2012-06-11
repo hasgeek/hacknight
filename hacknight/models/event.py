@@ -38,6 +38,7 @@ class Profile(BaseNameMixin, db.Model):
     description = db.Column(db.UnicodeText, default=u'', nullable=False)
     type = db.Column(db.Integer, default=PROFILE_TYPE.UNDEFINED, nullable=False)
 
+
     def type_label(self):
         return profile_types.get(self.type, profile_types[0])
 
@@ -58,3 +59,4 @@ class Event(BaseScopedNameMixin, db.Model):
     ticket_price = db.Column(db.Integer, nullable=False, default=0)
 
     __table_args__ = (db.UniqueConstraint('name', 'profile_id'),)
+

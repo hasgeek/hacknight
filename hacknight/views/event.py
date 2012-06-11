@@ -32,16 +32,12 @@ def event_new(profile):
         event = Event()
         form.populate_obj(event)
         event.make_name()
-        #Storing native timezone detail might not be good idea, need to revisit
-        event.start_datetime = event.start_datetime.replace(tzinfo=pytz.timezone(event.event_timezone))
-        event.end_datetime = event.end_datetime.replace(tzinfo=pytz.timezone(event.event_timezone))
+        event.start_datetime = event.start_datetime
+        event.end_datetime = event.end_datetime
         event.profile_id = profile.id
         db.session.add(event)
         db.session.commit()
-        participant = Participant()
-        participant.user_id = g.user.id
-        participant.event_id = event.id
-        participant.status = ParticipantStatus.OWNER
+        participant = Participant(user_id=g.user.id, event_id=event.id, status=ParticipantStatus.OWNER)
         db.session.add(participant)
         db.session.commit()
         flash(u"You have created new event", "success")

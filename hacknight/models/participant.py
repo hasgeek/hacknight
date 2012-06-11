@@ -23,3 +23,5 @@ class Participant(BaseMixin, db.Model):
     status = db.Column(db.Integer, default=ParticipantStatus.PENDING, nullable=False)
     mentor = db.Column(db.Boolean, default=False, nullable=False)
 
+
+
