@@ -7,7 +7,7 @@
 <h3> Details </h3>
 Start Date: {{ event.start_datetime }} <br/>
 End Date: {{ event.end_datetime }} <br/> 
-<div style="float:right">
+<div class="row">
 <h2>Participants</h2>
 <p>
 	{% for participant in participants %}
@@ -15,4 +15,34 @@ End Date: {{ event.end_datetime }} <br/>
     {% endfor %}
 </p>
 </div>
+<div class="row">
+<div id="tabs">
+          <table class="table">
+            <thead>
+              <th>#</th>
+              <th>Title</th>
+              <th>Proposer</th>
+              <th>+1</th>
+              <th>Comments</th>
+              <th>Submitted</th>
+            </thead>
+              {% for p in projects %}
+            <tbody>
+              <tr>
+                <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.id }}</a></td>
+                <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}"	><strong>{{ p.title }}</strong></a></td>
+                  <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.members.filter_by(status=0).first().participant.user.fullname }}</a></td>
+                  <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.votes.count }}</a></td>
+                  <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.comments.count }}</a></td>
+                  <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.created_at.strftime("%a, %b %e") }}</a></td>
+                </tr>
+              {%- else -%}
+                <tr>
+                  <td><em>(No events found)</em></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+    </div>
 {% endblock %}
