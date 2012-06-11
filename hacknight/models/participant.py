@@ -23,10 +23,5 @@ class Participant(BaseMixin, db.Model):
     status = db.Column(db.Integer, default=ParticipantStatus.PENDING, nullable=False)
     mentor = db.Column(db.Boolean, default=False, nullable=False)
 
-    def __init__(self, user_id, event_id, status=ParticipantStatus.PENDING, mentor=False):
-        self.user_id = user_id
-        self.event_id = event_id
-        self.status = status
-        self.mentor = mentor
 
 
