@@ -26,32 +26,32 @@ def project_new(profile, event, form=None):
 			return render_form(form=form, title=u"New Project", submit=u"Save",
 		cancel_url=url_for('index'), ajax=False)
 	
-		if request.method=="POST":
-			form = ProjectForm()
-			project = Project()
-			votespace = VoteSpace()
-			votespace.type= 0
-			commentspace = CommentSpace()
-			db.session.add(commentspace)
-			db.session.add(votespace)
-			db.session.commit()
-			form.populate_obj(project)
-			project.votes = votespace
-			project.comments = commentspace
-			project.comment_id = commentspace.id
-			project.make_name()
-			project.event_id = event.id
-			project.votes_id = votespace.id
-			project.votes.vote(g.user)
-			db.session.add(project)
-			db.session.commit()
-			project_member = ProjectMember()
-			project_member.project_id = project.id
-			project_member.participant_id = Participant.query.filter_by(user_id=g.user.id).first().id
-			db.session.add(project_member)
-			db.session.commit()
-			flash("Project saved")
-			return render_redirect(url_for('index'), code=303)
+	if request.method=="POST":
+		form = ProjectForm()
+		project = Project()
+		votespace = VoteSpace()
+		votespace.type= 0
+		commentspace = CommentSpace()
+		db.session.add(commentspace)
+		db.session.add(votespace)
+		db.session.commit()
+		form.populate_obj(project)
+		project.votes = votespace
+		project.comments = commentspace
+		project.comment_id = commentspace.id
+		project.make_name()
+		project.event_id = event.id
+		project.votes_id = votespace.id
+		project.votes.vote(g.user)
+		db.session.add(project)
+		db.session.commit()
+		project_member = ProjectMember()
+		project_member.project_id = project.id
+		project_member.participant_id = Participant.query.filter_by(user_id=g.user.id).first().id
+		db.session.add(project_member)
+		db.session.commit()
+		flash("Project saved")
+		return render_redirect(url_for('index'))
 
 
 @app.route('/<profile>/<event>/projects/<project>/edit', methods=['GET', 'POST'])
