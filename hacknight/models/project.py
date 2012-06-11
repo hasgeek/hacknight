@@ -16,6 +16,7 @@ class Project(BaseScopedIdNameMixin, db.Model):
         backref=db.backref('projects', cascade='all, delete-orphan'))
     parent = db.synonym('event')
     description = db.Column(db.UnicodeText, nullable=False)
+    objectives = db.Column(db.UnicodeText, nullable=False)
     maximum_size = db.Column(db.Integer, default=0, nullable=False)
     status = db.Column(db.Integer, nullable=False, default=0)
 
