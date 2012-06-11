@@ -24,20 +24,24 @@
 <div class="row">
 {% if events %}
 {% for e in events %}
-<a href="{{ url_for('event_view', profile=e.profile.name, event=e.name) }}">
+
   <div class="span4">
       <ul class="cardset">
-        <li>
-          <div class="title"> 
-            <h2>{{ e.title }}</h2>
-        <h3>{{ e.start_datetime.strftime("%a, %b %e") }}</h3></div>
-<div class="body">
-  <p>{{ e.website|safe }}</p>
-  <p>{{ e.description|safe }}</p>
-        </li>
-    </ul>
-    </div> 
-    </a>
+        <a href="{{ url_for('event_view', profile=e.profile.name, event=e.name) }}">
+          <li>
+            <div class="title"> 
+              <h2>{{ e.title }}</h2>
+              <h3>{{ e.start_datetime.strftime("%a, %b %e") }}</h3>
+            </div>
+            <div class="body">
+              <p>{{ e.website|safe }}</p>
+              <p>{{ e.description|safe }}</p>
+            </div>
+          </li>
+        </a>
+      </ul>
+ </div> 
+    
 {% endfor %}
 {% else %}
 <div class="span6">

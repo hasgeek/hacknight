@@ -298,7 +298,6 @@
   text-decoration: none;
 }
 
-
 ul.cardset {
   *zoom: 1;
   list-style: none;
@@ -341,17 +340,15 @@ ul.cardset li a, ul.cardset li a:hover, ul.cardset li a:active, ul.cardset li a:
 }
 ul.cardset li a .title, ul.cardset li a:hover .title, ul.cardset li a:active .title, ul.cardset li a:visited .title {
   display: block;
-  padding: 0 1em;
+  padding: 1em 1em;
   height: 5.5em;
   overflow: hidden;
 }
 ul.cardset li a .title h2, ul.cardset li a:hover .title h2, ul.cardset li a:active .title h2, ul.cardset li a:visited .title h2 {
   color: #816894;
-  margin: 0.5em 0 0 0;
   font-size: 130%;
 }
 ul.cardset li a .title h3, ul.cardset li a:hover .title h3, ul.cardset li a:active .title h3, ul.cardset li a:visited .title h3 {
-  margin: 0.5em 0 0 0;
   font-size: 80%;
   color: #666;
   font-weight: normal;
@@ -362,22 +359,50 @@ ul.cardset li a .body, ul.cardset li a:hover .body, ul.cardset li a:active .body
   height: 7em;
   overflow: hidden;
   border-top: 1px solid #e8e8e8;
+  color: #000000;
 }
 
-.eventhead h1 {
-  display: inline;
-  margin: 0 1em 0 0;
+.eventhead p {
+  margin: 1em 0;
 }
 dl.bar dt:after {
-  content: ":";
+  content: ": ";
+}
+dl.bar { 
+  margin:0;
+  padding:0;
+  overflow: hidden;
 }
 
 dl.bar dt {
-  margin: 0 0.5em 0 0;
+  float:left;
+  margin:0 0.5em 0 0;
 }
 
 dl.bar dd {
-  margin: 0 1em 0 0;
-  text-indent: 0;
+  float:left;
+  text-indent:0;
+  margin:0 1em 0 0;
 }
+
+.btn {
+  margin: 2px 4px;
+}
+
+table.proposals thead th {
+ background-color:#816894;
+ opacity:0.2;
+ border-top: 1px solid #AAAAAA !important;
+ color: #FFFFFF !important;
+}
+
+table.proposals th, table.proposals td {
+ border-left: 1px solid #AAAAAA;
+ border-right: 1px solid #AAAAAA;
+ border-bottom: 1px solid #AAAAAA;
+ padding:0.2em 1em;
+ text-align:left;
+ vertical-align:top;
+}
+
 

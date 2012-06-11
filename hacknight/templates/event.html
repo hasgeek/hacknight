@@ -4,27 +4,29 @@
 
 {% block content %}
 <div id="main">
-  <div class="eventhead row">
-    <div class="span12">  
+  <div class="row">
+    <div class="eventhead span12">  
       <h1> {{ event.title }}</h1>          
-      <button class="btn btn-primary" data-toggle="button">Apply Now</button>
-    
-      <dl class="bar">
-          <dt>When</dt>
-          <dd>{{ event.start_datetime }} to {{ event.end_datetime }}</dd>
-          <dt>Where</dt>
-          <dd>Bangalore</dd>
-      </dl>
+      
+      <div class="section bar">
+        <dl class="bar">
+            <dt>When</dt>
+            <dd>{{ event.start_datetime.strftime("%a, %b %e") }} to {{ event.end_datetime.strftime("%a, %b %e") }}</dd>
+            <dt>Where</dt>
+            <dd>Bangalore</dd>
+        </dl>
+      </div>
+      <button class="btn btn-primary" data-toggle="button">Register Now</button>
+      <button class="btn btn-primary" data-toggle="button">Propose a Project</button>
       <p> {{ event.description|safe }} </p>
     </div>
-      
-
   </div>
 
   <div class="row">
     <div id="tabs" class="span12">
-              <h2>Team Proposals</h2>
-              <table class="table">
+              <h2>Project Proposals</h2>
+              <table class="table proposals">
+                
                 <thead>
                   <th>#</th>
                   <th>Title</th>
@@ -45,7 +47,7 @@
                   </tr>
                   {%- else -%}
                    <tr>
-                      <td><em>(No events found)</em></td>
+                      <td><em>(No projects submitted yet)</em></td>
                    </tr>
                 {% endfor %}
                 </tbody>
@@ -55,7 +57,7 @@
 
   <div class="row">
     <div class="span12">
-      <h2>Participants</h2>
+      <h2>Registered Participants</h2>
       <p>
         {% for participant in participants %}
               {{ participant.user.fullname }}
