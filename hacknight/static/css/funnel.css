@@ -358,15 +358,14 @@ ul.cardset a li .title h2, ul.cardset a:hover li .title h2, ul.cardset a:active 
   text-transform: uppercase;
 }
 
-ul.cardset li a .title h3, ul.cardset li a:hover .title h3, ul.cardset li a:active .title h3, ul.cardset li a:visited .title h3 {
+ul.cardset a li .title h3, ul.cardset a:hover li .title h3, ul.cardset a:active li .title h3, ul.cardset a:visited li .title h3 {
   font-size: 80%;
   color: #666;
   font-weight: normal;
 }
-ul.cardset li a .body, ul.cardset li a:hover .body, ul.cardset li a:active .body, ul.cardset li a:visited .body {
+ul.cardset a li .body, ul.cardset a:hover li .body, ul.cardset a:active li .body, ul.cardset a:visited li .body {
   display: block;
-  padding: 0 1em;
-  height: 7em;
+  height: 4em;
   overflow: hidden;
   border-top: 1px solid #e8e8e8;
   color: #000000;

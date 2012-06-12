@@ -21,7 +21,12 @@ import pytz
 def event_view(profile, event):
     projects = Project.query.filter_by(event_id=event.id)
     participants = Participant.query.filter_by(event_id = event.id) 
-    return render_template('event.html', profile=profile, event=event, projects=projects, timezone=event.start_datetime.strftime("%Z"), participants=participants)
+    applied=0
+    for p in participants:
+        if p.user == g.user and p.status!= ParticipantStatus.WITHDRAWN:
+            applied=1
+            break
+    return render_template('event.html', profile=profile, event=event, projects=projects, timezone=event.start_datetime.strftime("%Z"), participants=participants, applied=applied)
 
 @app.route('/<profile>/new', methods=['GET', 'POST'])
 @lastuser.requires_login
@@ -40,7 +45,7 @@ def event_new(profile):
         participant = Participant(user_id=g.user.id, event_id=event.id, status=ParticipantStatus.OWNER)
         db.session.add(participant)
         db.session.commit()
-        flash(u"You have created new event", "success")
+        flash(u"New event created", "success")
         values={'profile': profile.name, 'event': event.name}
         return render_redirect(url_for('event_view', **values), code=303)
     return render_form(form=form, title="New Event", submit=u"Create",
@@ -61,7 +66,7 @@ def event_edit(profile, event):
         event.make_name()
         db.session.add(event)
         db.session.commit()
-        flash(u"You have edited details for event %s" % event.title, "success")
+        flash(u"Your edits to %s are saved" % event.title, "success")
         return render_redirect(url_for('event_view', event=event.name, profile=profile.name), code=303)
     return render_form(form=form, title="Edit Event", submit=u"Save",
         cancel_url=url_for('event_view', event=event.name, profile=profile.name), ajax=False)
@@ -107,9 +112,14 @@ def event_apply(profile, event):
         participant.status=ParticipantStatus.PENDING if event.maximum_participants < total_participants else ParticipantStatus.WL
         db.session.add(participant)
         db.session.commit()
-        flash(u"{0} is added to queue for the event{1}, you will be notified by Event manager".format(g.user.fullname, event.name), "success")
+        flash(u"Your request to participate is recorded, you will be notified by event manager".format(g.user.fullname, event.name), "success")
+    elif participant.status==ParticipantStatus.WITHDRAWN:
+        participant.status=ParticipantStatus.PENDING
+        db.session.commit()
+        flash(u"Your request to participate is recorded, you will be notified by event manager".format(g.user.fullname, event.name), "success")
+
     else:
-        flash(u"{0} is already in the list, be patient ! ".format(g.user.fullname, event.name), "error")
+        flash(u"Your request is pending. ", "error")
     values={'profile': profile.name, 'event': event.name}
     return render_redirect(url_for('event_view', **values), code=303)
 
@@ -135,7 +145,9 @@ def event_withdraw(profile, event):
             withdraw_call[participant.status]()
         except KeyError:
             pass
-        flash(u"{0} is withdrawn from the event{1}".format(g.user.fullname, event.name), "success")
+        db.session.add(participant)
+        db.session.commit()
+        flash(u"Your request to withdraw from {0} is recorded".format(event.name), "success")
         values={'profile': profile.name, 'event': event.name}
         return render_redirect(url_for('event_view', **values), code=303)
     else:

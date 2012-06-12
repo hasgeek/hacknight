@@ -19,7 +19,11 @@
   <h1><img src="{{ url_for('static', filename='img/hacknightlogo.png') }}" alt="Hacknight" title="Hacknight Home Page"></h1>
 </div>
 <div class="addhacknight span12 row">
- <button class="btn btn-primary" data-toggle="button">Add New Hacknight</button>
+  {% if profile %}
+            <a href="{{ url_for('event_new', profile=profile.name) }}" class="btn btn-primary btn-large" id="create">Create a new Hacknight</a>
+  {% else %}
+    <a href="{{ url_for('login') }}" class="btn btn-primary btn-large" id="create">Login to create a Hacknight</a>
+  {% endif %}
 </div>
 <div class="row">
 {% if events %}

@@ -38,7 +38,7 @@ class ParticipantWorkflow(DocumentWorkflow):
             Permissions available to current user.
         """
         base_permissions = super(ParticipantWorkflow,self).permissions()
-        raise
+        # raise
         base_permissions.append('participant')
         base_permissions.extend(lastuser.permissions())
         return base_permissions
@@ -203,7 +203,8 @@ class EventWorkflow(DocumentWorkflow):
         """
         Can the current user edit this?
         """
-        return 'owner' in self.permissions() and self.openit()        
+        return 'owner' in self.permissions()
+
     def can_delete(self):
         """
         Can the current user edit this?

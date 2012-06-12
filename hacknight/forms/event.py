@@ -23,6 +23,6 @@ class EventForm(Form):
 
 
 class EventManagerForm(Form):
-    def make_participants(participants):
+    def make_participants(self, participants):
         participants = wtf.SelectMultipleField("Select participant to confirm", description="Select participant to confirm")
 
