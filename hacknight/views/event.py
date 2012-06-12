@@ -21,7 +21,12 @@ import pytz
 def event_view(profile, event):
     projects = Project.query.filter_by(event_id=event.id)
     participants = Participant.query.filter_by(event_id = event.id) 
-    return render_template('event.html', profile=profile, event=event, projects=projects, timezone=event.start_datetime.strftime("%Z"), participants=participants)
+    applied=0
+    for p in participants:
+        if p.user == g.user:
+            applied=1
+            break
+    return render_template('event.html', profile=profile, event=event, projects=projects, timezone=event.start_datetime.strftime("%Z"), participants=participants, applied=applied)
 
 @app.route('/<profile>/new', methods=['GET', 'POST'])
 @lastuser.requires_login

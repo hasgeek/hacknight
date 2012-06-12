@@ -1,5 +1,4 @@
 {% extends "layout.html" %}
-
 {% block title %}{{ event.title }}{% endblock %}
 
 {% block content %}
@@ -16,8 +15,11 @@
             <dd>Bangalore</dd>
         </dl>
       </div>
-      <button class="btn btn-primary" data-toggle="button">Register Now</button>
-      <button class="btn btn-primary" data-toggle="button">Propose a Project</button>
+    
+
+       <a href="{{ url_for('event_apply', profile=profile.name, event=event.name) }}" class="btn btn-primary" id="register">Register Now</a>
+
+      <a href="{{ url_for('project_new', profile=profile.name, event=event.name) }}" class="btn btn-primary">Propose a Project</a>
       <p> {{ event.description|safe }} </p>
     </div>
   </div>
@@ -68,4 +70,15 @@
 
 
 </div>
+{% endblock %}
+
+{% block footerscripts %}
+<script>
+if({{ applied }})
+{
+  $("register").addClass("hidden");
+};
+
+</script>
+
 {% endblock %}
