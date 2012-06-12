@@ -52,6 +52,7 @@
       </div>
     </div>
     <h1>{{ project.title }}</h1>
+    
     <p>
       by <strong>{{ project.members.filter_by(status=0).first().participant.user.fullname }}</strong>
       {% if project.user == project.speaker -%}
@@ -62,22 +63,33 @@
       {% if project.user == g.user -%}
         <small>(that’s you! <a href="{{ url_for('editsession', name=event.name, slug=project.urlname) }}">Edit this</a>?)</small>
       {%- endif %}
+      <button class="btn btn-primary" data-toggle="button">Join this Team</button>
     </p>
+    
+    
     <!-- Social buttons -->
     <div class="social">
       <a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="hasgeek">Tweet</a>
-      <g:plusone size="medium"></g:plusone>
-      <iframe class="facebooklike" src="http://www.facebook.com/plugins/like.php?app_id=114496105304651&amp;href={{ request.url }}&amp;send=false&amp;layout=button_count&amp;width=150&amp;show_faces=false&amp;action=recommend&amp;colorscheme=light&amp;font&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:150px; height:21px;" allowTransparency="true"></iframe>
     </div>
+    
   </div>
   
   <div class="section">
     <h2>Objective</h2>
-    <p>Lorem Ipsum</p>
+    <p>{{ project.objectives|safe}}</p>
     <h2>Description</h2>
     <p>{{ project.description|safe }}</p>
   </div>
   
+  <div class="section">
+      <h2>Accepted Team Members</h2>
+      <p>
+        {% for participant in project.participants %}
+              {{ participant.user.fullname }}
+          {% endfor %}
+      </p>
+  </div>
+
   <div class="section">
     <h2 id="comments">Comments</h2>
     {% if comments %}

@@ -2,7 +2,6 @@
 {% from "baseframe/components.html" import networkbar with context %}
 
 {% block headerbox %}
-<div id="container" class="container">
   <header>
     {{ networkbar(siteid=config['SITE_ID'], login=true, baseclass='hg-dark') }}
     <div id="page-header" class="container">
@@ -15,6 +14,5 @@
 {% block basecontent %}
   {% block content %}{% endblock %}
 {% endblock %}
-</div>
 
 {% block footer %}{% endblock %}

@@ -1,30 +1,36 @@
 {% extends "layout.html" %}
-
 {% block title %}{{ event.title }}{% endblock %}
 
 {% block content %}
 <div id="main">
-  <div class="eventhead row">
-    <div class="span12">  
+  <div class="row">
+    <div class="eventhead span12">  
       <h1> {{ event.title }}</h1>          
-      <button class="btn btn-primary" data-toggle="button">Apply Now</button>
+      
+      <div class="section bar">
+        <dl class="bar">
+            <dt>When</dt>
+            <dd>{{ event.start_datetime.strftime("%a, %b %e") }} to {{ event.end_datetime.strftime("%a, %b %e") }}</dd>
+            <dt>Where</dt>
+            <dd>Bangalore</dd>
+        </dl>
+      </div>
     
-      <dl class="bar">
-          <dt>When</dt>
-          <dd>{{ event.start_datetime }} to {{ event.end_datetime }}</dd>
-          <dt>Where</dt>
-          <dd>Bangalore</dd>
-      </dl>
+
+       <a href="{{ url_for('event_apply', profile=profile.name, event=event.name) }}" class="btn btn-primary" id="register">Register Now</a>
+
+          <a href="{{ url_for('event_withdraw', profile=profile.name, event=event.name) }}" class="btn btn-danger hidden" id="withdraw">Withdraw</a>
+
+      <a href="{{ url_for('project_new', profile=profile.name, event=event.name) }}" class="btn btn-primary">Propose a Project</a>
       <p> {{ event.description|safe }} </p>
     </div>
-      
-
   </div>
 
   <div class="row">
     <div id="tabs" class="span12">
-              <h2>Team Proposals</h2>
-              <table class="table">
+              <h2>Project Proposals</h2>
+              <table class="table proposals">
+                
                 <thead>
                   <th>#</th>
                   <th>Title</th>
@@ -45,7 +51,7 @@
                   </tr>
                   {%- else -%}
                    <tr>
-                      <td><em>(No events found)</em></td>
+                      <td><em>(No projects submitted yet)</em></td>
                    </tr>
                 {% endfor %}
                 </tbody>
@@ -55,15 +61,30 @@
 
   <div class="row">
     <div class="span12">
-      <h2>Participants</h2>
-      <p>
+      <h2>Registered Participants</h2>
         {% for participant in participants %}
-              {{ participant.user.fullname }}
-          {% endfor %}
+        {% if participant.status == 2 %}
+      <p>
+            <a href="{{ url_for('profile_view', profile=profile.name) }}">  {{ participant.user.fullname }}</a>
       </p>
+        {% endif %}
+          {% endfor %}
     </div>
   </div>
 
 
 </div>
+{% endblock %}
+
+{% block footerscripts %}
+<script>
+if({{ applied }})
+{
+  $("#register").addClass("hidden");
+  $("#withdraw").removeClass("hidden");
+};
+
+
+</script>
+
 {% endblock %}

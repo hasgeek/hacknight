@@ -21,7 +21,12 @@ import pytz
 def event_view(profile, event):
     projects = Project.query.filter_by(event_id=event.id)
     participants = Participant.query.filter_by(event_id = event.id) 
-    return render_template('event.html', profile=profile, event=event, projects=projects, timezone=event.start_datetime.strftime("%Z"), participants=participants)
+    applied=0
+    for p in participants:
+        if p.user == g.user and p.status!= ParticipantStatus.WITHDRAWN:
+            applied=1
+            break
+    return render_template('event.html', profile=profile, event=event, projects=projects, timezone=event.start_datetime.strftime("%Z"), participants=participants, applied=applied)
 
 @app.route('/<profile>/new', methods=['GET', 'POST'])
 @lastuser.requires_login
@@ -108,8 +113,11 @@ def event_apply(profile, event):
         db.session.add(participant)
         db.session.commit()
         flash(u"{0} is added to queue for the event{1}, you will be notified by Event manager".format(g.user.fullname, event.name), "success")
+    elif participant.status==ParticipantStatus.WITHDRAWN:
+        participant.status=ParticipantStatus.PENDING
+        db.session.commit()
     else:
-        flash(u"{0} is already in the list, be patient ! ".format(g.user.fullname, event.name), "error")
+        flash(u"Your request is pending. ", "error")
     values={'profile': profile.name, 'event': event.name}
     return render_redirect(url_for('event_view', **values), code=303)
 

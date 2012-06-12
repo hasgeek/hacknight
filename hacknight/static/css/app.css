@@ -30,3 +30,29 @@ ul#status {
 .form-actions {
   background-color: #333333;
 }
+
+input#status-1, input#status-0 {
+  margin-right: 1em;
+}
+
+ul.cardset li .title, ul.cardset li .body {
+  padding: 1em 1em;
+}
+
+
+ul.cardset li h2 {
+  color: #816894;
+  font-size: 130%;
+}
+
+
+ul.cardset li h3 {
+  color: #666666;
+  font-size: 80%;
+  font-weight: normal;
+  line-height:15px;
+}
+
+ul.cardset li .body {
+  color: #000000;
+}
