@@ -14,12 +14,12 @@
 {% block headline %}{% endblock %}
 
 {% block content %}
-<div class="jumbotron">
-  <img src="{{ url_for('baseframe.static', filename='img/hasgeek-presents.png') }}" alt="HasGeek Presents">
-  <h1>Hacknight</h1>
-  <!-- <p style="text-transform: uppercase;">
-    Coming soon
-  </p> -->
+<div class="jumbotron span12">
+  <!--<img src="{{ url_for('baseframe.static', filename='img/hasgeek-presents.png') }}" alt="HasGeek Presents">-->
+  <h1><img src="{{ url_for('static', filename='img/hacknightlogo.png') }}" alt="Hacknight" title="Hacknight Home Page"></h1>
+</div>
+<div class="addhacknight span12 row">
+ <button class="btn btn-primary" data-toggle="button">Add New Hacknight</button>
 </div>
 <div class="row">
 {% if events %}
