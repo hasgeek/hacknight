@@ -14,17 +14,16 @@
 {% block headline %}{% endblock %}
 
 {% block content %}
-<div class="jumbotron">
-  <img src="{{ url_for('baseframe.static', filename='img/hasgeek-presents.png') }}" alt="HasGeek Presents">
-  <h1>Hacknight</h1>
-  <!-- <p style="text-transform: uppercase;">
-    Coming soon
-  </p> -->
+<div class="jumbotron span12">
+  <!--<img src="{{ url_for('baseframe.static', filename='img/hasgeek-presents.png') }}" alt="HasGeek Presents">-->
+  <h1><img src="{{ url_for('static', filename='img/hacknightlogo.png') }}" alt="Hacknight" title="Hacknight Home Page"></h1>
+</div>
+<div class="addhacknight span12 row">
   {% if profile %}
             <a href="{{ url_for('event_new', profile=profile.name) }}" class="btn btn-primary btn-large" id="create">Create a new Hacknight</a>
-    {% else %}
+  {% else %}
     <a href="{{ url_for('login') }}" class="btn btn-primary btn-large" id="create">Login to create a Hacknight</a>
-{% endif %}
+  {% endif %}
 </div>
 <div class="row">
 {% if events %}
