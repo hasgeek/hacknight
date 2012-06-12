@@ -143,6 +143,8 @@ def event_withdraw(profile, event):
             withdraw_call[participant.status]()
         except KeyError:
             pass
+        db.session.add(participant)
+        db.session.commit()
         flash(u"{0} is withdrawn from the event{1}".format(g.user.fullname, event.name), "success")
         values={'profile': profile.name, 'event': event.name}
         return render_redirect(url_for('event_view', **values), code=303)
