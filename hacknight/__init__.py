@@ -26,7 +26,11 @@ js = Bundle(baseframe_js,
 	'js/lib/jquery.form.js',
 	'js/lib/jquery.oembed.js',
 	'js/lib/jquery.tablesorter.min.js', 
-	'js/scripts.js'
+    'js/lib/jquery.min.js',
+    'js/lib/custom-ui.js',
+    'js/lib/timepicker.js',
+    'js/lib/slider.js',
+	'js/scripts.js',
 	)
 
 css = Bundle(baseframe_css,

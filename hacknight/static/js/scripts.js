@@ -96,4 +96,12 @@ $(document).ready(function()
     { 
         $("table").tablesorter(); 
     } 
-); 
+);
+
+//Datetime Picker
+    $(function(){
+        $( "#start_datetime" ).datetimepicker();
+    });
+    $(function(){
+        $( "#end_datetime" ).datetimepicker();
+    });
