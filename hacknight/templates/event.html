@@ -63,9 +63,11 @@
     <div class="span12">
       <h2>Registered Participants</h2>
         {% for participant in participants %}
+        {% if participant.status == 2 %}
       <p>
             <a href="{{ url_for('profile_view', profile=profile.name) }}">  {{ participant.user.fullname }}</a>
       </p>
+        {% endif %}
           {% endfor %}
     </div>
   </div>
@@ -81,6 +83,7 @@ if({{ applied }})
   $("#register").addClass("hidden");
   $("#withdraw").removeClass("hidden");
 };
+
 
 </script>
 
