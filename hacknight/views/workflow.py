@@ -38,7 +38,7 @@ class ParticipantWorkflow(DocumentWorkflow):
             Permissions available to current user.
         """
         base_permissions = super(ParticipantWorkflow,self).permissions()
-        raise
+        # raise
         base_permissions.append('participant')
         base_permissions.extend(lastuser.permissions())
         return base_permissions
