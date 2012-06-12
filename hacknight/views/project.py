@@ -121,11 +121,19 @@ def projects(profile, event):
 	(Project, {'name': 'project'}, 'project'),
 	(Event, {'name':'event'}, 'event'))
 def project_show(profile,project,event):
+	if not profile:
+		abort(404)
 	if not event:
 		abort(404)
 	if not project:
 		abort(404)
-
+	user = User.query.filter_by(userid=g.user.userid).first()
+	try:
+		participant = Participant.query.filter_by(user_id=user.id, event_id=event.id).first()
+		project_member = ProjectMember.query.filter_by(project_id=project.id, participant_id=participant.id).first()
+		member =1
+	except:
+		member=0	
 	comments = sorted(Comment.query.filter_by(commentspace=project.comments, parent=None).order_by('created_at').all(),
 		key=lambda c: c.votes.count, reverse=True)
 	commentform = CommentForm()
@@ -176,7 +184,7 @@ def project_show(profile,project,event):
 			return redirect(url_for('project_show',profile=profile.name, project=project.name, event=event.name))
 	return render_template('project_show.html', event=event, project=project, profile=profile,
 		comments=comments, commentform=commentform, delcommentform=delcommentform,
-		breadcrumbs=[(url_for('index'), "home")])
+		breadcrumbs=[(url_for('index'), "home")], member=member)
 
 
 @app.route('/<profile>/<event>/projects/<project>/voteup')
@@ -355,18 +363,14 @@ def join(profile, project, event):
 		abort(404)
 
 	user = User.query.filter_by(userid=g.user.userid).first()
-	print user.fullname
 	try:
 		participant = Participant.query.filter_by(user_id=user.id, event_id=event.id, status=ParticipantStatus.CONFIRMED).first()
-		print participant.id
 	except:
 		flash("You need to be a confirmed participant to join this team.", "fail")
 		return redirect(url_for('project_show',profile=profile.name, project=project.name, event=event.name))
 
 	try:
-		print "checking membership"
 		project_member = ProjectMember.query.filter_by(project_id=project.id, participant_id=participant.id).first()
-		print project_member.id
 		flash("You are already part of this team!", "fail")
 	except:
 		project_member = ProjectMember()
