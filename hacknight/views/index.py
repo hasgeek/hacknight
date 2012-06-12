@@ -1,16 +1,22 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template
+from flask import render_template, g
 from hacknight import app
 from hacknight.models.event import Event
 from pytz import utc, timezone
+from hacknight.models.event import Profile
 
 tz = timezone(app.config['TIMEZONE'])
 
 @app.route('/')
 def index():
 	events = Event.query.filter_by(status=0).all()
-	return render_template('index.html', events=events)
+	if g.user:
+		profile = Profile.query.filter_by(userid=g.user.userid).first()
+		return render_template('index.html', events=events, profile=profile)
+
+	else:
+		return render_template('index.html', events=events)
 
 
 @app.template_filter('shortdate')
