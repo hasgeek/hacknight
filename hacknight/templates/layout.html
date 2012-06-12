@@ -5,7 +5,13 @@
   <header>
     {{ networkbar(siteid=config['SITE_ID'], login=true, baseclass='hg-dark') }}
     <div id="page-header" class="container">
-      <div id="logo"><a href="{{ url_for('index') }}" title="Home">{{ config['SITE_TITLE'] }}</a></div>
+      <div class="logo">
+        <h1>
+          <a href="{{ url_for('index') }}" title="Home">
+          <img src="{{ url_for('static', filename='img/hacknightlogo-small.png') }}" alt="Hacknight Home Page" title="Click to go to Hacknight Home Page"/>
+        </a>
+        </h1>
+      </div>
     </div>
   </header>
 
