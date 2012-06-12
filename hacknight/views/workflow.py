@@ -203,7 +203,8 @@ class EventWorkflow(DocumentWorkflow):
         """
         Can the current user edit this?
         """
-        return 'owner' in self.permissions() and self.openit()        
+        return 'owner' in self.permissions()
+
     def can_delete(self):
         """
         Can the current user edit this?
