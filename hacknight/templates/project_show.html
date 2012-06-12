@@ -63,7 +63,7 @@
       {% if project.user == g.user -%}
         <small>(that’s you! <a href="{{ url_for('editsession', name=event.name, slug=project.urlname) }}">Edit this</a>?)</small>
       {%- endif %}
-      <button class="btn btn-primary" data-toggle="button">Join this Team</button>
+      <a class="btn btn-primary" href="{{ url_for('join', profile=profile.name, event=event.name, project=project.name) }}">Join this Team</a>
     </p>
     
     
