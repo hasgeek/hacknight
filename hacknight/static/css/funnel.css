@@ -314,8 +314,7 @@ ul.cardset:after {
 ul.cardset li {
   background: #fff;
   vertical-align: top;
-  margin: 0 0.5em 0.5em 0;
-  padding: 1em;
+  margin: 0 1.5em 0.5em 0;
   width: 300px;
   border: 1px solid #dddddd;
   display: block;
@@ -347,28 +346,32 @@ ul.cardset li a, ul.cardset li a:hover, ul.cardset li a:active, ul.cardset li a:
 }
 ul.cardset li a .title, ul.cardset li a:hover .title, ul.cardset li a:active .title, ul.cardset li a:visited .title {
   display: block;
-  padding: 1em 1em;
-  height: 5.5em;
+  padding: 0 1em;
   overflow: hidden;
+  border-bottom:1px solid #dddddd;
+  height: 7em;
 }
 
-ul.cardset a li .title h2, ul.cardset a:hover li .title h2, ul.cardset a:active li .title h2, ul.cardset a:visited li .title h2 {
+ul.cardset li a .title h2, ul.cardset li a:hover .title h2, ul.cardset li a:active .title h2, ul.cardset li a:visited .title h2 {
   color: #DF5E0E;
   font-size: 160%;
   text-transform: uppercase;
+  line-height:1.2em;
 }
 
-ul.cardset a li .title h3, ul.cardset a:hover li .title h3, ul.cardset a:active li .title h3, ul.cardset a:visited li .title h3 {
+ul.cardset li a .title h3, ul.cardset li a:hover .title h3, ul.cardset li a:active .title h3, ul.cardset li a:visited .title h3 {
   font-size: 80%;
   color: #666;
   font-weight: normal;
+  margin:0;
 }
-ul.cardset a li .body, ul.cardset a:hover li .body, ul.cardset a:active li .body, ul.cardset a:visited li .body {
+
+ul.cardset li a .body, ul.cardset li a:hover .body, ul.cardset li a:active .body, ul.cardset li a:visited .body {
   display: block;
-  height: 4em;
+  padding: 0 1em;
   overflow: hidden;
-  border-top: 1px solid #e8e8e8;
   color: #000000;
+  height:7em;
 }
 
 .eventhead p {

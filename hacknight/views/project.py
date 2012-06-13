@@ -363,16 +363,13 @@ def join(profile, project, event):
 		abort(404)
 
 	user = User.query.filter_by(userid=g.user.userid).first()
-	try:
-		participant = Participant.query.filter_by(user_id=user.id, event_id=event.id, status=ParticipantStatus.CONFIRMED).first()
-	except:
+	participant = Participant.query.filter_by(user_id=user.id, event_id=event.id, status=ParticipantStatus.CONFIRMED).first()
+	if participant==None:
 		flash("You need to be a confirmed participant to join this team.", "fail")
 		return redirect(url_for('project_show',profile=profile.name, project=project.name, event=event.name))
-
-	try:
-		project_member = ProjectMember.query.filter_by(project_id=project.id, participant_id=participant.id).first()
+	elif ProjectMember.query.filter_by(project_id=project.id, participant_id=participant.id).first():
 		flash("You are already part of this team!", "fail")
-	except:
+	else:
 		project_member = ProjectMember()
 		project_member.project_id = project.id
 		project_member.participant_id = participant.id

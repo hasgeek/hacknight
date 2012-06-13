@@ -31,8 +31,9 @@
     </div>
   </div>
 
-  <div class="section row">
+  <div class="row">
     <div id="tabs" class="span12">
+     {% if projects.count() %}         
               <h2>Project Proposals</h2>
               <table class="table proposals">
                 
@@ -57,13 +58,13 @@
 
                     <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.created_at.strftime("%a, %b %e") }}</a></td>
                   </tr>
-                  {%- else -%}
-                   <tr>
-                      <td><em>(No projects submitted yet)</em></td>
-                   </tr>
+                  
                 {% endfor %}
                 </tbody>
               </table>
+     {%- else -%}
+      <h2>No projects submitted yet</h2>
+     {% endif %}
     </div>
   </div>
 
@@ -71,11 +72,9 @@
     <div class="span12">
       <h2>Registered Participants</h2>
         {% for participant in participants %}
-        {% if participant.status == 2 %}
-      <p>
-            <a href="{{ url_for('profile_view', profile=profile.name) }}">  {{ participant.user.fullname }}</a>
-      </p>
-        {% endif %}
+        <ol> 
+            <li><a href="{{ url_for('profile_view', profile=profile.name) }}">  {{ participant.user.fullname }}</a></li>
+        <ol>
           {% endfor %}
     </div>
   </div>
