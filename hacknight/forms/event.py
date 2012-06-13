@@ -13,7 +13,7 @@ class ValidateEvent(object):
         """Need to check if the datetime is past date time, obstacle is Need to have time zone detail, check accordingly.
         """
 class EventForm(Form):
-    title = wtf.TextField("Title", description="Name of the Event", validators=[wtf.Required()])
+    title = wtf.TextField("Title", description="Name of the Event", validators=[wtf.Required(), wtf.NoneOf(values=["New"])])
     description = RichTextField("Description", description="Description of the project")
     #need to datepicker here, for time being while python datetime module is used inside views
     start_datetime = wtf.DateTimeField("Start Date and Time", description="Hacknight Start DateTime", validators=[wtf.Required()])

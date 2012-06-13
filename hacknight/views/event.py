@@ -40,11 +40,6 @@ def event_new(profile):
     if form.validate_on_submit():
         event = Event()
         form.populate_obj(event)
-        if event.title=="New":
-            flash("Please choose a different event name.", "fail")
-            return render_form(form=form, title="New Event", submit=u"Create", 
-                cancel_url=url_for('profile_view', profile=profile.name), ajax=False)
-
         if Event.query.filter_by(title=event.title).first():
             flash("Event name %s already exists." % event.title, "fail")
             return render_form(form=form, title="New Event", submit=u"Create", 
