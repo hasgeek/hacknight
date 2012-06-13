@@ -92,6 +92,11 @@ if({{ applied }})
   $("#withdraw").removeClass("hidden");
 };
 
+if("{{ event.profile.userid }}"=="{{ g.user.userid }}")
+{
+  $("#register").addClass("hidden");
+  $("#withdraw").addClass("hidden");
+};
 
 </script>
 

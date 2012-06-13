@@ -26,7 +26,7 @@ def profile_view(profile):
 @lastuser.requires_login
 @load_model(Profile, {'name': 'profile'}, 'profile')
 def profile_edit(profile):
-    if profile.userid not in g.user.user_organization_ids():
+    if profile.userid not in g.user.user_organization_owned_ids():
         abort(403)
     form = ProfileForm(obj=profile)
     if profile.userid == g.user.userid:
