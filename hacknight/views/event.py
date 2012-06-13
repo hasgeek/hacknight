@@ -40,12 +40,17 @@ def event_new(profile):
     if form.validate_on_submit():
         event = Event()
         form.populate_obj(event)
+        if Event.query.filter_by(title=event.title).first():
+            flash("Event name %s already exists." % event.title, "fail")
+            return render_form(form=form, title="New Event", submit=u"Create", 
+                cancel_url=url_for('profile_view', profile=profile.name), ajax=False)
         event.make_name()
         event.start_datetime = event.start_datetime
         event.end_datetime = event.end_datetime
         event.profile_id = profile.id
         db.session.add(event)
         db.session.commit()
+
         participant = Participant(user_id=g.user.id, event_id=event.id, status=ParticipantStatus.OWNER)
         db.session.add(participant)
         db.session.commit()
