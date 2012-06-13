@@ -1,26 +1,22 @@
 # -*- coding: utf-8 -*-
 
 import flask.ext.wtf as wtf
-from baseframe.forms import Form, RichTextField
+from baseframe.forms import Form, RichTextField, DateTimeInput
 
 __all__ = ['EventForm']
 
-class ValidateEvent(object):
-    @staticmethod
-    def date(form, field):
-        if form.start_datetime.data >= field.data:
-            raise wtf.ValidationError('End Date must be greater than Start Date')
-        """Need to check if the datetime is past date time, obstacle is Need to have time zone detail, check accordingly.
-        """
 class EventForm(Form):
     title = wtf.TextField("Title", description="Name of the Event", validators=[wtf.Required(), wtf.NoneOf(values=["New"])])
     description = RichTextField("Description", description="Description of the project")
     #need to datepicker here, for time being while python datetime module is used inside views
-    start_datetime = wtf.DateTimeField("Start Date and Time", description="Hacknight Start DateTime", validators=[wtf.Required()])
-    end_datetime = wtf.DateTimeField("End Date and Time", description="Hacknight End DateTime", validators=[wtf.Required(), ValidateEvent.date])
+    start_datetime = wtf.DateTimeField("Start Date and Time", widget=DateTimeInput(), description="Hacknight Start DateTime", validators=[wtf.Required()])
+    end_datetime = wtf.DateTimeField("End Date and Time", widget=DateTimeInput(), description="Hacknight End DateTime", validators=[wtf.Required()])
     ticket_price = wtf.TextField("Ticket Price", description="Entry fee, if any, to be paid at the venue.")
     website = wtf.TextField("Website",description="Related Website (Optional)", validators=[wtf.Optional()])
 
+    def validate_end_datetime(self, field):
+        if field.data < self.start_datetime.data:
+            raise wtf.ValidationError(u"Your event can’t end before it starts.")
 
 class EventManagerForm(Form):
     def make_participants(self, participants):
