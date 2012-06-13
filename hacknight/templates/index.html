@@ -14,16 +14,20 @@
 {% block headline %}{% endblock %}
 
 {% block content %}
+<div class="row">
 <div class="jumbotron span12">
   <!--<img src="{{ url_for('baseframe.static', filename='img/hasgeek-presents.png') }}" alt="HasGeek Presents">-->
   <h1><img src="{{ url_for('static', filename='img/hacknightlogo.png') }}" alt="Hacknight" title="Hacknight Home Page"></h1>
 </div>
-<div class="addhacknight span12 row">
+</div>
+<div class="row">
+<div class="addhacknight span12">
   {% if profile %}
             <a href="{{ url_for('event_new', profile=profile.name) }}" class="btn btn-primary btn-large" id="create">Create a new Hacknight</a>
   {% else %}
     <a href="{{ url_for('login') }}" class="btn btn-primary btn-large" id="create">Login to create a Hacknight</a>
   {% endif %}
+</div>
 </div>
 <div class="row">
   {% include 'includes/cardset.html' %}

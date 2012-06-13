@@ -1,6 +1,6 @@
 {% if events %}
 {% for e in events %}
-
+<div class="span12">
       <ul class="cardset">
         <a href="{{ url_for('event_view', profile=e.profile.name, event=e.name) }}">
           <li>
@@ -20,4 +20,4 @@
 {% else %}
       <h2> No events found </h2>
 {% endif %}
-
+</div>
