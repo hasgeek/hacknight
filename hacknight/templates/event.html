@@ -71,12 +71,14 @@
 
   <div class="row">
     <div class="span12">
-      <h2>Registered Participants</h2>
+      <h2>Registered Participants - {{ participants.count() }}/{{ event.maximum_participants }}</h2>
+      <ul>
         {% for participant in participants %}
-      <p>
-            <a href="{{ url_for('profile_view', profile=profile.name) }}">  {{ participant.user.fullname }}</a>
-      </p>
+      <li>
+            <a href="{{ url_for('profile_view', profile=participant.user.profile.name) }}">  {{ participant.user.fullname }}</a>
+      </li>
           {% endfor %}
+        </ul>
     </div>
   </div>
 
