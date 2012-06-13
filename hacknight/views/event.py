@@ -116,11 +116,11 @@ def event_apply(profile, event):
         participant.status=ParticipantStatus.PENDING if event.maximum_participants < total_participants else ParticipantStatus.WL
         db.session.add(participant)
         db.session.commit()
-        flash(u"Your request to participate is recorded, you will be notified by event manager".format(g.user.fullname, event.name), "success")
+        flash(u"Your request to participate is recorded, you will be notified by the event manager".format(g.user.fullname, event.title), "success")
     elif participant.status==ParticipantStatus.WITHDRAWN:
         participant.status=ParticipantStatus.PENDING
         db.session.commit()
-        flash(u"Your request to participate is recorded, you will be notified by event manager".format(g.user.fullname, event.name), "success")
+        flash(u"Your request to participate is recorded, you will be notified by the event manager".format(g.user.fullname, event.title), "success")
 
     else:
         flash(u"Your request is pending. ", "error")
@@ -151,7 +151,7 @@ def event_withdraw(profile, event):
             pass
         db.session.add(participant)
         db.session.commit()
-        flash(u"Your request to withdraw from {0} is recorded".format(event.name), "success")
+        flash(u"Your request to withdraw from {0} is recorded".format(event.title), "success")
         values={'profile': profile.name, 'event': event.name}
         return render_redirect(url_for('event_view', **values), code=303)
     else:
