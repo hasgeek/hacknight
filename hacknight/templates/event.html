@@ -13,6 +13,8 @@
             <dd>{{ event.start_datetime.strftime("%a, %b %e") }} to {{ event.end_datetime.strftime("%a, %b %e") }}</dd>
             <dt>Where</dt>
             <dd>Bangalore</dd>
+            <dt>Related Website</dt>
+            <dd><a href="{{ event.website }}">{{ event.website }}</a> </dd>
         </dl>
       </div>
     
@@ -27,6 +29,7 @@
   </div>
 
   <div class="row">
+    {% if projects.count() %}
     <div id="tabs" class="span12">
               <h2>Project Proposals</h2>
               <table class="table proposals">
@@ -37,6 +40,7 @@
                   <th>Proposer</th>
                   <th>+1</th>
                   <th>Comments</th>
+                  <th>Team members</th>
                   <th>Submitted</th>
                 </thead>
                 {% for p in projects %}
@@ -47,27 +51,31 @@
                     <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.members.filter_by(status=0).first().participant.user.fullname }}</a></td>
                     <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.votes.count }}</a></td>
                     <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.comments.count }}</a></td>
+                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.members.count() }}</a></td>
+
                     <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.created_at.strftime("%a, %b %e") }}</a></td>
                   </tr>
-                  {%- else -%}
-                   <tr>
-                      <td><em>(No projects submitted yet)</em></td>
-                   </tr>
+                  
                 {% endfor %}
                 </tbody>
               </table>
     </div>
+  </div>
+    {%- else -%}
+    <div class="row">
+      <div class="span9">
+    <h2>No projects submitted yet.</h2>
+    </div>
+    {% endif %}
   </div>
 
   <div class="row">
     <div class="span12">
       <h2>Registered Participants</h2>
         {% for participant in participants %}
-        {% if participant.status == 2 %}
       <p>
             <a href="{{ url_for('profile_view', profile=profile.name) }}">  {{ participant.user.fullname }}</a>
       </p>
-        {% endif %}
           {% endfor %}
     </div>
   </div>
@@ -84,6 +92,11 @@ if({{ applied }})
   $("#withdraw").removeClass("hidden");
 };
 
+if("{{ event.profile.userid }}"=="{{ g.user.userid }}")
+{
+  $("#register").addClass("hidden");
+  $("#withdraw").addClass("hidden");
+};
 
 </script>
 

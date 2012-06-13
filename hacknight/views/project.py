@@ -4,7 +4,7 @@ from flask import render_template, g, abort, flash, url_for, request, redirect
 from coaster.views import load_model, load_models
 from baseframe.forms import render_form, render_redirect, ConfirmDeleteForm
 from hacknight import app
-from hacknight.models import db, Profile, Event, Project, ProjectMember, Participant
+from hacknight.models import db, Profile, Event, Project, ProjectMember, Participant, ParticipantStatus, User
 from hacknight.models.event import profile_types
 from hacknight.forms.project import ProjectForm
 from hacknight.forms.comment import CommentForm, DeleteCommentForm, ConfirmDeleteForm
@@ -121,11 +121,19 @@ def projects(profile, event):
 	(Project, {'name': 'project'}, 'project'),
 	(Event, {'name':'event'}, 'event'))
 def project_show(profile,project,event):
+	if not profile:
+		abort(404)
 	if not event:
 		abort(404)
 	if not project:
 		abort(404)
-
+	user = User.query.filter_by(userid=g.user.userid).first()
+	try:
+		participant = Participant.query.filter_by(user_id=user.id, event_id=event.id).first()
+		project_member = ProjectMember.query.filter_by(project_id=project.id, participant_id=participant.id).first()
+		member =1
+	except:
+		member=0	
 	comments = sorted(Comment.query.filter_by(commentspace=project.comments, parent=None).order_by('created_at').all(),
 		key=lambda c: c.votes.count, reverse=True)
 	commentform = CommentForm()
@@ -176,7 +184,7 @@ def project_show(profile,project,event):
 			return redirect(url_for('project_show',profile=profile.name, project=project.name, event=event.name))
 	return render_template('project_show.html', event=event, project=project, profile=profile,
 		comments=comments, commentform=commentform, delcommentform=delcommentform,
-		breadcrumbs=[(url_for('index'), "home")])
+		breadcrumbs=[(url_for('index'), "home")], member=member)
 
 
 @app.route('/<profile>/<event>/projects/<project>/voteup')
@@ -340,4 +348,36 @@ def prevsession(profile, project, event):
 	else:
 		flash("You were at the first project", "info")
 		return redirect(url_for('project_show',profile=profile.name, project=project.name, event=event.name))
+
+@app.route('/<profile>/<event>/projects/<project>/join')
+@lastuser.requires_login
+@load_models((Profile, {'name':'profile'}, 'profile'),
+	(Project, {'name': 'project'}, 'project'),
+	(Event, {'name':'event'}, 'event'))
+def join(profile, project, event):
+	if not profile:
+		abort(404)
+	if not event:
+		abort(404)
+	if not project:
+		abort(404)
+
+	user = User.query.filter_by(userid=g.user.userid).first()
+	participant = Participant.query.filter_by(user_id=user.id, event_id=event.id, status=ParticipantStatus.CONFIRMED).first()
+	if participant==None:
+		flash("You need to be a confirmed participant to join this team.", "fail")
+		return redirect(url_for('project_show',profile=profile.name, project=project.name, event=event.name))
+	elif ProjectMember.query.filter_by(project_id=project.id, participant_id=participant.id).first():
+		flash("You are already part of this team!", "fail")
+	else:
+		project_member = ProjectMember()
+		project_member.project_id = project.id
+		project_member.participant_id = participant.id
+		db.session.add(project_member)
+		db.session.commit()
+		flash("You are now part of this team!", "success")
+		return redirect(url_for('project_show',profile=profile.name, project=project.name, event=event.name))
+	return redirect(url_for('project_show',profile=profile.name, project=project.name, event=event.name))
+
+
 

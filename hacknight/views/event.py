@@ -15,10 +15,14 @@ import pytz
 
 
 @app.route('/<profile>/<event>', methods=["GET"])
-@load_models(
-  (Profile, {'name': 'profile'}, 'profile'),
-  (Event, {'name': 'event'}, 'event'))
+@load_models((Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_view(profile, event):
+    if not profile:
+        abort(404)
+    if not event:
+        abort(404)
+
     projects = Project.query.filter_by(event_id=event.id)
     participants = Participant.query.filter_by(event_id = event.id) 
     applied=0
@@ -36,16 +40,21 @@ def event_new(profile):
     if form.validate_on_submit():
         event = Event()
         form.populate_obj(event)
+        if Event.query.filter_by(title=event.title).first():
+            flash("Event name %s already exists." % event.title, "fail")
+            return render_form(form=form, title="New Event", submit=u"Create", 
+                cancel_url=url_for('profile_view', profile=profile.name), ajax=False)
         event.make_name()
         event.start_datetime = event.start_datetime
         event.end_datetime = event.end_datetime
         event.profile_id = profile.id
         db.session.add(event)
         db.session.commit()
+
         participant = Participant(user_id=g.user.id, event_id=event.id, status=ParticipantStatus.OWNER)
         db.session.add(participant)
         db.session.commit()
-        flash(u"You have created new event", "success")
+        flash(u"New event created", "success")
         values={'profile': profile.name, 'event': event.name}
         return render_redirect(url_for('event_view', **values), code=303)
     return render_form(form=form, title="New Event", submit=u"Create",
@@ -66,7 +75,7 @@ def event_edit(profile, event):
         event.make_name()
         db.session.add(event)
         db.session.commit()
-        flash(u"You have edited details for event %s" % event.title, "success")
+        flash(u"Your edits to %s are saved" % event.title, "success")
         return render_redirect(url_for('event_view', event=event.name, profile=profile.name), code=303)
     return render_form(form=form, title="Edit Event", submit=u"Save",
         cancel_url=url_for('event_view', event=event.name, profile=profile.name), ajax=False)
@@ -112,10 +121,12 @@ def event_apply(profile, event):
         participant.status=ParticipantStatus.PENDING if event.maximum_participants < total_participants else ParticipantStatus.WL
         db.session.add(participant)
         db.session.commit()
-        flash(u"{0} is added to queue for the event{1}, you will be notified by Event manager".format(g.user.fullname, event.name), "success")
+        flash(u"Your request to participate is recorded, you will be notified by the event manager".format(g.user.fullname, event.title), "success")
     elif participant.status==ParticipantStatus.WITHDRAWN:
         participant.status=ParticipantStatus.PENDING
         db.session.commit()
+        flash(u"Your request to participate is recorded, you will be notified by the event manager".format(g.user.fullname, event.title), "success")
+
     else:
         flash(u"Your request is pending. ", "error")
     values={'profile': profile.name, 'event': event.name}
@@ -145,7 +156,7 @@ def event_withdraw(profile, event):
             pass
         db.session.add(participant)
         db.session.commit()
-        flash(u"{0} is withdrawn from the event{1}".format(g.user.fullname, event.name), "success")
+        flash(u"Your request to withdraw from {0} is recorded".format(event.title), "success")
         values={'profile': profile.name, 'event': event.name}
         return render_redirect(url_for('event_view', **values), code=303)
     else:
