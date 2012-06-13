@@ -41,3 +41,15 @@ div.addhacknight {
   margin:1em 0 3em;
 }
 
+div.useractions {
+  margin:0.1em 0 2em;
+}
+
+.useractions a {
+  margin: 0 0.5em 0 0;
+}
+
+div.breadcrumbs {
+  margin-top:0;
+  font-size:80%;
+}

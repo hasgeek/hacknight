@@ -3,7 +3,7 @@
 
 {% block content %}
 <div id="main">
-  <div class="row">
+  <div class="section row">
     <div class="eventhead span12">  
       <h1> {{ event.title }}</h1>          
       
@@ -13,22 +13,25 @@
             <dd>{{ event.start_datetime.strftime("%a, %b %e") }} to {{ event.end_datetime.strftime("%a, %b %e") }}</dd>
             <dt>Where</dt>
             <dd>Bangalore</dd>
+            <dt>Entry Fee</dt>
+            <dd>{{ event.ticket_price }} </dd>
             <dt>Related Website</dt>
             <dd><a href="{{ event.website }}">{{ event.website }}</a> </dd>
         </dl>
       </div>
     
+      <div class="section useractions">
+          <a href="{{ url_for('event_apply', profile=profile.name, event=event.name) }}" class="btn btn-primary" id="register">Register Now</a>
+          <a href="{{ url_for('event_withdraw', profile=profile.name, event=event.name) }}" class="hidden" id="withdraw">You're Registered</a>
+          <a href="{{ url_for('project_new', profile=profile.name, event=event.name) }}" class="btn btn-primary">Propose a Project</a>
+          <a href="" class="btn btn-primary" id="adminactions">Manage</a><!--add conditions for visibility only to admin/creator  -->
+      </div>
 
-       <a href="{{ url_for('event_apply', profile=profile.name, event=event.name) }}" class="btn btn-primary" id="register">Register Now</a>
-
-          <a href="{{ url_for('event_withdraw', profile=profile.name, event=event.name) }}" class="btn btn-danger hidden" id="withdraw">Withdraw</a>
-
-      <a href="{{ url_for('project_new', profile=profile.name, event=event.name) }}" class="btn btn-primary">Propose a Project</a>
       <p> {{ event.description|safe }} </p>
     </div>
   </div>
 
-  <div class="row">
+  <div class="section row">
     <div id="tabs" class="span12">
               <h2>Project Proposals</h2>
               <table class="table proposals">
@@ -64,7 +67,7 @@
     </div>
   </div>
 
-  <div class="row">
+  <div class="section row">
     <div class="span12">
       <h2>Registered Participants</h2>
         {% for participant in participants %}

@@ -6,10 +6,10 @@
 {% block headline %}{% endblock %}
 {% block content %}
 
-<p style="margin-top: 0; font-size: 80%;">
+<div class="breadcrumbs">
   <a href="{{ url_for('event_view', profile=profile.name, event=event.name) }}">&larr; Return to {{ event.title }}</a>
   {% if g.user in project.users %}| <a href="{{ url_for('project_edit', profile=profile.name, event=event.name, project=project.name) }}">Edit this &rarr;</a>{% endif %}
-</p>
+</div>
 <div class="infosheet">
   <div class="leftear">
     {%- if project.getprev() -%}
@@ -26,7 +26,8 @@
     {%- endif -%}
   </div>
   <div class="section first">
-    <div class="votebox">
+      <h1>{{ project.title }}</h1>
+      <div class="votebox">
       {%- set vote = project.votes.getvote(g.user) %}
       <div class="choices">
 
@@ -51,9 +52,8 @@
         Vote on this project
       </div>
     </div>
-    <h1>{{ project.title }}</h1>
     
-    <p>
+    <div class="useractions">
       by <strong>{{ project.members.filter_by(status=0).first().participant.user.fullname }}</strong>
       {% if project.user == project.speaker -%}
         (speaking)
@@ -65,7 +65,7 @@
       {%- endif %}
       <a id="join" class="btn btn-primary" href="{{ url_for('join', profile=profile.name, event=event.name, project=project.name) }}">Join this Team</a>
       <small id="member" class="hidden"> | you're part of this team!</small>
-    </p>
+    </div>
 
 
     

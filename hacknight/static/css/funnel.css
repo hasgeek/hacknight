@@ -395,7 +395,7 @@ dl.bar dd {
 }
 
 .btn {
-  margin: 2px 4px;
+  margin: 2px 0px;
 }
 
 table.proposals thead th {
