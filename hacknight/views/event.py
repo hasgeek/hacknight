@@ -15,10 +15,14 @@ import pytz
 
 
 @app.route('/<profile>/<event>', methods=["GET"])
-@load_models(
-  (Profile, {'name': 'profile'}, 'profile'),
-  (Event, {'name': 'event'}, 'event'))
+@load_models((Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_view(profile, event):
+    if not profile:
+        abort(404)
+    if not event:
+        abort(404)
+
     projects = Project.query.filter_by(event_id=event.id)
     participants = Participant.query.filter_by(event_id = event.id) 
     applied=0
