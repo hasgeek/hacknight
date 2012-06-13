@@ -6,7 +6,7 @@ from baseframe.forms import Form, RichTextField, DateTimeInput
 __all__ = ['EventForm']
 
 class EventForm(Form):
-    title = wtf.TextField("Title", description="Name of the Event", validators=[wtf.Required()])
+    title = wtf.TextField("Title", description="Name of the Event", validators=[wtf.Required(), wtf.NoneOf(values=["New"])])
     description = RichTextField("Description", description="Description of the project")
     #need to datepicker here, for time being while python datetime module is used inside views
     start_datetime = wtf.DateTimeField("Start Date and Time", widget=DateTimeInput(), description="Hacknight Start DateTime", validators=[wtf.Required()])
