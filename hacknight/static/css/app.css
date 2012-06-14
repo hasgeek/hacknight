@@ -1,27 +1,30 @@
 body {
   background-color: #203838;
-  background-image: url('../img/concrete_wall.png?1336391375');
+  background-image: url('../img/concrete_wall.png?1339132595');
   color: #ccc;
 }
 
 .jumbotron {
-  padding-top: 1%;
+  padding-top: 5%;
   text-align: center;
 }
 .jumbotron h1 {
+  font-size: 120px;
+  line-height: 1.2;
   margin-bottom: 10px;
-}
-.logo h1 {
- margin:0.25em 0 0.1em;
 }
 
 footer .footer-inner {
   background: transparent;
 }
 
+.logo h1 {
+  margin: 0.25em 0 0.1em;
+}
+
 label {
- color: #EEEEEE;
- display: inline-block;
+  color: #EEEEEE;
+  display: inline-block;
 }
 
 ul#status {
@@ -37,19 +40,23 @@ input#status-1, input#status-0 {
 }
 
 div.addhacknight {
-  text-align:center;
-  margin:1em 0 3em;
+  text-align: center;
+  margin: 1em 0 3em;
 }
 
 div.useractions {
-  margin:0.1em 0 2em;
+  margin: 0.1em 0 2em;
 }
-
-.useractions a {
-  margin: 0 0.5em 0 0;
+div.useractions .withdraw {
+  font-size: 80%;
+  vertical-align: bottom;
+}
+div.useractions img {
+  height: 35px;
+  vertical-align: middle;
 }
 
 div.breadcrumbs {
-  margin-top:0;
-  font-size:80%;
+  margin-top: 0;
+  font-size: 80%;
 }

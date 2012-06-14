@@ -21,10 +21,17 @@
       </div>
     
       <div class="section useractions">
-          <a href="{{ url_for('event_apply', profile=profile.name, event=event.name) }}" class="btn btn-primary" id="register">Register Now</a>
-          <a href="{{ url_for('event_withdraw', profile=profile.name, event=event.name) }}" class="hidden" id="withdraw">You're Registered</a>
-          <a href="{{ url_for('project_new', profile=profile.name, event=event.name) }}" class="btn btn-primary">Propose a Project</a>
-          <a href="" class="btn btn-primary" id="adminactions">Manage</a><!--add conditions for visibility only to admin/creator  -->
+       <!--add logic to show one of the following status icons, in the beginning user sees "Register"" -->
+       <img class="status" src="{{ url_for('static', filename='img/accepted.png') }}" alt="Registered" title="You're Registered"/>   
+	     <img class="status" src="{{ url_for('static', filename='img/rejected.png') }}" alt="Not Accepted" title="Sorry, you've not been accepted"/>
+	     <img class="status" src="{{ url_for('static', filename='img/pending.png') }}" alt="Requires Approval" title="Your registration requires approval"/>
+	     <img class="status" src="{{ url_for('static', filename='img/withdrawn.png') }}" alt="Withdrawn" title="You've withdrawn your registration "/>
+	     <img class="status" src="{{ url_for('static', filename='img/waitlisted.png') }}" alt="Registered" title="You're waitlisted"/>
+	     <a href="{{ url_for('event_apply', profile=profile.name, event=event.name) }}" class="btn btn-primary" id="register">Register Now</a>
+	     
+       <a href="{{ url_for('project_new', profile=profile.name, event=event.name) }}" class="btn btn-primary">Propose a Project</a>
+       <a href="" class="btn btn-primary" id="adminactions">Manage</a><!--add conditions for visibility only to admin/creator  -->
+       <a href="{{ url_for('event_withdraw', profile=profile.name, event=event.name) }}" class="withdraw hidden" id="withdraw">Withdraw Registration</a>
       </div>
 
       <p> {{ event.description|safe }} </p>
@@ -70,15 +77,20 @@
 
   <div class="section row">
     <div class="span12">
-      <h2>Registered Participants</h2>
+      <h2>Registered Participants - {{ participants.count() }}/{{ event.maximum_participants }}</h2>
+      <ul>
         {% for participant in participants %}
-        <ol> 
-            <li><a href="{{ url_for('profile_view', profile=profile.name) }}">  {{ participant.user.fullname }}</a></li>
-        <ol>
-          {% endfor %}
+         <li>
+            <a href="{{ url_for('profile_view', profile=participant.user.profile.name) }}">  {{ participant.user.fullname }}</a>
+         </li>
+         {% endfor %}
+        </ul>
     </div>
   </div>
 
+  <div class="section row">
+    
+  </div>
 
 </div>
 {% endblock %}
