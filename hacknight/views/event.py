@@ -45,10 +45,7 @@ def event_new(profile):
             return render_form(form=form, title="New Event", submit=u"Create", 
                 cancel_url=url_for('profile_view', profile=profile.name), ajax=False)
         event.make_name()
-        event.start_datetime = event.start_datetime
-        event.end_datetime = event.end_datetime
         event.profile_id = profile.id
-        event.maximum_participant = event.maximum_participant
         db.session.add(event)
         db.session.commit()
 
@@ -73,16 +70,8 @@ def event_edit(profile, event):
     form = EventForm(obj=event)
     if form.validate_on_submit():
         form.populate_obj(event)
-        if Event.query.filter_by(title=event.title).first():
-            flash("Event name %s already exists." % event.title, "fail")
-            return render_form(form=form, title="New Event", submit=u"Create", 
-                cancel_url=url_for('profile_view', profile=profile.name), ajax=False)
         event.make_name()
-        event.start_datetime = event.start_datetime
-        event.end_datetime = event.end_datetime
         event.profile_id = profile.id
-        event.maximum_participant = event.maximum_participant
-        db.session.add(event)
         db.session.commit()
         flash(u"Your edits to %s are saved" % event.title, "success")
         return render_redirect(url_for('event_view', event=event.name, profile=profile.name), code=303)
