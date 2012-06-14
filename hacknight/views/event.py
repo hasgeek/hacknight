@@ -24,13 +24,21 @@ def event_view(profile, event):
         abort(404)
 
     projects = Project.query.filter_by(event_id=event.id)
-    participants = Participant.query.filter_by(event_id = event.id) 
+    participants = Participant.query.filter(
+        Participant.status != ParticipantStatus.OWNER,
+        Participant.status != ParticipantStatus.WITHDRAWN,
+        Participant.event == event)
+
+    acceptedP = [p for p in participants if p.status == ParticipantStatus.CONFIRMED]
+    restP = [p for p in participants if p.status != ParticipantStatus.CONFIRMED]
     applied=0
     for p in participants:
-        if p.user == g.user and p.status!= ParticipantStatus.WITHDRAWN:
+        if p.user == g.user:
             applied=1
             break
-    return render_template('event.html', profile=profile, event=event, projects=projects, timezone=event.start_datetime.strftime("%Z"), participants=participants, applied=applied)
+    return render_template('event.html', profile=profile, event=event, 
+        projects=projects, timezone=event.start_datetime.strftime("%Z"), 
+        acceptedparticipants=acceptedP, restparticipants=restP, applied=applied)
 
 @app.route('/<profile>/new', methods=['GET', 'POST'])
 @lastuser.requires_login
