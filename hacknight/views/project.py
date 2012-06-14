@@ -127,13 +127,28 @@ def project_show(profile,project,event):
 		abort(404)
 	if not project:
 		abort(404)
-	user = User.query.filter_by(userid=g.user.userid).first()
-	participant = Participant.query.filter_by(user_id=user.id, event_id=event.id).first()
-	project_member = ProjectMember.query.filter_by(project_id=project.id, participant_id=participant.id).first()
-	if project_member: 
-		member =1
-	else:
-		member=0	
+
+	member = 0
+	if g.user:
+		user = User.query.filter_by(userid=g.user.userid).first()
+		if user:
+			participant = Participant.query.filter_by(user_id=user.id, event_id=event.id).first()
+		if participant:
+			project_member = ProjectMember.query.filter_by(project_id=project.id, participant_id=participant.id).first()
+			if project_member: 
+				member =1
+	# Fix the join query below and replace the cascaded if conditions.
+	# if g.user:
+	# 	query = (ProjectMember
+	# 		.query.filter(ProjectMember.project_id == project.id)
+	# 		.join(Participant).filter(Participant.event_id == event.id)
+	# 		.join(User).filter(User.userid == g.user.userid))
+	# 	print "user id = %s, event id = %s, project id = %s" % (
+	# 		g.user.userid, event.id, project.id)
+	# 	print query.statement
+	# 	project_member = query.first()
+	# 	print project_member.project.name
+
 	comments = sorted(Comment.query.filter_by(commentspace=project.comments, parent=None).order_by('created_at').all(),
 		key=lambda c: c.votes.count, reverse=True)
 	commentform = CommentForm()
