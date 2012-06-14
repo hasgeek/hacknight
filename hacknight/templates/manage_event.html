@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block title %}{{ event.title }}{% endblock %}
+
+{% block content %}
+<div id="main" class="participant-list">
+
+  <h1>Participants</h1>
+  {% for participant in participants %}
+  <div class="row participant-{{ participant.id }}" data-status="{{ participant.status }}">
+    <div class="span1">{{ participant.user.fullname }}</div>
+    <div class="span2 participant-status-label">{{ participant.status | show_participant_status}}</div>
+    <div class="span2 ">
+      <a href="#" class="update-participant-status" data-id="{{ participant.id }}" data-status="2" title="Accept">accept</a>&nbsp;&nbsp;&nbsp;&nbsp;
+      <a href="#" class="update-participant-status" data-id="{{ participant.id }}" data-status="3" title="Reject">reject</a>&nbsp;&nbsp;&nbsp;&nbsp;
+      <a href="#" class="update-participant-status" data-id="{{ participant.id }}" data-status="1" title="Wait-list">wait-list</i></a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
+{% block footerscripts %}
+  <script type="text/javascript">
+    $(function() {
+      $('.update-participant-status').click(function(e) {
+        var el = $(this), 
+            id = el.attr('data-id'), 
+            participantEl = $('.participant-list .participant-'+id),
+            currentStatus = participantEl.attr('data-status'),
+            newStatus = el.attr('data-status'),
+            statusLabels = {{statuslabels | tojson | safe}};
+        e.stopPropagation();
+        participantEl.children('.participant-status-label').text(statusLabels[newStatus]);
+        $.post('manage/update', {participantid: id, status: newStatus})
+          .error( function(){ location.reload(); } );
+        return false;
+      });
+    });
+  </script>
+{% endblock %}

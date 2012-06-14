@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, abort, flash, url_for, g
+from flask import render_template, abort, flash, url_for, g, request, Response
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app
@@ -89,7 +89,22 @@ def event_edit(profile, event):
     return render_form(form=form, title="Edit Event", submit=u"Save",
         cancel_url=url_for('event_view', event=event.name, profile=profile.name), ajax=False)
 
-@app.route('/<profile>/<event>/manage', methods=['GET', 'POST'])
+
+
+participant_status_labels = {
+    ParticipantStatus.PENDING: "Pending",
+    ParticipantStatus.WL: "Waiting List",
+    ParticipantStatus.CONFIRMED: "Confirmed",
+    ParticipantStatus.REJECTED: "Rejected",
+    ParticipantStatus.WITHDRAWN: "Withdrawn",
+    ParticipantStatus.OWNER: "Owner"
+}
+
+@app.template_filter('show_participant_status')
+def show_participant_status(status):
+    return participant_status_labels[status]
+
+@app.route('/<profile>/<event>/manage', methods=['GET'])
 @lastuser.requires_login
 @load_models(
   (Profile, {'name': 'profile'}, 'profile'),
@@ -98,20 +113,32 @@ def event_open(profile, event):
     workflow = event.workflow()
     if not workflow.can_open():
         abort(403)
-    pending_participants = Participant.query.filter_by(status=ParticipantStatus.PENDING) 
-    confirmed_participants = Participant.query.filter_by(status=ParticipantStatus.CONFIRMED) 
-    form = EventManagerForm()
-    form.make_participants(pending_participants)
-    if form.validate_on_submit():
-        raise
-    return render_form(form=form, title="Manage", submit=u"Create",
-        cancel_url=url_for('profile_view', profile=profile.name), ajax=False)
-    
-#    workflow.open()
-#    db.session.add(event)
-#    db.session.commit()
-#    flash(u"You have edited details for event %s" % event.title, "success")
-#    return render_redirect(url_for('event_view', event=event.name, profile=profile.name), code=303)
+    participants = Participant.query#.filter(
+        #Participant.status != ParticipantStatus.WITHDRAWN,
+        #Participant.status != ParticipantStatus.OWNER,
+        #Participant.event == event)
+    return render_template('manage_event.html', profile=profile, event=event, 
+        participants=participants, statuslabels=participant_status_labels)
+
+@app.route('/<profile>/<event>/manage/update', methods=['POST'])
+@lastuser.requires_login
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
+def event_update_participant_status(profile, event):
+    workflow = event.workflow()
+    if not workflow.can_open():
+        return Response("Forbidden", 403)
+    participantid = int(request.form['participantid'])
+    status = int(request.form['status'])
+    participant = Participant.query.get(participantid)
+
+    if(participant.event != event):
+        return Response("Forbidden", 403)
+
+    participant.status = status
+    db.session.commit()
+    return "Done"
 
 @app.route('/<profile>/<event>/apply', methods=['GET', 'POST'])
 @lastuser.requires_login
