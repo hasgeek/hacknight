@@ -1,3 +1,13 @@
+
+{% macro participant_list(participants) %}
+  <ul>
+    {% for participant in participants %}
+  <li>
+        <a href="{{ url_for('profile_view', profile=participant.user.profile.name) }}">  {{ participant.user.fullname }}</a>
+  </li>
+      {% endfor %}
+  </ul>
+{% endmacro %}
 {% extends "layout.html" %}
 {% block title %}{{ event.title }}{% endblock %}
 
@@ -73,14 +83,9 @@
 
   <div class="row">
     <div class="span12">
-      <h2>Registered Participants - {{ participants.count() }}/{{ event.maximum_participants }}</h2>
-      <ul>
-        {% for participant in participants %}
-      <li>
-            <a href="{{ url_for('profile_view', profile=participant.user.profile.name) }}">  {{ participant.user.fullname }}</a>
-      </li>
-          {% endfor %}
-        </ul>
+      <h2>Registered Participants</h2>
+      {{ participant_list(acceptedparticipants) }}
+      {{ participant_list(restparticipants) }}
     </div>
   </div>
 
