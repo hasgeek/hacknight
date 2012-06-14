@@ -46,8 +46,10 @@
 	     <a href="{{ url_for('event_apply', profile=profile.name, event=event.name) }}" class="btn btn-primary" id="register">Register Now</a>
 	     
        <a href="{{ url_for('project_new', profile=profile.name, event=event.name) }}" class="btn btn-primary">Propose a Project</a>
+       {% if owner %}
        <a href="" class="btn btn-primary" id="adminactions">Manage</a><!--add conditions for visibility only to admin/creator  -->
-       <a href="{{ url_for('event_withdraw', profile=profile.name, event=event.name) }}" class="withdraw hidden" id="withdraw">Withdraw Registration</a>
+       {% endif %}
+       <a class="btn btn-danger hidden" href="{{ url_for('event_withdraw', profile=profile.name, event=event.name) }}"  id="withdraw">Withdraw Registration</a>
       </div>
 
       <p> {{ event.description|safe }} </p>
@@ -106,6 +108,7 @@
 <script>
 if({{ applied }})
 {
+console.log({{ applied }});
   $("#register").addClass("hidden");
   $("#withdraw").removeClass("hidden");
 };

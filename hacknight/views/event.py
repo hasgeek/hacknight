@@ -4,7 +4,7 @@ from flask import render_template, abort, flash, url_for, g, request, Response
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app
-from hacknight.models import db, Profile
+from hacknight.models import db, Profile, User
 from hacknight.models.event import Event, EventStatus
 from hacknight.models.participant import Participant, ParticipantStatus
 from hacknight.models.project import Project
@@ -32,13 +32,19 @@ def event_view(profile, event):
     acceptedP = [p for p in participants if p.status == ParticipantStatus.CONFIRMED]
     restP = [p for p in participants if p.status != ParticipantStatus.CONFIRMED]
     applied=0
+    owner =0
     for p in participants:
         if p.user == g.user:
             applied=1
             break
+    if g.user:
+        user = User.query.filter_by(userid=g.user.userid).first()
+        if user.profile == profile:
+            owner =1
+
     return render_template('event.html', profile=profile, event=event, 
         projects=projects, timezone=event.start_datetime.strftime("%Z"), 
-        acceptedparticipants=acceptedP, restparticipants=restP, applied=applied)
+        acceptedparticipants=acceptedP, restparticipants=restP, applied=applied, owner=owner)
 
 @app.route('/<profile>/new', methods=['GET', 'POST'])
 @lastuser.requires_login
