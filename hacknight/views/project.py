@@ -104,7 +104,7 @@ def project_remove(profile, project, event):
 			db.session.delete(project)
 			db.session.commit()
 			flash("Project removed", "success")
-			return render_redirect(url_for('index'), code=303)
+			return render_redirect(url_for('event_view', profile=profile.name, event=event.name), code=303)
 	return render_template('baseframe/delete.html', form=form, title=u"Confirm delete",
 		message=u"Delete '%s' ? It will remove comments, votes and all information related to the project. This operation cannot be undone." % (project.title))
 
