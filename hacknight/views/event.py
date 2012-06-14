@@ -8,7 +8,7 @@ from hacknight.models import db, Profile
 from hacknight.models.event import Event, EventStatus
 from hacknight.models.participant import Participant, ParticipantStatus
 from hacknight.models.project import Project
-from hacknight.forms.event import EventForm, EventManagerForm
+from hacknight.forms.event import EventForm, EventManagerForm, ConfirmWithdrawForm
 from hacknight.views.login import lastuser
 import hacknight.views.workflow 
 import pytz
@@ -175,17 +175,24 @@ def event_withdraw(profile, event):
                          2: workflow.withdraw_confirmed,
                          3: workflow.withdraw_rejected,
                          }
-        try:
-            withdraw_call[participant.status]()
-        except KeyError:
-            pass
-        db.session.add(participant)
-        db.session.commit()
-        flash(u"Your request to withdraw from {0} is recorded".format(event.title), "success")
-        values={'profile': profile.name, 'event': event.name}
-        return render_redirect(url_for('event_view', **values), code=303)
+        
+        form = ConfirmWithdrawForm()
+        if form.validate_on_submit():
+            if 'delete' in request.form:
+                try:
+                    withdraw_call[participant.status]()
+
+                except KeyError:
+                    pass
+      
+            db.session.commit()
+            flash(u"Your request to withdraw from {0} is recorded".format(event.title), "success")
+            values={'profile': profile.name, 'event': event.name}
+            return render_redirect(url_for('event_view', **values), code=303)
+        return render_template('withdraw.html', form=form, title=u"Confirm withdraw",
+            message=u"Withdraw from '%s' ? You can come back anytime." % (event.title))
     else:
-        abort(403)
+        abort(404)
 
 @app.route('/<profile>/<event>/publish', methods=['GET', 'POST'])
 @lastuser.requires_login

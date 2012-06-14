@@ -23,3 +23,12 @@ class EventManagerForm(Form):
     def make_participants(self, participants):
         participants = wtf.SelectMultipleField("Select participant to confirm", description="Select participant to confirm")
 
+
+class ConfirmWithdrawForm(wtf.Form):
+    """
+    Confirm a delete operation
+    """
+    delete = wtf.SubmitField(u"Withdraw")
+    cancel = wtf.SubmitField(u"Cancel")
+
+
