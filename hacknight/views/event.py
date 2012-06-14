@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, abort, flash, url_for, g
+from flask import render_template, abort, flash, url_for, g, request, Response
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app
@@ -8,7 +8,7 @@ from hacknight.models import db, Profile
 from hacknight.models.event import Event, EventStatus
 from hacknight.models.participant import Participant, ParticipantStatus
 from hacknight.models.project import Project
-from hacknight.forms.event import EventForm, EventManagerForm
+from hacknight.forms.event import EventForm, EventManagerForm, ConfirmWithdrawForm
 from hacknight.views.login import lastuser
 import hacknight.views.workflow 
 import pytz
@@ -24,13 +24,21 @@ def event_view(profile, event):
         abort(404)
 
     projects = Project.query.filter_by(event_id=event.id)
-    participants = Participant.query.filter_by(event_id = event.id) 
+    participants = Participant.query.filter(
+        Participant.status != ParticipantStatus.OWNER,
+        Participant.status != ParticipantStatus.WITHDRAWN,
+        Participant.event == event)
+
+    acceptedP = [p for p in participants if p.status == ParticipantStatus.CONFIRMED]
+    restP = [p for p in participants if p.status != ParticipantStatus.CONFIRMED]
     applied=0
     for p in participants:
-        if p.user == g.user and p.status!= ParticipantStatus.WITHDRAWN:
+        if p.user == g.user:
             applied=1
             break
-    return render_template('event.html', profile=profile, event=event, projects=projects, timezone=event.start_datetime.strftime("%Z"), participants=participants, applied=applied)
+    return render_template('event.html', profile=profile, event=event, 
+        projects=projects, timezone=event.start_datetime.strftime("%Z"), 
+        acceptedparticipants=acceptedP, restparticipants=restP, applied=applied)
 
 @app.route('/<profile>/new', methods=['GET', 'POST'])
 @lastuser.requires_login
@@ -45,8 +53,6 @@ def event_new(profile):
             return render_form(form=form, title="New Event", submit=u"Create", 
                 cancel_url=url_for('profile_view', profile=profile.name), ajax=False)
         event.make_name()
-        event.start_datetime = event.start_datetime
-        event.end_datetime = event.end_datetime
         event.profile_id = profile.id
         db.session.add(event)
         db.session.commit()
@@ -73,14 +79,29 @@ def event_edit(profile, event):
     if form.validate_on_submit():
         form.populate_obj(event)
         event.make_name()
-        db.session.add(event)
+        event.profile_id = profile.id
         db.session.commit()
         flash(u"Your edits to %s are saved" % event.title, "success")
         return render_redirect(url_for('event_view', event=event.name, profile=profile.name), code=303)
     return render_form(form=form, title="Edit Event", submit=u"Save",
         cancel_url=url_for('event_view', event=event.name, profile=profile.name), ajax=False)
 
-@app.route('/<profile>/<event>/manage', methods=['GET', 'POST'])
+
+
+participant_status_labels = {
+    ParticipantStatus.PENDING: "Pending",
+    ParticipantStatus.WL: "Waiting List",
+    ParticipantStatus.CONFIRMED: "Confirmed",
+    ParticipantStatus.REJECTED: "Rejected",
+    ParticipantStatus.WITHDRAWN: "Withdrawn",
+    ParticipantStatus.OWNER: "Owner"
+}
+
+@app.template_filter('show_participant_status')
+def show_participant_status(status):
+    return participant_status_labels[status]
+
+@app.route('/<profile>/<event>/manage', methods=['GET'])
 @lastuser.requires_login
 @load_models(
   (Profile, {'name': 'profile'}, 'profile'),
@@ -89,20 +110,32 @@ def event_open(profile, event):
     workflow = event.workflow()
     if not workflow.can_open():
         abort(403)
-    pending_participants = Participant.query.filter_by(status=ParticipantStatus.PENDING) 
-    confirmed_participants = Participant.query.filter_by(status=ParticipantStatus.CONFIRMED) 
-    form = EventManagerForm()
-    form.make_participants(pending_participants)
-    if form.validate_on_submit():
-        raise
-    return render_form(form=form, title="Manage", submit=u"Create",
-        cancel_url=url_for('profile_view', profile=profile.name), ajax=False)
-    
-#    workflow.open()
-#    db.session.add(event)
-#    db.session.commit()
-#    flash(u"You have edited details for event %s" % event.title, "success")
-#    return render_redirect(url_for('event_view', event=event.name, profile=profile.name), code=303)
+    participants = Participant.query.filter(
+        Participant.status != ParticipantStatus.WITHDRAWN,
+        Participant.status != ParticipantStatus.OWNER,
+        Participant.event == event)
+    return render_template('manage_event.html', profile=profile, event=event, 
+        participants=participants, statuslabels=participant_status_labels)
+
+@app.route('/<profile>/<event>/manage/update', methods=['POST'])
+@lastuser.requires_login
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
+def event_update_participant_status(profile, event):
+    workflow = event.workflow()
+    if not workflow.can_open():
+        return Response("Forbidden", 403)
+    participantid = int(request.form['participantid'])
+    status = int(request.form['status'])
+    participant = Participant.query.get(participantid)
+
+    if(participant.event != event):
+        return Response("Forbidden", 403)
+
+    participant.status = status
+    db.session.commit()
+    return "Done"
 
 @app.route('/<profile>/<event>/apply', methods=['GET', 'POST'])
 @lastuser.requires_login
@@ -150,17 +183,24 @@ def event_withdraw(profile, event):
                          2: workflow.withdraw_confirmed,
                          3: workflow.withdraw_rejected,
                          }
-        try:
-            withdraw_call[participant.status]()
-        except KeyError:
-            pass
-        db.session.add(participant)
-        db.session.commit()
-        flash(u"Your request to withdraw from {0} is recorded".format(event.title), "success")
-        values={'profile': profile.name, 'event': event.name}
-        return render_redirect(url_for('event_view', **values), code=303)
+        
+        form = ConfirmWithdrawForm()
+        if form.validate_on_submit():
+            if 'delete' in request.form:
+                try:
+                    withdraw_call[participant.status]()
+
+                except KeyError:
+                    pass
+      
+            db.session.commit()
+            flash(u"Your request to withdraw from {0} is recorded".format(event.title), "success")
+            values={'profile': profile.name, 'event': event.name}
+            return render_redirect(url_for('event_view', **values), code=303)
+        return render_template('withdraw.html', form=form, title=u"Confirm withdraw",
+            message=u"Withdraw from '%s' ? You can come back anytime." % (event.title))
     else:
-        abort(403)
+        abort(404)
 
 @app.route('/<profile>/<event>/publish', methods=['GET', 'POST'])
 @lastuser.requires_login

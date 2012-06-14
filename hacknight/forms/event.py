@@ -12,6 +12,7 @@ class EventForm(Form):
     start_datetime = wtf.DateTimeField("Start Date and Time", widget=DateTimeInput(), description="Hacknight Start DateTime", validators=[wtf.Required()])
     end_datetime = wtf.DateTimeField("End Date and Time", widget=DateTimeInput(), description="Hacknight End DateTime", validators=[wtf.Required()])
     ticket_price = wtf.TextField("Ticket Price", description="Entry fee, if any, to be paid at the venue.")
+    total_participants = wtf.IntegerField("Total Participants", description="Total Participants for Hacknight. E.g: 50", default=50, validators=[wtf.Required()])
     website = wtf.TextField("Website",description="Related Website (Optional)", validators=[wtf.Optional()])
 
     def validate_end_datetime(self, field):
@@ -21,4 +22,13 @@ class EventForm(Form):
 class EventManagerForm(Form):
     def make_participants(self, participants):
         participants = wtf.SelectMultipleField("Select participant to confirm", description="Select participant to confirm")
+
+
+class ConfirmWithdrawForm(wtf.Form):
+    """
+    Confirm a delete operation
+    """
+    delete = wtf.SubmitField(u"Withdraw")
+    cancel = wtf.SubmitField(u"Cancel")
+
 

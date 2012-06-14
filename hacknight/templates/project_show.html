@@ -8,7 +8,7 @@
 
 <div class="breadcrumbs">
   <a href="{{ url_for('event_view', profile=profile.name, event=event.name) }}">&larr; Return to {{ event.title }}</a>
-  {% if g.user in project.users %}| <a href="{{ url_for('project_edit', profile=profile.name, event=event.name, project=project.name) }}">Edit this &rarr;</a>{% endif %}
+  {% if g.user in project.users %}| <a href="">Delete this </a> | <a href="{{ url_for('project_edit', profile=profile.name, event=event.name, project=project.name) }}">Edit this &rarr;</a>{% endif %}
 </div>
 <div class="infosheet">
   <div class="leftear">
