@@ -113,10 +113,10 @@ def event_open(profile, event):
     workflow = event.workflow()
     if not workflow.can_open():
         abort(403)
-    participants = Participant.query#.filter(
-        #Participant.status != ParticipantStatus.WITHDRAWN,
-        #Participant.status != ParticipantStatus.OWNER,
-        #Participant.event == event)
+    participants = Participant.query.filter(
+        Participant.status != ParticipantStatus.WITHDRAWN,
+        Participant.status != ParticipantStatus.OWNER,
+        Participant.event == event)
     return render_template('manage_event.html', profile=profile, event=event, 
         participants=participants, statuslabels=participant_status_labels)
 
