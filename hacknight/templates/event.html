@@ -13,7 +13,9 @@
             <dd>{{ event.start_datetime.strftime("%a, %b %e") }} to {{ event.end_datetime.strftime("%a, %b %e") }}</dd>
             <dt>Where</dt>
             <dd>Bangalore</dd>
+            {% if event.website %}
             <dt>Related Website</dt>
+            {% endif %}
             <dd><a href="{{ event.website }}">{{ event.website }}</a> </dd>
         </dl>
       </div>
