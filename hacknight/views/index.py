@@ -22,3 +22,7 @@ def index():
 @app.template_filter('shortdate')
 def shortdate(date):
     return utc.localize(date).astimezone(tz).strftime("%B %d, %Y")
+
+@app.template_filter('fulldate')
+def shortdate(date):
+    return utc.localize(date).astimezone(tz).strftime("%a, %b %e %H: %M %P")

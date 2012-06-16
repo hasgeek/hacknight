@@ -3,7 +3,7 @@
   <ul>
     {% for participant in participants %}
   <li>
-        <a href="{{ url_for('profile_view', profile=participant.user.profile.name) }}">  {{ participant.user.fullname }}</a>
+       <a href="{{ url_for('profile_view', profile=participant.user.profile.name) }}">  {{ participant.user.fullname }}</a>
   </li>
       {% endfor %}
   </ul>
@@ -20,7 +20,7 @@
       <div class="section bar">
         <dl class="bar">
             <dt>When</dt>
-            <dd>{{ event.start_datetime.strftime("%a, %b %e") }} to {{ event.end_datetime.strftime("%a, %b %e") }}</dd>
+            <dd>{{ event.start_datetime | fulldate }} to {{ event.end_datetime | fulldate }}</dd>
             <dt>Where</dt>
             <dd>Bangalore</dd>
             
