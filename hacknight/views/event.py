@@ -25,8 +25,8 @@ def event_view(profile, event):
 
     projects = Project.query.filter_by(event_id=event.id)
     participants = Participant.query.filter(
-        Participant.status != ParticipantStatus.OWNER,
-        Participant.status != ParticipantStatus.WITHDRAWN,
+        Participant.status != ParticipantStatus.OWNER).filter(
+        Participant.status != ParticipantStatus.WITHDRAWN).filter(
         Participant.event == event)
 
     acceptedP = [p for p in participants if p.status == ParticipantStatus.CONFIRMED]
