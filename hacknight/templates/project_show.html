@@ -64,12 +64,6 @@
       {% if project.user == g.user -%}
         <small>(that’s you! <a href="{{ url_for('editsession', name=event.name, slug=project.urlname) }}">Edit this</a>?)</small>
       {%- endif %}
-      <!--add logic to show one of the following status icons, in the beginning user sees "Join" -->
-      <img class="status" src="{{ url_for('static', filename='img/accepted.png') }}" alt="Registered" title="You're Registered"/>   
-      <img class="status" src="{{ url_for('static', filename='img/rejected.png') }}" alt="Not Accepted" title="Sorry, you've not been accepted"/>
-      <img class="status" src="{{ url_for('static', filename='img/pending.png') }}" alt="Requires Approval" title="Your registration requires approval"/>
-      <img class="status" src="{{ url_for('static', filename='img/withdrawn.png') }}" alt="Withdrawn" title="You've withdrawn your registration ">
-      <img class="status" src="{{ url_for('static', filename='img/waitlisted.png') }}" alt="Registered" title="You're waitlisted"/>
       <a id="join" class="btn btn-primary" href="{{ url_for('join', profile=profile.name, event=event.name, project=project.name) }}">Join this Team</a>
       <small id="member" class="hidden"> you're part of this team!</small>
     </div>
