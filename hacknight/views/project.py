@@ -48,7 +48,6 @@ def project_new(profile, event, form=None):
 		project_member = ProjectMember()
 		project_member.project_id = project.id
 		project_member.participant_id = Participant.get(user=g.user.id, event=event.id).id
-		print project_member.participant_id
 		db.session.add(project_member)
 		db.session.commit()
 		flash("Project saved")
