@@ -47,7 +47,8 @@ def project_new(profile, event, form=None):
 		db.session.commit()
 		project_member = ProjectMember()
 		project_member.project_id = project.id
-		project_member.participant_id = Participant.query.filter_by(user_id=g.user.id).first().id
+		project_member.participant_id = Participant.get(user=g.user.id, event=event.id).id
+		print project_member.participant_id
 		db.session.add(project_member)
 		db.session.commit()
 		flash("Project saved")

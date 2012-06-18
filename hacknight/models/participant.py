@@ -23,5 +23,12 @@ class Participant(BaseMixin, db.Model):
     status = db.Column(db.Integer, default=ParticipantStatus.PENDING, nullable=False)
     mentor = db.Column(db.Boolean, default=False, nullable=False)
 
+    @classmethod
+    def get(cls, user, event):
+        return cls.query.filter_by(user_id=user).filter_by(event_id=event).first()
+
+
+
+
 
 
