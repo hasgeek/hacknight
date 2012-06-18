@@ -3,7 +3,7 @@
 import flask.ext.wtf as wtf
 from baseframe.forms import Form, RichTextField, DateTimeField
 
-__all__ = ['EventForm']
+__all__ = ['EventForm', 'ConfirmWithdrawForm']
 
 
 class EventForm(Form):
@@ -19,11 +19,6 @@ class EventForm(Form):
     def validate_end_datetime(self, field):
         if field.data < self.start_datetime.data:
             raise wtf.ValidationError(u"Your event can’t end before it starts.")
-
-
-class EventManagerForm(Form):
-    def make_participants(self, participants):
-        participants = wtf.SelectMultipleField("Select participant to confirm", description="Select participant to confirm")
 
 
 class ConfirmWithdrawForm(wtf.Form):

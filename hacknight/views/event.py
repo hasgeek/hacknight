@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, abort, flash, url_for, g, request, Response
+from flask import render_template, abort, flash, url_for, g, request, Response, redirect
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app
@@ -9,7 +9,8 @@ from hacknight.models.event import Event, EventStatus
 from hacknight.models.participant import Participant, ParticipantStatus
 from hacknight.models.project import Project
 from hacknight.models.venue import Venue
-from hacknight.forms.event import EventForm, EventManagerForm, ConfirmWithdrawForm
+from hacknight.forms.event import EventForm, ConfirmWithdrawForm
+from hacknight.forms.userinfo import UserInfoForm
 from hacknight.views.login import lastuser
 import hacknight.views.workflow
 
@@ -158,26 +159,27 @@ def event_update_participant_status(profile, event):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_apply(profile, event):
+    values = {'profile': profile.name, 'event': event.name}
     user_id = g.user.id
-    participant = Participant.query.filter_by(event_id=event.id,user_id=user_id).first()
-    p = Participant()
+    #FIX ME add workflow to find userinfo is available
+    if not g.user.reason_to_join:
+        return render_redirect(url_for('userinfo_add', **values), code=303)
+    participant = Participant.query.filter_by(event_id=event.id, user_id=user_id).first()
     if not participant:
         total_participants = Participant.query.filter_by(event_id=event.id).count()
         participant = Participant()
-        participant.user_id=user_id
-        participant.event_id=event.id
-        participant.status=ParticipantStatus.PENDING if event.maximum_participants < total_participants else ParticipantStatus.WL
+        participant.user_id = user_id
+        participant.event_id = event.id
+        participant.status = ParticipantStatus.PENDING if event.maximum_participants < total_participants else ParticipantStatus.WL
         db.session.add(participant)
         db.session.commit()
         flash(u"Your request to participate is recorded, you will be notified by the event manager".format(g.user.fullname, event.title), "success")
-    elif participant.status==ParticipantStatus.WITHDRAWN:
-        participant.status=ParticipantStatus.PENDING
+    elif participant.status == ParticipantStatus.WITHDRAWN:
+        participant.status = ParticipantStatus.PENDING
         db.session.commit()
         flash(u"Your request to participate is recorded, you will be notified by the event manager".format(g.user.fullname, event.title), "success")
-
     else:
         flash(u"Your request is pending. ", "error")
-    values={'profile': profile.name, 'event': event.name}
     return render_redirect(url_for('event_view', **values), code=303)
 
 @app.route('/<profile>/<event>/withdraw', methods=['GET', 'POST'])
@@ -255,6 +257,7 @@ def event_cancel(profile, event):
     flash(u"You have cancelled event %s" % event.title, "success")
     return render_redirect(url_for('profile_view', profile=profile.name), code=303)
 
+
 @app.route('/<profile>/<event>/delete', methods=['GET', 'POST'])
 @lastuser.requires_login
 @load_models(
@@ -269,3 +272,45 @@ def event_delete(profile, event):
         success=u"You have deleted an event '%s'." % event.title,
          next=url_for('profile_view', profile=profile.name))
 
+
+@app.route('/<profile>/<event>/userinfo/new', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
+def userinfo_new(profile, event):
+    values = {'profile': profile.name, 'event': event.name}
+    if g.user.reason_to_join and g.user.phone_no:
+        flash(u"Your Info is already available. ", "success")
+        return render_redirect(url_for('event_view', **values), code=303)
+    else:
+        form = UserInfoForm()
+    user = g.user
+    form.email.data = user.userinfo['email'] or  u''
+    if form.validate_on_submit():
+        form.populate_obj(user)
+        db.session.add(user)
+        db.session.commit()
+        flash(u"User Info is saved.", "success")
+        return render_redirect(url_for('event_view', **values), code=303)
+    return render_form(form=form, title="New User Info", submit=u"Create",
+        cancel_url=url_for('profile_view', profile=profile.name), ajax=False)
+
+
+@app.route('/<profile>/<event>/userinfo/edit', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
+def userinfo_edit(profile, event):
+    values = {'profile': profile.name, 'event': event.name}
+    user = g.user
+    form = UserInfoForm(obj=user)
+    if form.validate_on_submit():
+        form.populate_obj(user)
+        db.session.add(user)
+        db.session.commit()
+        flash(u"User Info is saved.", "success")
+        return render_redirect(url_for('event_view', **values), code=303)
+    return render_form(form=form, title="New User Info", submit=u"Create",
+        cancel_url=url_for('profile_view', profile=profile.name), ajax=False)
