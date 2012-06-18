@@ -107,21 +107,22 @@ participant_status_labels = {
 def show_participant_status(status):
     return participant_status_labels[status]
 
+
 @app.route('/<profile>/<event>/manage', methods=['GET'])
 @lastuser.requires_login
 @load_models(
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_open(profile, event):
-    workflow = event.workflow()
-    if not workflow.can_open():
+    if  profile.userid not in g.user.user_organization_owned_ids():
         abort(403)
     participants = Participant.query.filter(
         Participant.status != ParticipantStatus.WITHDRAWN,
         Participant.status != ParticipantStatus.OWNER,
         Participant.event == event)
-    return render_template('manage_event.html', profile=profile, event=event, 
+    return render_template('manage_event.html', profile=profile, event=event,
         participants=participants, statuslabels=participant_status_labels)
+
 
 @app.route('/<profile>/<event>/manage/update', methods=['POST'])
 @lastuser.requires_login
@@ -129,9 +130,8 @@ def event_open(profile, event):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_update_participant_status(profile, event):
-    workflow = event.workflow()
-    if not workflow.can_open():
-        return Response("Forbidden", 403)
+    if  profile.userid not in g.user.user_organization_owned_ids():
+        abort(403)
     participantid = int(request.form['participantid'])
     status = int(request.form['status'])
     participant = Participant.query.get(participantid)
@@ -142,6 +142,7 @@ def event_update_participant_status(profile, event):
     participant.status = status
     db.session.commit()
     return "Done"
+
 
 @app.route('/<profile>/<event>/apply', methods=['GET', 'POST'])
 @lastuser.requires_login
