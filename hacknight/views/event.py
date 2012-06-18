@@ -8,10 +8,10 @@ from hacknight.models import db, Profile, User
 from hacknight.models.event import Event, EventStatus
 from hacknight.models.participant import Participant, ParticipantStatus
 from hacknight.models.project import Project
+from hacknight.models.venue import Venue
 from hacknight.forms.event import EventForm, EventManagerForm, ConfirmWithdrawForm
 from hacknight.views.login import lastuser
-import hacknight.views.workflow 
-import pytz
+import hacknight.views.workflow
 
 
 @app.route('/<profile>/<event>', methods=["GET"])
@@ -31,32 +31,36 @@ def event_view(profile, event):
 
     acceptedP = [p for p in participants if p.status == ParticipantStatus.CONFIRMED]
     restP = [p for p in participants if p.status != ParticipantStatus.CONFIRMED]
-    applied=0
-    owner =0
+    applied = 0
+    owner = 0
     for p in participants:
         if p.user == g.user:
-            applied=1
+            applied = 1
             break
     if g.user:
         user = User.query.filter_by(userid=g.user.userid).first()
         if user.profile == profile:
-            owner =1
+            owner = 1
 
-    return render_template('event.html', profile=profile, event=event, 
-        projects=projects, timezone=event.start_datetime.strftime("%Z"), 
+    return render_template('event.html', profile=profile, event=event,
+        projects=projects, venue=Venue.query.filter_by(id=event.venue_id).first(), timezone=event.start_datetime.strftime("%Z"),
         acceptedparticipants=acceptedP, restparticipants=restP, applied=applied, owner=owner)
+
 
 @app.route('/<profile>/new', methods=['GET', 'POST'])
 @lastuser.requires_login
 @load_model(Profile, {'name': 'profile'}, 'profile')
 def event_new(profile):
     form = EventForm()
+    #venues = Venue.query.filter(Venue.profile_id.in_([p.id for p in g.user.profiles])).all()
+    #venues hold list of venues created by organization members to list in drop down
+    form.venue_id.choices = [(venue.id, venue.name) for venue in Venue.query.all()]
     if form.validate_on_submit():
         event = Event()
         form.populate_obj(event)
         if Event.query.filter_by(name=event.name, profile=profile).first():
             flash("Event name %s already exists." % event.title, "fail")
-            return render_form(form=form, title="New Event", submit=u"Create", 
+            return render_form(form=form, title="New Event", submit=u"Create",
                 cancel_url=url_for('profile_view', profile=profile.name), ajax=False)
         event.make_name()
         event.profile_id = profile.id
@@ -67,10 +71,11 @@ def event_new(profile):
         db.session.add(participant)
         db.session.commit()
         flash(u"New event created", "success")
-        values={'profile': profile.name, 'event': event.name}
+        values = {'profile': profile.name, 'event': event.name}
         return render_redirect(url_for('event_view', **values), code=303)
     return render_form(form=form, title="New Event", submit=u"Create",
         cancel_url=url_for('profile_view', profile=profile.name), ajax=False)
+
 
 @app.route('/<profile>/<event>/edit', methods=['GET', 'POST'])
 @lastuser.requires_login
@@ -82,6 +87,9 @@ def event_edit(profile, event):
     if not workflow.can_edit():
         abort(403)
     form = EventForm(obj=event)
+    #venues = Venue.query.filter(Venue.profile_id.in_([p.id for p in g.user.profiles])).all()
+    #venues hold list of venues created by organization members to list in drop down
+    form.venue_id.choices = [(venue.id, venue.name) for venue in Venue.query.all()]
     if form.validate_on_submit():
         form.populate_obj(event)
         event.make_name()
@@ -190,7 +198,7 @@ def event_withdraw(profile, event):
                          2: workflow.withdraw_confirmed,
                          3: workflow.withdraw_rejected,
                          }
-        
+
         form = ConfirmWithdrawForm()
         if form.validate_on_submit():
             if 'delete' in request.form:
@@ -199,7 +207,7 @@ def event_withdraw(profile, event):
 
                 except KeyError:
                     pass
-      
+
             db.session.commit()
             flash(u"Your request to withdraw from {0} is recorded".format(event.title), "success")
             values={'profile': profile.name, 'event': event.name}

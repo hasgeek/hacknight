@@ -14,31 +14,39 @@
 {% block content %}
 <div id="main">
   <div class="section row">
-    <div class="eventhead span12">  
-      <h1> {{ event.title }}</h1>          
-      
+    <div class="eventhead span12">
+      <h1> {{ event.title }}</h1>
+
       <div class="section bar">
         <dl class="bar">
             <dt>When</dt>
             <dd>{{ event.start_datetime | fulldate }} to {{ event.end_datetime | fulldate }}</dd>
             <dt>Where</dt>
-            <dd>Bangalore</dd>
-            
+            <dd><a href="{{url_for('venue_view', venue=venue.name)}}"> {{ venue.name }}</a></dd>
+            <dt>Description</dt>
+            <dd>{{ venue.description | safe}}</dd>
+            <dt>Address 1</dt>
+            <dd>{{ venue.address1 | safe}}</dd>
+            {% if venue.address2 %}
+              <dd>Address 2 </dd>
+              <dt> {{ venue.address2}} </dt>
+            {% endif %}
+
             {% if event.ticket_price %}
             <dt>Entry Fee</dt>
             <dd>{{ event.ticket_price }} </dd>
             {% endif %}
-            
+
             {% if event.website %}
             <dt>Related Website</dt>
             <dd><a href="{{ event.website }}">{{ event.website }}</a> </dd>
             {% endif %}
         </dl>
       </div>
-    
+
       <div class="section useractions">
 	     <a href="{{ url_for('event_apply', profile=profile.name, event=event.name) }}" class="btn btn-primary" id="register">Register Now</a>
-	     
+
        <a href="{{ url_for('project_new', profile=profile.name, event=event.name) }}" class="btn btn-primary">Propose a Project</a>
        {% if owner %}
        <a href="{{ url_for('event_open', event=event.name, profile=profile.name) }}" class="btn btn-primary" id="adminactions">Manage</a><!--add conditions for visibility only to admin/creator  -->
@@ -52,10 +60,10 @@
 
   <div class="row">
     <div id="tabs" class="span12">
-     {% if projects.count() %}         
+     {% if projects.count() %}
               <h2>Project Proposals</h2>
               <table class="table proposals">
-                
+
                 <thead>
                   <th>#</th>
                   <th>Title</th>
@@ -77,7 +85,7 @@
 
                     <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.created_at.strftime("%a, %b %e") }}</a></td>
                   </tr>
-                  
+
                 {% endfor %}
                 </tbody>
               </table>

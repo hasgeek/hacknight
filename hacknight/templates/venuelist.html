@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block title %}All Hacknight Venues {% endblock %}
+
+{% block content %}
+{% for venue in venues %}
+  {{ venue.description|safe }}
+<h2>Address</h2>
+<p>
+  {{ venue.address1 }}<br>
+  {% if venue.address2 %}{{ venue.address2 }}<br>{% endif %}
+  {{ venue.city }}, {{ venue.state }}, {{ venue.country }}
+</p>
+{% endfor %}
+{% endblock %}
