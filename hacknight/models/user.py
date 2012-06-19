@@ -10,11 +10,10 @@ __all__ = ['User']
 
 class User(UserBase, db.Model):
     __tablename__ = 'user'
-    email = db.Column(db.Unicode(80), default=u'', nullable=False)
-    reason_to_join = db.Column(db.UnicodeText, default=u'', nullable=False)
-    phone_no = db.Column(db.Unicode(15), default=u'', nullable=False)
-    job_title = db.Column(db.Unicode(120), default=u'', nullable=False)
-    company = db.Column(db.Unicode(1200), default=u'', nullable=False)
+    email = db.Column(db.Unicode(80), default=u'', nullable=True)
+    phone_no = db.Column(db.Unicode(15), default=u'', nullable=True)
+    job_title = db.Column(db.Unicode(120), default=u'', nullable=True)
+    company = db.Column(db.Unicode(1200), default=u'', nullable=True)
 
     @property
     def profile_url(self):
