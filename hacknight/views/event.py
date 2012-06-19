@@ -39,12 +39,13 @@ def event_view(profile, event):
             break
     if g.user:
         user = User.query.filter_by(userid=g.user.userid).first()
+        current_participant = Participant.query.filter_by(user=user).first()
         if user.profile == profile:
             owner = 1
 
     return render_template('event.html', profile=profile, event=event,
         projects=projects, venue=Venue.query.filter_by(id=event.venue_id).first(), timezone=event.start_datetime.strftime("%Z"),
-        acceptedparticipants=acceptedP, restparticipants=restP, applied=applied, owner=owner)
+        acceptedparticipants=acceptedP, restparticipants=restP, applied=applied, owner=owner, current_participant = current_participant)
 
 
 @app.route('/<profile>/new', methods=['GET', 'POST'])

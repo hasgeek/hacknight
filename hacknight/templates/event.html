@@ -48,11 +48,36 @@
 	     <a href="{{ url_for('event_apply', profile=profile.name, event=event.name) }}" class="btn btn-primary" id="register">Register Now</a>
 
        <a href="{{ url_for('project_new', profile=profile.name, event=event.name) }}" class="btn btn-primary">Propose a Project</a>
+
        {% if owner %}
-       <a href="{{ url_for('event_open', event=event.name, profile=profile.name) }}" class="btn btn-primary" id="adminactions">Manage</a><!--add conditions for visibility only to admin/creator  -->
+       <a href="{{ url_for('event_open', event=event.name, profile=profile.name) }}" class="btn btn-primary" id="adminactions">Manage</a>
+       
+       <a href="{{ url_for('event_edit', event=event.name, profile=profile.name) }}" class="btn btn-primary" id="adminactions">Edit</a>
+
+       <a href="{{ url_for('event_delete', event=event.name, profile=profile.name) }}" class="btn btn-danger" id="adminactions">Delete</a>
        {% endif %}
        <a class="btn btn-danger hidden" href="{{ url_for('event_withdraw', profile=profile.name, event=event.name) }}"  id="withdraw">Withdraw Registration</a>
       </div>
+
+    {%if current_participant %}
+    <div class="section userstatus">
+      {% if current_participant.status == 0 %}
+        <span class="label">Pending</span>
+        {% endif %}
+      {% if current_participant.status == 2 %}
+        <span class="label label-success">Confirmed</span>
+        {% endif %}
+      {% if current_participant.status == 1 %}
+    <span class="label label-warning">Wait listed</span>
+    {% endif %}
+      {% if current_participant.status == 3 %}
+    <span class="label label-important">Rejected</span>
+    {% endif %}
+      {% if current_participant.status == 4 %}
+    <span class="label label-inverse">Withdrawn</span>
+    {% endif %}
+    {% endif %}
+    </div>
 
       <p> {{ event.description|safe }} </p>
     </div>
