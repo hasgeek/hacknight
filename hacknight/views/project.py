@@ -20,6 +20,11 @@ markdown = Markdown(safe_mode="escape").convert
     (Profile, {'name':'profile'}, 'profile'))
 @lastuser.requires_login
 def project_new(profile, event, form=None):
+    participant = Participant.get(user=g.user.id, event=event.id)
+    if participant == None:
+        abort(403)
+    if participant.status != ParticipantStatus.CONFIRMED:
+        abort(403)
     if request.method=="GET":
         if form == None:
             form = ProjectForm()
@@ -49,7 +54,7 @@ def project_new(profile, event, form=None):
         db.session.commit()
         project_member = ProjectMember()
         project_member.project_id = project.id
-        project_member.participant_id = Participant.get(user=g.user, event=event).id
+        project_member.participant_id = participant.id
         db.session.add(project_member)
         db.session.commit()
         flash("Project saved")
