@@ -33,6 +33,7 @@ def event_view(profile, event):
     restP = [p for p in participants if p.status != ParticipantStatus.CONFIRMED]
     applied = 0
     owner = 0
+    current_participant = None
     for p in participants:
         if p.user == g.user:
             applied = 1
@@ -43,9 +44,9 @@ def event_view(profile, event):
         if user.profile == profile:
             owner = 1
 
-    return render_template('event.html', profile=profile, event=event,
-        projects=projects, venue=Venue.query.filter_by(id=event.venue_id).first(), timezone=event.start_datetime.strftime("%Z"),
-        acceptedparticipants=acceptedP, restparticipants=restP, applied=applied, owner=owner, current_participant = current_participant)
+    return render_template('event.html', profile = profile, event = event,
+        projects = projects, venue = Venue.query.filter_by(id = event.venue_id).first(), timezone = event.start_datetime.strftime("%Z"),
+        acceptedparticipants = acceptedP, restparticipants = restP, applied = applied, owner = owner, current_participant = current_participant)
 
 
 @app.route('/<profile>/new', methods=['GET', 'POST'])
