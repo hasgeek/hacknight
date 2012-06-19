@@ -15,28 +15,22 @@ from markdown import Markdown
 
 markdown = Markdown(safe_mode="escape").convert
 
-
 @app.route('/<profile>/<event>/new', methods=['GET', 'POST'])
 @load_models((Event, {'name': 'event'}, 'event'),
-    (Profile, {'name': 'profile'}, 'profile'))
+    (Profile, {'name':'profile'}, 'profile'))
 @lastuser.requires_login
 def project_new(profile, event, form=None):
-    participant = Participant.get(user=g.user.id, event=event.id)
-    if participant == None:
-        abort(403)
-    if participant.status != ParticipantStatus.CONFIRMED:
-        abort(403)
-    if request.method == "GET":
+    if request.method=="GET":
         if form == None:
             form = ProjectForm()
             return render_form(form=form, title=u"New Project", submit=u"Save",
         cancel_url=url_for('index'), ajax=False)
-
-    if request.method == "POST":
+    
+    if request.method=="POST":
         form = ProjectForm()
         project = Project()
         votespace = VoteSpace()
-        votespace.type = 0
+        votespace.type= 0
         commentspace = CommentSpace()
         db.session.add(commentspace)
         db.session.add(votespace)
@@ -55,12 +49,11 @@ def project_new(profile, event, form=None):
         db.session.commit()
         project_member = ProjectMember()
         project_member.project_id = project.id
-        project_member.participant_id = participant.id
+        project_member.participant_id = Participant.get(user=g.user.id, event=event.id).id
         db.session.add(project_member)
         db.session.commit()
         flash("Project saved")
-        return render_redirect(url_for('project_show', profile=profile.name,
-            project=project.url_name, event=event.name))
+        return render_redirect(url_for('project_show', profile=profile.name,project=project.url_forname,event=event.name))
 
 
 @app.route('/<profile>/<event>/projects/<project>/edit', methods=['GET', 'POST'])
@@ -163,7 +156,6 @@ def project_show(profile,project,event):
     commentform = CommentForm()
     delcommentform = DeleteCommentForm()
     if request.method == 'POST':
-        print "here"
         if request.form.get('form.id') == 'newcomment' and commentform.validate():
             if commentform.edit_id.data:
                 comment = Comment.query.get(int(commentform.edit_id.data))
