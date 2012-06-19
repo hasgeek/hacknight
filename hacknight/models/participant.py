@@ -38,7 +38,7 @@ class Participant(BaseMixin, db.Model):
 
     @classmethod
     def get(cls, user, event):
-        return cls.query.filter_by(user_id=user).filter_by(event_id=event).first()
+        return cls.query.filter_by(user=user).filter_by(event=event).first()
 
 
 

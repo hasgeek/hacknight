@@ -40,7 +40,7 @@ def event_view(profile, event):
             break
     if g.user:
         user = User.query.filter_by(userid=g.user.userid).first()
-        current_participant = Participant.query.filter_by(user=user).first()
+        current_participant = Participant.get(user=g.user, event=event)
         if user.profile == profile:
             owner = 1
 
