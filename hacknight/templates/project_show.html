@@ -9,19 +9,19 @@
 <div class="breadcrumbs">
   <a href="{{ url_for('event_view', profile=profile.name, event=event.name) }}">&larr; Return to {{ event.title }}</a>
   {% if g.user in project.users %}| <a href="{{ url_for('project_remove', profile=profile.name,
-  event=event.name, project=project.name) }}">Delete this </a> | <a href="{{ url_for('project_edit', profile=profile.name, event=event.name, project=project.name) }}">Edit this &rarr;</a>{% endif %}
+  event=event.name, project=project.url_name) }}">Delete this </a> | <a href="{{ url_for('project_edit', profile=profile.name, event=event.name, project=project.url_name) }}">Edit this &rarr;</a>{% endif %}
 </div>
 <div class="infosheet">
   <div class="leftear">
     {%- if project.getprev() -%}
-      <a href="{{ url_for('prevsession', profile=profile.name, event=event.name, project=project.name) }}" title="Previous">&lt;</a>
+      <a href="{{ url_for('prevsession', profile=profile.name, event=event.name, project=project.url_name) }}" title="Previous">&lt;</a>
     {%- else -%}
       <span>&lt;</span>
     {%- endif -%}
   </div>
   <div class="rightear">
     {%- if project.getnext() -%}
-      <a href="{{ url_for('nextsession', profile=profile.name, event=event.name, project=project.name) }}" title="Next">&gt;</a>
+      <a href="{{ url_for('nextsession', profile=profile.name, event=event.name, project=project.url_name) }}" title="Next">&gt;</a>
     {%- else -%}
       <span>&gt;</span>
     {%- endif -%}
@@ -33,14 +33,14 @@
       <div class="choices">
 
         {%- if not vote %}
-          <a class="votechoice" title="Vote up" href="{{ url_for('voteupsession', profile=profile.name, event=event.name, project=project.name) }}">+1</a>
-          <a class="votechoice" title="Vote down" href="{{ url_for('votedownsession', profile=profile.name, event=event.name, project=project.name) }}">-1</a>
+          <a class="votechoice" title="Vote up" href="{{ url_for('voteupsession', profile=profile.name, event=event.name, project=project.url_name) }}">+1</a>
+          <a class="votechoice" title="Vote down" href="{{ url_for('votedownsession', profile=profile.name, event=event.name, project=project.url_name) }}">-1</a>
         {%- elif vote.votedown %}
-          <a class="votechoice" title="Vote up" href="{{ url_for('voteupsession', profile=profile.name, event=event.name, project=project.name) }}">+1</a>
-          <a class="votechoice selected" title="Withdraw vote" href="{{ url_for('votecancelsession', profile=profile.name, event=event.name, project=project.name) }}">-1</a>
+          <a class="votechoice" title="Vote up" href="{{ url_for('voteupsession', profile=profile.name, event=event.name, project=project.url_name) }}">+1</a>
+          <a class="votechoice selected" title="Withdraw vote" href="{{ url_for('votecancelsession', profile=profile.name, event=event.name, project=project.url_name) }}">-1</a>
         {%- else %}
-          <a class="votechoice selected" title="Withdraw vote" href="{{ url_for('votecancelsession', profile=profile.name, event=event.name, project=project.name) }}">+1</a>
-          <a class="votechoice" title="Vote down" href="{{ url_for('votedownsession', profile=profile.name, event=event.name, project=project.name) }}">-1</a>
+          <a class="votechoice selected" title="Withdraw vote" href="{{ url_for('votecancelsession', profile=profile.name, event=event.name, project=project.url_name) }}">+1</a>
+          <a class="votechoice" title="Vote down" href="{{ url_for('votedownsession', profile=profile.name, event=event.name, project=project.url_name) }}">-1</a>
         {% endif %}
         <span class="indicator">&rarr;</span>
         <span class="score">
@@ -62,9 +62,9 @@
         (proposing) |
       {%- endif %}
       {% if project.user == g.user -%}
-        <small>(that’s you! <a href="{{ url_for('editsession', name=event.name, slug=project.urlname) }}">Edit this</a>?)</small>
+        <small>(that’s you! <a href="{{ url_for('editsession', name=event.name, slug=project.url_name) }}">Edit this</a>?)</small>
       {%- endif %}
-      <a id="join" class="btn btn-primary" href="{{ url_for('join', profile=profile.name, event=event.name, project=project.name) }}">Join this Team</a>
+      <a id="join" class="btn btn-primary" href="{{ url_for('join', profile=profile.name, event=event.name, project=project.url_name) }}">Join this Team</a>
       <small id="member" class="hidden"> you're part of this team!</small>
     </div>
 

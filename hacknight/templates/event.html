@@ -76,14 +76,14 @@
                 {% for p in projects %}
                 <tbody>
                   <tr>
-                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.id }}</a></td>
-                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}"	><strong>{{ p.title }}</strong></a></td>
-                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.members.filter_by(status=0).first().participant.user.fullname }}</a></td>
-                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.votes.count }}</a></td>
-                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.comments.count }}</a></td>
-                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.members.count() }}</a></td>
+                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.id }}</a></td>
+                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.url_name,event=event.name) }}"	><strong>{{ p.title }}</strong></a></td>
+                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.members.filter_by(status=0).first().participant.user.fullname }}</a></td>
+                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.votes.count }}</a></td>
+                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.comments.count }}</a></td>
+                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.members.count() }}</a></td>
 
-                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.name,event=event.name) }}">{{ p.created_at.strftime("%a, %b %e") }}</a></td>
+                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.created_at.strftime("%a, %b %e") }}</a></td>
                   </tr>
 
                 {% endfor %}

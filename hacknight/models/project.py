@@ -12,7 +12,7 @@ __all__ = ['Project', 'ProjectMember']
 class Project(BaseScopedIdNameMixin, db.Model):
     __tablename__ = 'project'
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
-    event = db.relationship(Event,
+    event = db.relation(Event,
         backref=db.backref('projects', cascade='all, delete-orphan'))
     parent = db.synonym('event')
     description = db.Column(db.UnicodeText, nullable=False)
@@ -28,15 +28,11 @@ class Project(BaseScopedIdNameMixin, db.Model):
     comments_id = db.Column(db.Integer, db.ForeignKey('commentspace.id'), nullable=False)
     comments = db.relationship(CommentSpace, uselist=False)
 
-    __table_args__ = (db.UniqueConstraint('name', 'event_id'),)
+    __table_args__ = (db.UniqueConstraint('url_id', 'event_id'),)
 
     @property
     def users(self):
         return [m.participant.user for m in self.members]
-
-    @property
-    def urlname(self):
-        return '%s-%s' % (self.id, self.name)
 
     def getnext(self):
         return Project.query.filter(Project.event == self.event).filter(
