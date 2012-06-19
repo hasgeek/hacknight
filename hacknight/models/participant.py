@@ -12,7 +12,7 @@ class ParticipantStatus:
     CONFIRMED = 2
     REJECTED = 3
     WITHDRAWN = 4
-    OWNER = 5
+
 
 class Participant(BaseMixin, db.Model):
     __tablename__ = 'participant'

@@ -26,8 +26,7 @@ def event_view(profile, event):
 
     projects = Project.query.filter_by(event_id=event.id)
     participants = Participant.query.filter(
-        Participant.status != ParticipantStatus.OWNER).filter(
-        Participant.status != ParticipantStatus.WITHDRAWN).filter(
+        Participant.status != ParticipantStatus.WITHDRAWN,
         Participant.event == event)
 
     acceptedP = [p for p in participants if p.status == ParticipantStatus.CONFIRMED]
@@ -68,7 +67,7 @@ def event_new(profile):
         db.session.add(event)
         db.session.commit()
 
-        participant = Participant(user_id=g.user.id, event_id=event.id, status=ParticipantStatus.OWNER)
+        participant = Participant(user_id=g.user.id, event_id=event.id, status=ParticipantStatus.CONFIRMED)
         db.session.add(participant)
         db.session.commit()
         flash(u"New event created", "success")
@@ -108,8 +107,7 @@ participant_status_labels = {
     ParticipantStatus.WL: "Waiting List",
     ParticipantStatus.CONFIRMED: "Confirmed",
     ParticipantStatus.REJECTED: "Rejected",
-    ParticipantStatus.WITHDRAWN: "Withdrawn",
-    ParticipantStatus.OWNER: "Owner"
+    ParticipantStatus.WITHDRAWN: "Withdrawn"
 }
 
 @app.template_filter('show_participant_status')
@@ -127,7 +125,6 @@ def event_open(profile, event):
         abort(403)
     participants = Participant.query.filter(
         Participant.status != ParticipantStatus.WITHDRAWN,
-        Participant.status != ParticipantStatus.OWNER,
         Participant.event == event)
     return render_template('manage_event.html', profile=profile, event=event,
         participants=participants, statuslabels=participant_status_labels)
