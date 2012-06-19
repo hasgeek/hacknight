@@ -20,7 +20,7 @@ markdown = Markdown(safe_mode="escape").convert
     (Profile, {'name':'profile'}, 'profile'))
 @lastuser.requires_login
 def project_new(profile, event, form=None):
-    participant = Participant.get(user=g.user.id, event=event.id)
+    participant = Participant.get(user=g.user, event=event)
     if participant == None:
         abort(403)
     if participant.status != ParticipantStatus.CONFIRMED:
