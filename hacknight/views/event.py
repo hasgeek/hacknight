@@ -140,12 +140,14 @@ def event_open(profile, event):
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_update_participant_status(profile, event):
     if  profile.userid not in g.user.user_organization_owned_ids():
-        abort(403)
+        return Response("Forbidden", 403)
     participantid = int(request.form['participantid'])
     status = int(request.form['status'])
     participant = Participant.query.get(participantid)
 
     if(participant.event != event):
+        return Response("Forbidden", 403)
+    if(participant.status == ParticipantStatus.WITHDRAWN):
         return Response("Forbidden", 403)
 
     participant.status = status

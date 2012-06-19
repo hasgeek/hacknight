@@ -22,6 +22,19 @@ class Participant(BaseMixin, db.Model):
     event = db.relationship(Event, backref=db.backref('participants', cascade='all, delete-orphan'))
     status = db.Column(db.Integer, default=ParticipantStatus.PENDING, nullable=False)
     mentor = db.Column(db.Boolean, default=False, nullable=False)
+    reason_to_join = db.Column(db.UnicodeText, default=u'', nullable=False)
+    email = db.Column(db.Unicode(80), default=u'', nullable=False)
+    phone_no = db.Column(db.Unicode(15), default=u'', nullable=False)
+    job_title = db.Column(db.Unicode(120), default=u'', nullable=False)
+    company = db.Column(db.Unicode(1200), default=u'', nullable=False)
+
+
+    def save_defaults(self):
+        user = self.user
+        user.email = self.email
+        user.phone_no = self.phone_no
+        user.job_title = self.job_title
+        user.company = self.company
 
     @classmethod
     def get(cls, user, event):
