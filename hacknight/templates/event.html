@@ -1,22 +1,9 @@
 
-{% macro participant_list(participants, status=None) %}
+{% macro participant_list(participants) %}
   <ul>
     {% for participant in participants %}
   <li>
        <a href="{{ url_for('profile_view', profile=participant.user.profile.name) }}">  {{ participant.user.fullname }}</a>
-        {% if status == 0 %}
-            <span class="label">Pending</span>
-        {% elif status == 2 %}
-            <span class="label label-success">Confirmed</span>
-        {% elif status == 1 %}
-            <span class="label label-warning">Wait listed</span>
-        {% elif status == 3 %}
-            <span class="label label-important">Rejected</span>
-        {% elif status == 4 %}
-            <span class="label label-inverse">Withdrawn</span>
-        {% else %}
-            <span class="label"></span>
-        {% endif %}
   </li>
       {% endfor %}
   </ul>
@@ -140,8 +127,8 @@
   <div class="section row">
     <div class="span12">
       <h2>Registered Participants</h2>
-      {{ participant_list(acceptedparticipants, 2) }}
-      {{ participant_list(restparticipants, 0) }}
+      {{ participant_list(acceptedparticipants) }}
+      {{ participant_list(restparticipants) }}
     </div>
   </div>
 
