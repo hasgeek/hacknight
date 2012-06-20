@@ -9,7 +9,7 @@ __all__ = ['EventForm', 'ConfirmWithdrawForm']
 class EventForm(Form):
     title = wtf.TextField("Title", description="Name of the Event", validators=[wtf.Required(), wtf.NoneOf(values=["New"])])
     description = RichTextField("Description", description="Description of the project")
-    venue_id = wtf.SelectField("venue", description="Select the venue, don't forget to create a one in venue/new", coerce=int, validators=[wtf.Required()])
+    venue_id = wtf.SelectField("Venue", description="Select the venue, don't forget to create a one in venue/new", coerce=int, validators=[wtf.Required()])
     start_datetime = DateTimeField("Start Date and Time", description="Hacknight Start DateTime", validators=[wtf.Required()])
     end_datetime = DateTimeField("End Date and Time", description="Hacknight End DateTime", validators=[wtf.Required()])
     ticket_price = wtf.TextField("Ticket Price", description="Entry fee, if any, to be paid at the venue.")

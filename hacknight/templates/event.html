@@ -23,27 +23,50 @@
             <dd>{{ event.start_datetime | fulldate }} to {{ event.end_datetime | fulldate }}</dd>
             <dt>Where</dt>
             <dd><a href="{{url_for('venue_view', venue=venue.name)}}"> {{ venue.name }}</a></dd>
-            <dt>Description</dt>
-            <dd>{{ venue.description | safe}}</dd>
-            <dt>Address 1</dt>
-            <dd>{{ venue.address1 | safe}}</dd>
+            <dt>Address</dt>
+            <dd>{{ venue.address1 | safe}}
             {% if venue.address2 %}
-              <dd>Address 2 </dd>
-              <dt> {{ venue.address2}} </dt>
+              {{ venue.address2}}
             {% endif %}
-
-            {% if event.ticket_price %}
-            <dt>Entry Fee</dt>
-            <dd>{{ event.ticket_price }} </dd>
-            {% endif %}
-
-            {% if event.website %}
-            <dt>Related Website</dt>
-            <dd><a href="{{ event.website }}">{{ event.website }}</a> </dd>
-            {% endif %}
+            </dd>
         </dl>
+        {% if event.ticket_price %}
+        <dl class="bar">
+          <dt>Entry Fee</dt>
+          <dd>{{ event.ticket_price }} </dd>
+        </dl>
+        {% endif %}
+        
+        {% if event.website %}
+        <dl class="bar">
+          <dt>Related Website</dt>
+          <dd><a href="{{ event.website }}">{{ event.website }}</a> </dd>
+        </dl>
+        {% endif %}
       </div>
 
+      {%if current_participant %}
+      <div class="section userstatus">
+        <p>Your registration is </p> 
+          {% if current_participant.status == 0 %}
+            <span class="label">Pending</span>
+          {% endif %}
+          {% if current_participant.status == 2 %}
+            <span class="label label-success">Confirmed</span>
+          {% endif %}
+          {% if current_participant.status == 1 %}
+            <span class="label label-warning">Wait listed</span>
+          {% endif %}
+          {% if current_participant.status == 3 %}
+            <span class="label label-important">Rejected</span>
+          {% endif %}
+          {% if current_participant.status == 4 %}
+            <span class="label label-inverse">Withdrawn</span>
+          {% endif %}
+        
+      </div>
+    {% endif %}
+    
       <div class="section useractions">
 	     <a href="{{ url_for('event_apply', profile=profile.name, event=event.name) }}" class="btn btn-primary" id="register">Register Now</a>
 
@@ -59,26 +82,7 @@
        <a class="btn btn-danger hidden" href="{{ url_for('event_withdraw', profile=profile.name, event=event.name) }}"  id="withdraw">Withdraw Registration</a>
       </div>
 
-    {%if current_participant %}
-    <div class="section userstatus">
-      {% if current_participant.status == 0 %}
-        <span class="label">Pending</span>
-        {% endif %}
-      {% if current_participant.status == 2 %}
-        <span class="label label-success">Confirmed</span>
-        {% endif %}
-      {% if current_participant.status == 1 %}
-    <span class="label label-warning">Wait listed</span>
-    {% endif %}
-      {% if current_participant.status == 3 %}
-    <span class="label label-important">Rejected</span>
-    {% endif %}
-      {% if current_participant.status == 4 %}
-    <span class="label label-inverse">Withdrawn</span>
-    {% endif %}
-    {% endif %}
-    </div>
-
+    
       <p> {{ event.description|safe }} </p>
     </div>
   </div>
