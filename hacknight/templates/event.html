@@ -1,9 +1,22 @@
 
-{% macro participant_list(participants) %}
+{% macro participant_list(participants, status=None) %}
   <ul>
     {% for participant in participants %}
   <li>
        <a href="{{ url_for('profile_view', profile=participant.user.profile.name) }}">  {{ participant.user.fullname }}</a>
+        {% if status == 0 %}
+            <span class="label">Pending</span>
+        {% elif status == 2 %}
+            <span class="label label-success">Confirmed</span>
+        {% elif status == 1 %}
+            <span class="label label-warning">Wait listed</span>
+        {% elif status == 3 %}
+            <span class="label label-important">Rejected</span>
+        {% elif status == 4 %}
+            <span class="label label-inverse">Withdrawn</span>
+        {% else %}
+            <span class="label"></span>
+        {% endif %}
   </li>
       {% endfor %}
   </ul>
@@ -36,7 +49,7 @@
           <dd>{{ event.ticket_price }} </dd>
         </dl>
         {% endif %}
-        
+
         {% if event.website %}
         <dl class="bar">
           <dt>Related Website</dt>
@@ -47,7 +60,7 @@
 
       {%if current_participant %}
       <div class="section userstatus">
-        <p>Your registration is </p> 
+        <p>Your registration is </p>
           {% if current_participant.status == 0 %}
             <span class="label">Pending</span>
           {% endif %}
@@ -63,10 +76,10 @@
           {% if current_participant.status == 4 %}
             <span class="label label-inverse">Withdrawn</span>
           {% endif %}
-        
+
       </div>
     {% endif %}
-    
+
       <div class="section useractions">
 	     <a href="{{ url_for('event_apply', profile=profile.name, event=event.name) }}" class="btn btn-primary" id="register">Register Now</a>
 
@@ -74,7 +87,7 @@
 
        {% if owner %}
        <a href="{{ url_for('event_open', event=event.name, profile=profile.name) }}" class="btn btn-primary" id="adminactions">Manage</a>
-       
+
        <a href="{{ url_for('event_edit', event=event.name, profile=profile.name) }}" class="btn btn-primary" id="adminactions">Edit</a>
 
        <a href="{{ url_for('event_delete', event=event.name, profile=profile.name) }}" class="btn btn-danger" id="adminactions">Delete</a>
@@ -82,7 +95,7 @@
        <a class="btn btn-danger hidden" href="{{ url_for('event_withdraw', profile=profile.name, event=event.name) }}"  id="withdraw">Withdraw Registration</a>
       </div>
 
-    
+
       <p> {{ event.description|safe }} </p>
     </div>
   </div>
@@ -127,8 +140,8 @@
   <div class="section row">
     <div class="span12">
       <h2>Registered Participants</h2>
-      {{ participant_list(acceptedparticipants) }}
-      {{ participant_list(restparticipants) }}
+      {{ participant_list(acceptedparticipants, 2) }}
+      {{ participant_list(restparticipants, 0) }}
     </div>
   </div>
 

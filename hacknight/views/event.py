@@ -53,6 +53,8 @@ def event_view(profile, event):
 @lastuser.requires_login
 @load_model(Profile, {'name': 'profile'}, 'profile')
 def event_new(profile):
+    if profile.userid not in g.user.user_organization_owned_ids():
+        abort(403)
     form = EventForm()
     #venues = Venue.query.filter(Venue.profile_id.in_([p.id for p in g.user.profiles])).all()
     #venues hold list of venues created by organization members to list in drop down
