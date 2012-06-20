@@ -58,7 +58,7 @@ def project_new(profile, event, form=None):
         db.session.add(project_member)
         db.session.commit()
         flash("Project saved")
-        return render_redirect(url_for('project_show', profile=profile.name,project=project.url_forname,event=event.name))
+        return render_redirect(url_for('project_show', profile=profile.name,project=project.url_name,event=event.name))
 
 
 @app.route('/<profile>/<event>/projects/<project>/edit', methods=['GET', 'POST'])
