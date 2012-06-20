@@ -30,7 +30,7 @@ def project_new(profile, event, form=None):
             form = ProjectForm()
             return render_form(form=form, title=u"New Project", submit=u"Save",
         cancel_url=url_for('index'), ajax=False)
-    
+
     if request.method=="POST":
         form = ProjectForm()
         project = Project()
@@ -142,7 +142,7 @@ def project_show(profile,project,event):
             participant = Participant.query.filter_by(user_id=user.id, event_id=event.id).first()
         if participant:
             project_member = ProjectMember.query.filter_by(project_id=project.id, participant_id=participant.id).first()
-            if project_member: 
+            if project_member:
                 member =1
     # Fix the join query below and replace the cascaded if conditions.
     # if g.user:
