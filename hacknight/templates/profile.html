@@ -4,12 +4,12 @@
 {% block content %}
 <div class="row">
   <div class="span12 section">
-	<h1> {{ profile.title }}</h1> 
+	<h1> {{ profile.title }}</h1>
         <div class="useractions row span12">
-	  <a href="{{ url_for('event_new', profile=profile.name) }}" class="btn btn-primary" id="create">Create a new Hacknight</a>
+	  <!--<a href="{{ url_for('event_new', profile=profile.name) }}" class="btn btn-primary" id="create">Create a new Hacknight</a>-->
 	</div>
 	<p>{{ profile.description|safe }}<p>
-  </div> 
+  </div>
 </div>
 <div class="row">
   <div class="section span12">
