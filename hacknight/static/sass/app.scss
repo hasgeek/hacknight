@@ -2,8 +2,8 @@
 
 body {
 	background-color: #203838;
-	background-image: image-url('concrete_wall.png');
-	color: #ccc;
+	background-image: image-url('stucco.png');
+	color: #000;
 }
 
 .jumbotron {
@@ -25,7 +25,7 @@ footer .footer-inner {
 }
 
 label {
- color: #EEEEEE;
+ //color: #EEEEEE;
  display: inline-block;
 }
 
@@ -34,7 +34,7 @@ ul#status {
 }
 
 .form-actions {
-  background-color: #333333;
+  //background-color: #333333;
 }
 
 input#status-1, input#status-0 {

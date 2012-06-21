@@ -1,7 +1,7 @@
 body {
   background-color: #203838;
-  background-image: url('../img/concrete_wall.png?1339132595');
-  color: #ccc;
+  background-image: url('../img/stucco.png?1333532496');
+  color: #000;
 }
 
 .jumbotron {
@@ -23,16 +23,11 @@ footer .footer-inner {
 }
 
 label {
-  color: #EEEEEE;
   display: inline-block;
 }
 
 ul#status {
   list-style: none;
-}
-
-.form-actions {
-  background-color: #333333;
 }
 
 input#status-1, input#status-0 {
