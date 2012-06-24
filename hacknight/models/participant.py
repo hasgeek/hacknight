@@ -28,10 +28,8 @@ class Participant(BaseMixin, db.Model):
     job_title = db.Column(db.Unicode(120), default=u'', nullable=False)
     company = db.Column(db.Unicode(1200), default=u'', nullable=False)
 
-
     def save_defaults(self):
         user = self.user
-        user.email = self.email
         user.phone_no = self.phone_no
         user.job_title = self.job_title
         user.company = self.company
@@ -39,9 +37,3 @@ class Participant(BaseMixin, db.Model):
     @classmethod
     def get(cls, user, event):
         return cls.query.filter_by(user=user).filter_by(event=event).first()
-
-
-
-
-
-
