@@ -72,7 +72,7 @@
 
        <a href="{{ url_for('project_new', profile=profile.name, event=event.name) }}" class="btn btn-primary">Propose a Project</a>
 
-       {% if owner %}
+       {% if user_is_owner %}
        <a href="{{ url_for('event_open', event=event.name, profile=profile.name) }}" class="btn btn-primary" id="adminactions">Manage</a>
 
        <a href="{{ url_for('event_edit', event=event.name, profile=profile.name) }}" class="btn btn-primary" id="adminactions">Edit</a>

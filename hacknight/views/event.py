@@ -32,21 +32,15 @@ def event_view(profile, event):
     acceptedP = [p for p in participants if p.status == ParticipantStatus.CONFIRMED]
     restP = [p for p in participants if p.status != ParticipantStatus.CONFIRMED]
     applied = 0
-    owner = 0
-    current_participant = None
     for p in participants:
         if p.user == g.user:
             applied = 1
             break
-    if g.user:
-        user = User.query.filter_by(userid=g.user.userid).first()
-        current_participant = Participant.get(user=g.user, event=event)
-        if user.profile == profile:
-            owner = 1
-
-    return render_template('event.html', profile = profile, event = event,
-        projects = projects, venue = Venue.query.filter_by(id = event.venue_id).first(), timezone = event.start_datetime.strftime("%Z"),
-        acceptedparticipants = acceptedP, restparticipants = restP, applied = applied, owner = owner, current_participant = current_participant)
+    current_participant = Participant.get(user=g.user, event=event) if g.user else None
+    user_is_owner = g.user is not None and event.owner_is(g.user)
+    return render_template('event.html', profile=profile, event=event,
+        projects=projects, venue=Venue.query.filter_by(id=event.venue_id).first(), timezone=event.start_datetime.strftime("%Z"),
+        acceptedparticipants=acceptedP, restparticipants=restP, applied=applied, user_is_owner=user_is_owner, current_participant=current_participant)
 
 
 @app.route('/<profile>/new', methods=['GET', 'POST'])
