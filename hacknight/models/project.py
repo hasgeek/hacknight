@@ -31,8 +31,12 @@ class Project(BaseScopedIdNameMixin, db.Model):
     __table_args__ = (db.UniqueConstraint('url_id', 'event_id'),)
 
     @property
+    def participants(self):
+        return (m.participant for m in self.members)
+
+    @property
     def users(self):
-        return [m.participant.user for m in self.members]
+        return (m.participant.user for m in self.members)
 
     def getnext(self):
         return Project.query.filter(Project.event == self.event).filter(

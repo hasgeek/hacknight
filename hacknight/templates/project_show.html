@@ -88,11 +88,11 @@
   
   <div class="section">
       <h2>Accepted Team Members</h2>
-      <p>
+      <ul>
         {% for participant in project.participants %}
-              {{ participant.user.fullname }}
-          {% endfor %}
-      </p>
+          <li>{{ participant.user.fullname }}</li>
+        {% endfor %}
+      </ul>
   </div>
 
   <div class="section">
