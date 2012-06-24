@@ -63,3 +63,6 @@ class Event(BaseScopedNameMixin, db.Model):
 
     __table_args__ = (db.UniqueConstraint('name', 'profile_id'),)
 
+    def owner_is(self, user):
+        """Check if a user is an owner of this event"""
+        return self.profile.userid in user.user_organizations_owned_ids()
