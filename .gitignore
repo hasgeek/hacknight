@@ -21,3 +21,4 @@ baseframe-packed.js
 env/
 dev/
 error.log
+hacknight/static/js/packed.js
