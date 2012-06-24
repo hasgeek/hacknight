@@ -135,7 +135,7 @@ def project_show(profile,project,event):
     if not project:
         abort(404)
 
-    member = 0
+    userIsMember = False
     if g.user:
         user = User.query.filter_by(userid=g.user.userid).first()
         if user:
@@ -143,7 +143,7 @@ def project_show(profile,project,event):
         if participant:
             project_member = ProjectMember.query.filter_by(project_id=project.id, participant_id=participant.id).first()
             if project_member:
-                member =1
+                userIsMember = True
     # Fix the join query below and replace the cascaded if conditions.
     # if g.user:
     #   query = (ProjectMember
@@ -205,7 +205,7 @@ def project_show(profile,project,event):
             return redirect(url_for('project_show',profile=profile.name, project=project.url_name, event=event.name))
     return render_template('project_show.html', event=event, project=project, profile=profile,
         comments=comments, commentform=commentform, delcommentform=delcommentform,
-        breadcrumbs=[(url_for('index'), "home")], member=member)
+        breadcrumbs=[(url_for('index'), "home")], userIsMember=userIsMember)
 
 
 @app.route('/<profile>/<event>/projects/<project>/voteup')

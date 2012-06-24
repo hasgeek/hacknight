@@ -64,8 +64,12 @@
       {% if project.user == g.user -%}
         <small>(that’s you! <a href="{{ url_for('editsession', name=event.name, slug=project.url_name) }}">Edit this</a>?)</small>
       {%- endif %}
-      <a id="join" class="btn btn-primary" href="{{ url_for('join', profile=profile.name, event=event.name, project=project.url_name) }}">Join this Team</a>
-      <small id="member" class="hidden"> you're part of this team!</small>
+      {% if userIsMember -%}
+        <small> you're part of this team!</small>
+      {%- else -%}
+        <a class="btn btn-primary" href="{{ url_for('join', profile=profile.name, event=event.name, project=project.url_name) }}">Join this Team</a>
+      {%- endif %}
+      
     </div>
 
 
@@ -140,12 +144,6 @@
 {% block footerscripts %}
 <script type="text/javascript">
   $(function() {
-    console.log({{ member }})
-    if ({{ member }}){
-      $('#join').addClass("hidden");
-      $('#member').removeClass("hidden");
-
-    };
     commentsInit("{{ request.base_url }}")});
     </script>
 {% endblock %}
