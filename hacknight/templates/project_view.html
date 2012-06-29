@@ -8,7 +8,7 @@
 
 <div class="breadcrumbs">
   <a href="{{ url_for('event_view', profile=profile.name, event=event.name) }}">&larr; Return to {{ event.title }}</a>
-  {% if g.user in project.users %}| <a href="{{ url_for('project_remove', profile=profile.name,
+  {% if g.user in project.users %}| <a href="{{ url_for('project_delete', profile=profile.name,
   event=event.name, project=project.url_name) }}">Delete this </a> | <a href="{{ url_for('project_edit', profile=profile.name, event=event.name, project=project.url_name) }}">Edit this &rarr;</a>{% endif %}
 </div>
 <div class="infosheet">
@@ -62,7 +62,7 @@
         (proposing) |
       {%- endif %}
       {% if project.user == g.user -%}
-        <small>(that’s you! <a href="{{ url_for('editsession', name=event.name, slug=project.url_name) }}">Edit this</a>?)</small>
+        <small>(that’s you! <a href="{{ url_for('project_edit', profile=profile.name, event=event.name, project=project.url_name) }}">Edit this</a>?)</small>
       {%- endif %}
       {% if userIsMember -%}
         <small> you're part of this team!</small>

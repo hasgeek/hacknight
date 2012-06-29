@@ -4,8 +4,9 @@ from hacknight.models import BaseMixin, BaseScopedIdNameMixin
 from hacknight.models import db
 from hacknight.models.event import Event
 from hacknight.models.participant import Participant
-from hacknight.models.vote import Vote, VoteSpace
-from hacknight.models.comment import Comment, CommentSpace
+from hacknight.models.vote import VoteSpace
+from hacknight.models.comment import CommentSpace
+
 __all__ = ['Project', 'ProjectMember']
 
 
@@ -15,6 +16,11 @@ class Project(BaseScopedIdNameMixin, db.Model):
     event = db.relation(Event,
         backref=db.backref('projects', cascade='all, delete-orphan'))
     parent = db.synonym('event')
+
+    #: Participant who created this project
+    participant_id = db.Column(None, db.ForeignKey('participant.id'), nullable=False)
+    participant = db.relationship(Participant)
+
     description = db.Column(db.UnicodeText, nullable=False)
     maximum_size = db.Column(db.Integer, default=0, nullable=False)
     status = db.Column(db.Integer, nullable=False, default=0)
@@ -29,6 +35,17 @@ class Project(BaseScopedIdNameMixin, db.Model):
     comments = db.relationship(CommentSpace, uselist=False)
 
     __table_args__ = (db.UniqueConstraint('url_id', 'event_id'),)
+
+    def __init__(self, **kwargs):
+        super(Project, self).__init__(**kwargs)
+        if not self.votes:
+            self.votes = VoteSpace(type=0)
+        if not self.comments:
+            self.comments = CommentSpace()
+
+    @property
+    def user(self):
+        return self.participant.user
 
     @property
     def participants(self):
@@ -58,4 +75,3 @@ class ProjectMember(BaseMixin, db.Model):
 
     status = db.Column(db.Integer, nullable=False, default=0)
     role = db.Column(db.Unicode(250), nullable=False, default=u'')
-

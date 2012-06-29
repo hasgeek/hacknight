@@ -1,46 +1,43 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, abort, flash, url_for, g, request, Response, redirect
+from flask import render_template, abort, flash, url_for, g, request, Response
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app
-from hacknight.models import db, Profile, User
-from hacknight.models.event import Event, EventStatus
-from hacknight.models.participant import Participant, ParticipantStatus
+from hacknight.models import db, Profile
+from hacknight.models.event import Event
+from hacknight.models.participant import Participant, PARTICIPANT_STATUS
 from hacknight.models.project import Project
 from hacknight.models.venue import Venue
 from hacknight.forms.event import EventForm, ConfirmWithdrawForm
 from hacknight.forms.participant import ParticipantForm
 from hacknight.views.login import lastuser
-import hacknight.views.workflow
 
 
 @app.route('/<profile>/<event>', methods=["GET"])
-@load_models((Profile, {'name': 'profile'}, 'profile'),
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_view(profile, event):
-    if not profile:
-        abort(404)
-    if not event:
-        abort(404)
-
     projects = Project.query.filter_by(event_id=event.id)
     participants = Participant.query.filter(
-        Participant.status != ParticipantStatus.WITHDRAWN,
+        Participant.status != PARTICIPANT_STATUS.WITHDRAWN,
         Participant.event == event)
 
-    acceptedP = [p for p in participants if p.status == ParticipantStatus.CONFIRMED]
-    restP = [p for p in participants if p.status != ParticipantStatus.CONFIRMED]
+    acceptedP = [p for p in participants if p.status == PARTICIPANT_STATUS.CONFIRMED]
+    restP = [p for p in participants if p.status != PARTICIPANT_STATUS.CONFIRMED]
     applied = 0
     for p in participants:
         if p.user == g.user:
             applied = 1
             break
     current_participant = Participant.get(user=g.user, event=event) if g.user else None
-    user_is_owner = g.user is not None and event.owner_is(g.user)
     return render_template('event.html', profile=profile, event=event,
-        projects=projects, venue=Venue.query.filter_by(id=event.venue_id).first(), timezone=event.start_datetime.strftime("%Z"),
-        acceptedparticipants=acceptedP, restparticipants=restP, applied=applied, user_is_owner=user_is_owner, current_participant=current_participant)
+        projects=projects,
+        acceptedparticipants=acceptedP,
+        restparticipants=restP,
+        applied=applied,
+        current_participant=current_participant)
 
 
 @app.route('/<profile>/new', methods=['GET', 'POST'])
@@ -49,28 +46,18 @@ def event_view(profile, event):
 def event_new(profile):
     if profile.userid not in g.user.user_organizations_owned_ids():
         abort(403)
-    form = EventForm()
-    #venues = Venue.query.filter(Venue.profile_id.in_([p.id for p in g.user.profiles])).all()
-    #venues hold list of venues created by organization members to list in drop down
-    form.venue_id.choices = [(venue.id, venue.name) for venue in Venue.query.all()]
+    form = EventForm(parent=profile, model=Event)
     if form.validate_on_submit():
-        event = Event()
+        event = Event(profile=profile)
         form.populate_obj(event)
-        if Event.query.filter_by(name=event.name, profile=profile).first():
-            flash("Event name %s already exists." % event.title, "fail")
-            return render_form(form=form, title="New Event", submit=u"Create",
-                cancel_url=url_for('profile_view', profile=profile.name), ajax=False)
-        event.make_name()
-        event.profile_id = profile.id
+        if not event.name:
+            event.make_name()
         db.session.add(event)
-        db.session.commit()
-
-        participant = Participant(user_id=g.user.id, event_id=event.id, status=ParticipantStatus.CONFIRMED)
+        participant = Participant(user=g.user, event=event, status=PARTICIPANT_STATUS.CONFIRMED)
         db.session.add(participant)
         db.session.commit()
         flash(u"New event created", "success")
-        values = {'profile': profile.name, 'event': event.name}
-        return render_redirect(url_for('event_view', **values), code=303)
+        return render_redirect(url_for('event_view', profile=profile.name, event=event.name), code=303)
     return render_form(form=form, title="New Event", submit=u"Create",
         cancel_url=url_for('profile_view', profile=profile.name), ajax=False)
 
@@ -85,12 +72,10 @@ def event_edit(profile, event):
     if not workflow.can_edit():
         abort(403)
     form = EventForm(obj=event)
-    #venues = Venue.query.filter(Venue.profile_id.in_([p.id for p in g.user.profiles])).all()
-    #venues hold list of venues created by organization members to list in drop down
-    form.venue_id.choices = [(venue.id, venue.name) for venue in Venue.query.all()]
     if form.validate_on_submit():
         form.populate_obj(event)
-        event.make_name()
+        if not event.name:
+            event.make_name()
         event.profile_id = profile.id
         db.session.commit()
         flash(u"Your edits to %s are saved" % event.title, "success")
@@ -99,14 +84,14 @@ def event_edit(profile, event):
         cancel_url=url_for('event_view', event=event.name, profile=profile.name), ajax=False)
 
 
-
 participant_status_labels = {
-    ParticipantStatus.PENDING: "Pending",
-    ParticipantStatus.WL: "Waiting List",
-    ParticipantStatus.CONFIRMED: "Confirmed",
-    ParticipantStatus.REJECTED: "Rejected",
-    ParticipantStatus.WITHDRAWN: "Withdrawn"
+    PARTICIPANT_STATUS.PENDING: "Pending",
+    PARTICIPANT_STATUS.WL: "Waiting List",
+    PARTICIPANT_STATUS.CONFIRMED: "Confirmed",
+    PARTICIPANT_STATUS.REJECTED: "Rejected",
+    PARTICIPANT_STATUS.WITHDRAWN: "Withdrawn"
 }
+
 
 @app.template_filter('show_participant_status')
 def show_participant_status(status):
@@ -119,10 +104,10 @@ def show_participant_status(status):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_open(profile, event):
-    if  profile.userid not in g.user.user_organization_owned_ids():
+    if  profile.userid not in g.user.user_organizations_owned_ids():
         abort(403)
     participants = Participant.query.filter(
-        Participant.status != ParticipantStatus.WITHDRAWN,
+        Participant.status != PARTICIPANT_STATUS.WITHDRAWN,
         Participant.event == event)
     return render_template('manage_event.html', profile=profile, event=event,
         participants=participants, statuslabels=participant_status_labels)
@@ -134,7 +119,7 @@ def event_open(profile, event):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_update_participant_status(profile, event):
-    if  profile.userid not in g.user.user_organization_owned_ids():
+    if  profile.userid not in g.user.user_organizations_owned_ids():
         return Response("Forbidden", 403)
     participantid = int(request.form['participantid'])
     status = int(request.form['status'])
@@ -142,7 +127,7 @@ def event_update_participant_status(profile, event):
 
     if(participant.event != event):
         return Response("Forbidden", 403)
-    if(participant.status == ParticipantStatus.WITHDRAWN):
+    if(participant.status == PARTICIPANT_STATUS.WITHDRAWN):
         return Response("Forbidden", 403)
 
     participant.status = status
@@ -157,8 +142,7 @@ def event_update_participant_status(profile, event):
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_apply(profile, event):
     values = {'profile': profile.name, 'event': event.name}
-    user_id = g.user.id
-    participant = Participant.query.filter_by(event_id=event.id, user_id=user_id).first()
+    participant = Participant.get(g.user, event)
     if not participant:
         # If no participant is found create a new participant entry
         # First collect some information about the new participant
@@ -166,26 +150,26 @@ def event_apply(profile, event):
         form = ParticipantForm(obj=user)
         if form.validate_on_submit():
             total_participants = Participant.query.filter_by(event_id=event.id).count()
-            participant = Participant()
+            participant = Participant(user=user, event=event)
             form.populate_obj(participant)
-            participant.user = user
-            participant.event = event
             participant.save_defaults()
-            participant.status = ParticipantStatus.PENDING if event.maximum_participants < total_participants else ParticipantStatus.WL
+            participant.status = PARTICIPANT_STATUS.PENDING if event.maximum_participants < total_participants else PARTICIPANT_STATUS.WL
             db.session.add(participant)
             db.session.commit()
+            flash(u"Your request to participate has been recorded; you will be notified by the event manager", "success")
         else:
-            flash(u"Your request to participate is recorded, you will be notified by the event manager".format(g.user.fullname, event.title), "success")
             return render_form(form=form, title="Participant Details",
                 submit=u"Participate", cancel_url=url_for('event_view',
                 event=event.name, profile=profile.name), ajax=False)
-    elif participant.status == ParticipantStatus.WITHDRAWN:
-        participant.status = ParticipantStatus.PENDING
+    # FIXME: Don't change anything unless this is a POST request
+    elif participant.status == PARTICIPANT_STATUS.WITHDRAWN:
+        participant.status = PARTICIPANT_STATUS.PENDING
         db.session.commit()
-        flash(u"Your request to participate is recorded, you will be notified by the event manager".format(g.user.fullname, event.title), "success")
+        flash(u"Your request to participate has been recorded; you will be notified by the event manager", "success")
     else:
-        flash(u"Your request is pending. ", "error")
+        flash(u"Your request is pending", "error")
     return render_redirect(url_for('event_view', **values), code=303)
+
 
 @app.route('/<profile>/<event>/withdraw', methods=['GET', 'POST'])
 @lastuser.requires_login
@@ -194,7 +178,7 @@ def event_apply(profile, event):
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_withdraw(profile, event):
     user_id = g.user.id
-    participant = Participant.query.filter_by(event_id=event.id,user_id=user_id).first()
+    participant = Participant.query.filter_by(event_id=event.id, user_id=user_id).first()
     if participant:
         workflow = participant.workflow()
         if not workflow.can_withdraw():
@@ -217,12 +201,13 @@ def event_withdraw(profile, event):
 
             db.session.commit()
             flash(u"Your request to withdraw from {0} is recorded".format(event.title), "success")
-            values={'profile': profile.name, 'event': event.name}
+            values = {'profile': profile.name, 'event': event.name}
             return render_redirect(url_for('event_view', **values), code=303)
         return render_template('withdraw.html', form=form, title=u"Confirm withdraw",
             message=u"Withdraw from '%s' ? You can come back anytime." % (event.title))
     else:
         abort(404)
+
 
 @app.route('/<profile>/<event>/publish', methods=['GET', 'POST'])
 @lastuser.requires_login
@@ -239,6 +224,7 @@ def event_publish(profile, event):
     flash(u"You have published the event %s" % event.title, "success")
     return render_redirect(url_for('event_view', event=event.name, profile=profile.name), code=303)
 
+
 @app.route('/<profile>/<event>/cancel', methods=['GET', 'POST'])
 @lastuser.requires_login
 @load_models(
@@ -248,6 +234,7 @@ def event_cancel(profile, event):
     workflow = event.workflow()
     if not workflow.can_edit():
         abort(403)
+    # FIXME: Hardcoded state values. Unclear what calling them does
     call = {
             0: workflow.cancel_draft,
             2: workflow.cancel_active

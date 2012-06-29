@@ -1,20 +1,18 @@
 {% extends "layout.html" %}
-{% block title %}My profile{% endblock %}
+{% from "macros/cardset.html" import cardset with context %}
+{% block title %}{{ profile.title }}{% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="span12 section">
-	<h1> {{ profile.title }}</h1>
-        <div class="useractions row span12">
-
-	</div>
-	<p>{{ profile.description|safe }}<p>
-  </div>
-</div>
-<div class="row">
-  <div class="section span12">
-    <h2> My Hacknights </h2>
-    {% include 'includes/cardset.html' %}
-  </div>
-</div>
+  {{ profile.description|safe }}
+  {% if events -%}
+    {{ cardset(events) }}
+  {%- else -%}
+    <p>
+      {%- if is_user -%}
+        <em>This person is not hosting or participating in any events.</em>
+      {%- else -%}
+        <em>This {{ profile.type_label()|lower }} is not hosting any events.</em>
+      {%- endif -%}
+    </p>
+  {%- endif %}
 {% endblock %}

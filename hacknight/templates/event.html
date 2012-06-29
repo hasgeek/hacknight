@@ -1,118 +1,108 @@
-
-{% macro participant_list(participants) %}
-  <ul>
-    {% for participant in participants %}
-  <li>
-       <a href="{{ url_for('profile_view', profile=participant.user.profile.name) }}">  {{ participant.user.fullname }}</a>
-  </li>
-      {% endfor %}
-  </ul>
-{% endmacro %}
 {% extends "layout.html" %}
 {% block title %}{{ event.title }}{% endblock %}
 
+{% macro participant_list(participants) -%}
+  <ul>
+    {% for participant in participants -%}
+      <li>
+        <a href="{{ url_for('profile_view', profile=participant.user.profile.name) }}">{{ participant.user.fullname }}</a>
+      </li>
+    {% endfor -%}
+  </ul>
+{%- endmacro %}
+
+{% block headline %}{% endblock %}
 {% block content %}
-<div id="main">
-  <div class="section row">
-    <div class="eventhead span12">
-      <h1> {{ event.title }}</h1>
-
-      <div class="section bar">
-        <dl class="bar">
-            <dt>When</dt>
-            <dd>{{ event.start_datetime | fulldate }} to {{ event.end_datetime | fulldate }}</dd>
-            <dt>Where</dt>
-            <dd><a href="{{url_for('venue_view', venue=venue.name)}}"> {{ venue.name }}</a></dd>
-            <dt>Address</dt>
-            <dd>{{ venue.address1 | safe}}
-            {% if venue.address2 %}
-              {{ venue.address2}}
-            {% endif %}
-            </dd>
-        </dl>
-        {% if event.ticket_price %}
-        <dl class="bar">
-          <dt>Entry Fee</dt>
-          <dd>{{ event.ticket_price }} </dd>
-        </dl>
+  <div class="row section">
+    <div class="span8">
+      <div class="page-header">
+        <h3><a href="{{ url_for('profile_view', profile=event.profile.name) }}">{{ event.profile.title }}</a> &raquo;</h3>
+        <h1>{{ self.title() }}</h1>
+      </div>
+      {{ event.description|safe }}
+    </div>
+    <div class="span4">
+      <ul class="well nav nav-list">
+        <li><i class="icon-calendar"></i> {{ event.start_datetime | fulldate }} &mdash; {{ event.end_datetime | fulldate }}</li>
+        {% if event.ticket_price -%}
+          <li><i class="icon-money"></i> {{ event.ticket_price }}</li>
+        {%- endif %}
+        <li><a href="{{ url_for('venue_view', venue=event.venue.name) }}"><i class="icon-map-marker"></i> {{ event.venue.title }}</a></li>
+        <li><i class="icon-blank"></i> {{ event.venue.address1 }}</li>
+        {% if event.venue.address2 -%}
+          <li><i class="icon-blank"></i> {{ event.venue.address2 }}</li>
+        {%- endif %}
+        <li><i class="icon-blank"></i> {{ event.venue.city }}, {{ event.venue.state }}{%- if event.venue.postcode %} &ndash; {{ event.venue.postcode }}{% endif %}, {{ event.venue.country }}</li>
+        {% if event.website -%}
+          <li><a href="{{ event.website }}" target="_blank"><i class="icon-link"></i> {{ event.website|cleanurl }}</a></li>
+        {%- endif %}
+        <li class="nav-header">Your participation</li>
+        {% if not current_participant or current_participant.status == 4 -%}
+          <li><a href="{{ url_for('event_apply', profile=profile.name, event=event.name) }}"><i class="icon-signin"></i> Register now {%- if not g.user %} (login required) {%- endif %}...</a></li>
+        {% else %}
+          <li><i class="icon-user"></i> {% if event.owner_is(g.user) -%}
+            You are an owner
+          {%- else -%}
+            {% if current_participant.status == 0 -%}
+              Pending approval
+            {%- elif current_participant.status == 2 -%}
+              Confirmed
+            {%- elif current_participant.status == 1 -%}
+              Wait listed
+            {%- elif current_participant.status == 3 -%}
+              Rejected
+            {%- elif current_participant.status == 4 -%}
+              Withdrawn
+            {%- endif -%}
+          {% endif %}</li>
+          <li><a href="{{ url_for('event_withdraw', profile=profile.name, event=event.name) }}"><i class="icon-signout"></i> Withdraw registration...</a></li>
         {% endif %}
-
-        {% if event.website %}
-        <dl class="bar">
-          <dt>Related Website</dt>
-          <dd><a href="{{ event.website }}">{{ event.website }}</a> </dd>
-        </dl>
-        {% endif %}
-      </div>
-
-      {%if current_participant %}
-      <div class="section userstatus">
-        <p>Your registration is </p>
-          {% if current_participant.status == 0 %}
-            <span class="label">Pending</span>
-          {% endif %}
-          {% if current_participant.status == 2 %}
-            <span class="label label-success">Confirmed</span>
-          {% endif %}
-          {% if current_participant.status == 1 %}
-            <span class="label label-warning">Wait listed</span>
-          {% endif %}
-          {% if current_participant.status == 3 %}
-            <span class="label label-important">Rejected</span>
-          {% endif %}
-          {% if current_participant.status == 4 %}
-            <span class="label label-inverse">Withdrawn</span>
-          {% endif %}
-
-      </div>
-    {% endif %}
-
-      <div class="section useractions">
-	     <a href="{{ url_for('event_apply', profile=profile.name, event=event.name) }}" class="btn btn-primary" id="register">Register Now</a>
-
-       <a href="{{ url_for('project_new', profile=profile.name, event=event.name) }}" class="btn btn-primary">Propose a Project</a>
-
-       {% if user_is_owner %}
-       <a href="{{ url_for('event_open', event=event.name, profile=profile.name) }}" class="btn btn-primary" id="adminactions">Manage</a>
-
-       <a href="{{ url_for('event_edit', event=event.name, profile=profile.name) }}" class="btn btn-primary" id="adminactions">Edit</a>
-
-       <a href="{{ url_for('event_delete', event=event.name, profile=profile.name) }}" class="btn btn-danger" id="adminactions">Delete</a>
-       {% endif %}
-       <a class="btn btn-danger hidden" href="{{ url_for('event_withdraw', profile=profile.name, event=event.name) }}"  id="withdraw">Withdraw Registration</a>
-      </div>
-
-
-      <p> {{ event.description|safe }} </p>
+        {%- if event.owner_is(g.user) %}
+          <li class="nav-header">Manage event</li>
+          <li><a href="{{ url_for('event_open', event=event.name, profile=profile.name) }}"><i class="icon-wrench"></i> Manage event</a></li>
+          <li><a href="{{ url_for('event_edit', event=event.name, profile=profile.name) }}"><i class="icon-pencil"></i> Edit details...</a></li>
+          <li><a href="{{ url_for('event_delete', event=event.name, profile=profile.name) }}"><i class="icon-trash"></i> Delete event...</a></li>
+        {% endif -%}
+      </ul>
     </div>
   </div>
 
-  <div class="row">
-    <div id="tabs" class="span12">
-     {% if projects.count() %}
-              <h2>Project Proposals</h2>
-              <table class="table proposals">
+  <div id="map" class="event-map">Map comes here</div>
 
-                <thead>
-                  <th>#</th>
-                  <th>Title</th>
-                  <th>Proposer</th>
-                  <th>+1</th>
-                  <th>Comments</th>
-                  <th>Team members</th>
-                  <th>Submitted</th>
-                </thead>
+  <ul class="cardset row">
+    {% for p in projects %}
+      <li class="span4">
+        <a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=p.url_name) }}">
+          <div class="card-title">
+            <h2>{{ p.title }}</h2>
+          </div>
+          <div class="card-body">
+            {{ p.description|safe }}
+          </div>
+        </a>
+      </li>
+    {% endfor %}
+    <li class="span4">
+      <a href="{{ url_for('project_new', profile=profile.name, event=event.name) }}">
+        <div class="card-title">
+          <h2>New project...</h2>
+        </div>
+        <div class="card-body large-plus"><i class="icon-plus"></i></div>
+      </a>
+    </li>
+  </ul>
+{#
                 {% for p in projects %}
                 <tbody>
                   <tr>
-                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.id }}</a></td>
-                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.url_name,event=event.name) }}"	><strong>{{ p.title }}</strong></a></td>
-                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.members.filter_by(status=0).first().participant.user.fullname }}</a></td>
-                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.votes.count }}</a></td>
-                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.comments.count }}</a></td>
-                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.members.count() }}</a></td>
+                    <td><a href="{{ url_for('project_view', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.id }}</a></td>
+                    <td><a href="{{ url_for('project_view', profile=profile.name ,project=p.url_name,event=event.name) }}"	><strong>{{ p.title }}</strong></a></td>
+                    <td><a href="{{ url_for('project_view', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.members.filter_by(status=0).first().participant.user.fullname }}</a></td>
+                    <td><a href="{{ url_for('project_view', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.votes.count }}</a></td>
+                    <td><a href="{{ url_for('project_view', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.comments.count }}</a></td>
+                    <td><a href="{{ url_for('project_view', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.members.count() }}</a></td>
 
-                    <td><a href="{{ url_for('project_show', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.created_at.strftime("%a, %b %e") }}</a></td>
+                    <td><a href="{{ url_for('project_view', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.created_at.strftime("%a, %b %e") }}</a></td>
                   </tr>
 
                 {% endfor %}
@@ -131,8 +121,7 @@
       {{ participant_list(restparticipants) }}
     </div>
   </div>
-
-</div>
+#}
 {% endblock %}
 
 {% block footerscripts %}

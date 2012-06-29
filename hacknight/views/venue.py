@@ -42,7 +42,7 @@ def venue_new():
 @lastuser.requires_login
 @load_model(Venue, {'name': 'venue'}, 'venue')
 def venue_edit(venue):
-    if not lastuser.has_permission('siteadmin') and venue.profile.userid not in g.user.user_organization_ids():
+    if not lastuser.has_permission('siteadmin') and venue.profile.userid not in g.user.user_organization_owned_ids():
         abort(403)
     form = VenueForm(obj=venue)
     form.profile_id.choices = [(p.id, p.title) for p in g.user.profiles]
@@ -60,7 +60,7 @@ def venue_edit(venue):
 @lastuser.requires_login
 @load_model(Venue, {'name': 'venue'}, 'venue')
 def venue_delete(venue):
-    if not lastuser.has_permission('siteadmin') and venue.profile.userid not in g.user.user_organization_ids():
+    if not lastuser.has_permission('siteadmin') and venue.profile.userid not in g.user.user_organization_owned_ids():
         abort(403)
     return render_delete_sqla(venue, db, title=u"Confirm delete",
         message=u"Delete venue '%s'? This cannot be undone." % venue.title,

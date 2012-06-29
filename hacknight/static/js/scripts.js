@@ -75,7 +75,7 @@ function commentsInit(pageURL) {
         $("#newcomment textarea").focus();
         return false;
     });
-};
+}
 
 // ROT13 link handler
 $(function() {
@@ -87,13 +87,6 @@ $(function() {
       $(this).attr('href', decoded);
       $(this).removeAttr('data-href');
       $(this).removeClass('rot13');
-    };
+    }
   });
 });
-
-// Make all table columns on site sortable. See http://tablesorter.com/docs/.
-$(document).ready(function() 
-    { 
-        $("table").tablesorter(); 
-    } 
-); 

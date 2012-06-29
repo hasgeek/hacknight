@@ -22,12 +22,9 @@ import hacknight.views
 app.register_blueprint(baseframe)
 
 assets = Environment(app)
-js = Bundle(baseframe_js, 
-	'js/lib/jquery.form.js',
-	'js/lib/jquery.oembed.js',
-	'js/lib/jquery.tablesorter.min.js', 
-	'js/scripts.js'
-	)
+js = Bundle(baseframe_js,
+    'js/scripts.js'
+    )
 
 css = Bundle(baseframe_css,
              'css/app.css')
