@@ -8,7 +8,7 @@ TIMEZONE = 'Asia/Calcutta'
 #: LastUser server
 LASTUSER_SERVER = 'https://auth.hasgeek.com/'
 #: Typekit id
-TYPEKIT_CODE = 'qhx6vtv'
+TYPEKIT_CODE = ''
 #: Mail settings
 #: MAIL_FAIL_SILENTLY : default True
 #: MAIL_SERVER : default 'localhost'

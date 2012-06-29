@@ -6,14 +6,21 @@
     {{ networkbar(siteid=config['SITE_ID'], login=true, baseclass='hg-dark') }}
     <div id="page-header" class="container">
       <div class="logo">
-          <a href="{{ url_for('index') }}" title="Home">
-          <img src="{{ url_for('static', filename='img/hacknightlogo-small.png') }}" alt="Hacknight Home Page" title="Click to go to Hacknight Home Page"/>
-          </a>
+        <a href="{{ url_for('index') }}" title="Home">
+          <img src="{{ url_for('static', filename='img/hacknightlogo-small.png') }}" alt="Hacknight">
+        </a>
       </div>
     </div>
   </header>
-
 {% endblock %}
+
+{% block baseheadline -%}
+  {% block headline -%}
+    <div class="page-header">
+      <h1>{{ self.title()|e }}</h1>
+    </div>
+  {%- endblock %}
+{%- endblock %}
 
 {% block basecontent %}
   {% block content %}{% endblock %}

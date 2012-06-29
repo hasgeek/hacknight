@@ -2,13 +2,14 @@
 {% block title %}All Hacknight Venues {% endblock %}
 
 {% block content %}
-{% for venue in venues %}
-  {{ venue.description|safe }}
-<h2>Address</h2>
-<p>
-  {{ venue.address1 }}<br>
-  {% if venue.address2 %}{{ venue.address2 }}<br>{% endif %}
-  {{ venue.city }}, {{ venue.state }}, {{ venue.country }}
-</p>
-{% endfor %}
+  {% for venue in venues %}
+    <h2><a href="{{ url_for('venue_view', venue=venue.name) }}">{{ venue.title }}</a></h2>
+    {{ venue.description|safe }}
+    <h3>Address</h3>
+    <p>
+      {{ venue.address1 }}<br>
+      {% if venue.address2 %}{{ venue.address2 }}<br>{% endif %}
+      {{ venue.city }}, {{ venue.state }}, {{ venue.country }}
+    </p>
+  {% endfor %}
 {% endblock %}

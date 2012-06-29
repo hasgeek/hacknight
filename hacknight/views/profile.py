@@ -1,39 +1,35 @@
 # -*- coding: utf-8 -*-
 
 from flask import render_template, g, abort, flash, url_for
-from coaster.views import load_model, load_models
+from coaster.views import load_model
 from baseframe.forms import render_redirect, render_form
 from hacknight import app
 from hacknight.models import db, Profile, User, Event
 from hacknight.models.event import profile_types
 from hacknight.forms.profile import ProfileForm
 from hacknight.views.login import lastuser
-from markdown import markdown
 from hacknight.models.participant import Participant
 
 
 @app.route('/<profile>')
 @load_model(Profile, {'name': 'profile'}, 'profile')
 def profile_view(profile):
+    events = Event.query.filter_by(profile_id=profile.id).all()
     user = User.query.filter_by(userid=profile.userid).first()
-    if user is None:
-        events = Event.query.filter_by(profile_id=profile.id)
-    else:
-        participants = Participant.query.filter_by(user_id=user.id).all()
-        events = []
-        for participant in participants:
-            events.append(participant.event)
-    return render_template('profile.html', profile=profile, events=events,
-        description=markdown(profile.description, safe_mode='escape'))
+    if user is not None:
+        # User. Show all events this user owns or is participating in.
+        events = list(set(events + [p.event for p in Participant.query.filter_by(user=user).all()]))
+    return render_template('profile.html', profile=profile, events=events, is_user=True if user else False)
 
 
 @app.route('/<profile>/edit', methods=['GET', 'POST'])
 @lastuser.requires_login
 @load_model(Profile, {'name': 'profile'}, 'profile')
 def profile_edit(profile):
-    if profile.userid not in g.user.user_organization_owned_ids():
+    if profile.userid not in g.user.user_organizations_owned_ids():
         abort(403)
     form = ProfileForm(obj=profile)
+    # FIXME: The way "choices" are populated is very confusing. Make this clearer.
     if profile.userid == g.user.userid:
         form.type.choices = [(1, profile_types[1])]
     else:

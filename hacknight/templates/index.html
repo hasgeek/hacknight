@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% from "baseframe/components.html" import networkbar with context %}
+{% from "macros/cardset.html" import cardset with context %}
 {% block titletags -%}
   <title>{% block title %}{{ config['SITE_TITLE'] }}{% endblock %}</title>
   <meta name="DC.title" content="{{ config['SITE_TITLE'] }}"/>
@@ -8,30 +9,19 @@
 {% block headerbox %}
   <header>
     {{ networkbar(siteid=config['SITE_ID'], login=true, baseclass='hg-dark') }}
+    <h1 class="masthead"><img src="{{ url_for('static', filename='img/hacknightlogo.png') }}" alt="Hacknight"></h1>
   </header>
 {% endblock %}
 
 {% block headline %}{% endblock %}
 
 {% block content %}
-<div class="row">
-<div class="jumbotron span12">
-  <!--<img src="{{ url_for('baseframe.static', filename='img/hasgeek-presents.png') }}" alt="HasGeek Presents">-->
-  <h1><img src="{{ url_for('static', filename='img/hacknightlogo.png') }}" alt="Hacknight" title="Hacknight Home Page"></h1>
-</div>
-</div>
-<div class="row">
-<div class="addhacknight span12">
-  {% if profile %}
-    <br/>
-  {% else %}
-    <a href="{{ url_for('login') }}" class="btn btn-primary btn-large" id="create">Login to Join Hacknight</a>
-  {% endif %}
-</div>
-</div>
-<div class="row">
-  <div class="section span12">
-  {% include 'includes/cardset.html' %}
+  <div class="row">
+    <div class="span12 centered">
+      {% if not g.user %}
+        <a href="{{ url_for('login') }}" class="btn btn-primary btn-large" id="create">Login to join a hacknight</a>
+      {% endif %}
+    </div>
   </div>
-</div>
+  <div class="centered">{{ cardset(events) }}</div>
 {% endblock %}

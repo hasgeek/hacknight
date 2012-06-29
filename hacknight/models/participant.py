@@ -4,9 +4,10 @@ from hacknight.models import db, BaseMixin
 from hacknight.models.user import User
 from hacknight.models.event import Event
 
-__all__ = ['Participant', 'ParticipantStatus']
+__all__ = ['Participant', 'PARTICIPANT_STATUS']
 
-class ParticipantStatus:
+
+class PARTICIPANT_STATUS:
     PENDING = 0
     WL = 1
     CONFIRMED = 2
@@ -20,7 +21,7 @@ class Participant(BaseMixin, db.Model):
     user = db.relationship(User)
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
     event = db.relationship(Event, backref=db.backref('participants', cascade='all, delete-orphan'))
-    status = db.Column(db.Integer, default=ParticipantStatus.PENDING, nullable=False)
+    status = db.Column(db.Integer, default=PARTICIPANT_STATUS.PENDING, nullable=False)
     mentor = db.Column(db.Boolean, default=False, nullable=False)
     reason_to_join = db.Column(db.UnicodeText, default=u'', nullable=False)
     email = db.Column(db.Unicode(80), default=u'', nullable=False)

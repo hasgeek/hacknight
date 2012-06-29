@@ -1,19 +1,28 @@
 # -*- coding: utf-8 -*-
 
+from flask import Markup
 import flask.ext.wtf as wtf
-from baseframe.forms import Form, RichTextField, DateTimeField
+from baseframe.forms import Form, RichTextField, DateTimeField, ValidName, AvailableName
+from hacknight.models import Venue
 
 __all__ = ['EventForm', 'ConfirmWithdrawForm']
 
 
 class EventForm(Form):
-    title = wtf.TextField("Title", description="Name of the Event", validators=[wtf.Required(), wtf.NoneOf(values=["New"])])
-    description = RichTextField("Description", description="Description of the project")
-    venue_id = wtf.SelectField("Venue", description="Select the venue, don't forget to create a one in venue/new", coerce=int, validators=[wtf.Required()])
-    start_datetime = DateTimeField("Start Date and Time", description="Hacknight Start DateTime", validators=[wtf.Required()])
-    end_datetime = DateTimeField("End Date and Time", description="Hacknight End DateTime", validators=[wtf.Required()])
-    ticket_price = wtf.TextField("Ticket Price", description="Entry fee, if any, to be paid at the venue.")
-    total_participants = wtf.IntegerField("Total Participants", description="Total Participants for Hacknight. E.g: 50", default=50, validators=[wtf.Required()])
+    title = wtf.TextField("Title", description="Name of the Event", validators=[wtf.Required(), wtf.NoneOf(values=["new"])])
+    name = wtf.TextField("URL name", validators=[wtf.Optional(), ValidName(),
+            AvailableName(u"There’s another event with the same name")],
+        description="URL identifier, leave blank to autogenerate")
+    blurb = wtf.TextField("Blurb", description="Single line blurb introducing the event")
+    description = RichTextField("Description", description="Detailed description of the event")
+    venue = wtf.QuerySelectField("Venue",
+        description=Markup('Venue for this event (<a href="/venue/new">make new</a>)'),
+        query_factory=lambda: Venue.query, get_label='title',
+        )
+    start_datetime = DateTimeField("Start date/time", description="The date and time at which this event begins", validators=[wtf.Required()])
+    end_datetime = DateTimeField("End date/time", description="The date and time at which this event ends", validators=[wtf.Required()])
+    ticket_price = wtf.TextField("Ticket price", description="Entry fee, if any, to be paid at the venue")
+    total_participants = wtf.IntegerField("Venue capacity", description="The number of people this venue can accommodate. Registrations will be closed after that. Use 0 to indicate unlimited capacity", default=50, validators=[wtf.Required()])
     website = wtf.TextField("Website", description="Related Website (Optional)", validators=[wtf.Optional()])
 
     def validate_end_datetime(self, field):
