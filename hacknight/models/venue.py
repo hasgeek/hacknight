@@ -18,5 +18,5 @@ class Venue(BaseNameMixin, db.Model):
     state = db.Column(db.Unicode(30), default=u'', nullable=False)
     postcode = db.Column(db.Unicode(20), default=u'', nullable=False)
     country = db.Column(db.Unicode(2), default=u'', nullable=False)
-    latitude = db.Column(db.Numeric, nullable=True)
-    longitude = db.Column(db.Numeric, nullable=True)
+    latitude = db.Column(db.Numeric(7, 4), nullable=True)
+    longitude = db.Column(db.Numeric(7, 4), nullable=True)
