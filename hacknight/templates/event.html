@@ -67,7 +67,7 @@
     </div>
   </div>
 
-  <div id="map" class="event-map">Map comes here</div>
+  <div id="map" class="event-map"></div>
 
   <ul class="cardset row">
     {% for p in projects %}
@@ -140,5 +140,31 @@ if("{{ event.profile.userid }}"=="{{ g.user.userid }}")
 };
 
 </script>
+
+<script type="text/javascript">
+  $(function() {
+    var map = new L.Map('map');
+    
+    //BC9A493B41014CAABB98F0471D759707
+    var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/0cb2761ce981414391f2941dd891892c/999/256/{z}/{x}/{y}.png',
+        subDomains = ['a','b','c'],
+        cloudmadeAttrib = '<a href="http://maps.cloudmade.com" target="_blank">CloudMade</a>, <a href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> and contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/" target="_blank">CC-BY-SA</a>';
+        var cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18, attribution: cloudmadeAttrib, subdomains: subDomains});
+
+        console.log({{ event.venue.latitude }});
+        var venue = new L.LatLng({{ event.venue.latitude }}, {{ event.venue.longitude }}); // geographical point (longitude and latitude)
+        map.setView(venue, 16).addLayer(cloudmade);
+        
+          var venue_marker = new L.Marker(venue);
+            map.addLayer(venue_marker);
+            venue_marker.bindPopup('{{ event.venue.title }}').openPopup();
+            map.scrollWheelZoom.disable();
+
+            map.on('zoomend', onZoomend);
+    function onZoomend(){ 
+        map.setView(venue, map.getZoom());
+    };
+  });
+  </script>
 
 {% endblock %}
