@@ -8,4 +8,5 @@ __all__ = ['ProfileForm']
 
 class ProfileForm(Form):
     type = wtf.SelectField(u"Profile type", coerce=int, validators=[wtf.Required()])
-    description = RichTextField(u"Description")
+    description = RichTextField(u"Description/Bio",
+        content_css="/static/css/editor.css")

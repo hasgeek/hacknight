@@ -21,9 +21,11 @@ class Project(BaseScopedIdNameMixin, db.Model):
     participant_id = db.Column(None, db.ForeignKey('participant.id'), nullable=False)
     participant = db.relationship(Participant)
 
+    blurb = db.Column(db.Unicode(250), nullable=False)
     description = db.Column(db.UnicodeText, nullable=False)
     maximum_size = db.Column(db.Integer, default=0, nullable=False)
-    status = db.Column(db.Integer, nullable=False, default=0)
+    #: Is the project owner participating?
+    participating = db.Column(db.Boolean, nullable=False, default=True)
 
     members = db.relationship('ProjectMember', backref='project',
                       lazy='dynamic')
@@ -49,11 +51,14 @@ class Project(BaseScopedIdNameMixin, db.Model):
 
     @property
     def participants(self):
-        return (m.participant for m in self.members)
+        return set([self.participant] + [m.participant for m in self.members])
 
     @property
     def users(self):
-        return (m.participant.user for m in self.members)
+        return set([self.user] + [m.participant.user for m in self.members])
+
+    def owner_is(self, user):
+        return self.user == user
 
     def getnext(self):
         return Project.query.filter(Project.event == self.event).filter(
@@ -75,3 +80,5 @@ class ProjectMember(BaseMixin, db.Model):
 
     status = db.Column(db.Integer, nullable=False, default=0)
     role = db.Column(db.Unicode(250), nullable=False, default=u'')
+
+    __table_args__ = (db.UniqueConstraint('project_id', 'participant_id'),)

@@ -4,6 +4,9 @@
 $font-size: 14px
 $line-height: 22px
 $font-color: #aaa
+$font-faint-color: #666
+$border-color: rgba(255, 255, 255, 0.2)
+$background-color: rgba(0, 0, 0, 0.1)
 
 body
   background-color: #203838
@@ -11,7 +14,7 @@ body
   color: $font-color
 
 header #page-header
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2)
+  border-bottom: 1px solid $border-color
 
 footer .footer-inner
   background: transparent
@@ -24,23 +27,40 @@ footer .footer-inner
 .centered
   text-align: center
 
+label
+  color: $font-color
+
+.help-block
+  color: $font-faint-color
+
 // Interim handling of forms
 .form-horizontal
-  background: #eee
-  padding: 1em
-  +border-radius(4px)
+  // background: #eee
+  // padding: 1em
+  // +border-radius(4px)
 
-  .form-actions
-    margin: $line-height -1em -1em
-    +border-bottom-left-radius(4px)
-    +border-bottom-right-radius(4px)
+  // .form-actions
+  //   margin: $line-height -1em -1em
+  //   +border-bottom-left-radius(4px)
+  //   +border-bottom-right-radius(4px)
+
+input, textarea, select, .uneditable-input
+  color: $font-color
+  background-color: $background-color
+  border-color: $border-color
+
+.form-actions
+  background-color: $background-color
+  border-top: 1px solid $border-color
+  +border-bottom-left-radius(4px)
+  +border-bottom-right-radius(4px)
 
 .chzn-results li, .datepicker .calendar
   color: #333
 
 .alert, .alert-success
-  background: rgba(0, 0, 0, 0.1)
-  border: 1px solid rgba(255, 255, 255, 0.2)
+  background: $background-color
+  border: 1px solid $border-color
   text-shadow: none
 
   .close
@@ -48,13 +68,36 @@ footer .footer-inner
     text-shadow: none
 
 .well
-  border: 2px solid rgba(255, 255, 255, 0.2)
-  +box-shadow(0 1px 2px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.1) inset)
-  background: rgba(0, 0, 0, 0.1)
+  border: 2px solid $border-color
+  +box-shadow(0 1px 2px $background-color, 0 0 10px $background-color inset)
+  background: $background-color
+
+  .nav.nav-list:first-child
+    margin-top: -1px
 
   &.nav.nav-list
     padding-top: $line-height - 2px
     padding-bottom: $line-height - 2px
+
+  .pager
+    margin-bottom: 0
+
+.pager-nav, .voting
+  text-align: center
+  line-height: 1
+  font-size: $font-size * 3
+
+  div.votecount
+    font-size: $font-size * 2
+    line-height: 1
+
+  a
+    display: block
+    width: 100%
+    height: 100%
+    vertical-align: top
+  a:hover
+    text-decoration: none
 
 .nav-list > li > a, .nav-list .nav-header
   margin-left: -14px
@@ -66,10 +109,10 @@ footer .footer-inner
   color: $font-color
 
 .nav > li > a:hover
-  background-color: rgba(255, 255, 255, 0.2)
+  background-color: $border-color
   color: $font-color
 
-.cardset
+.cardset, .userset
   list-style: none
   // margin-left: 0
   li
@@ -77,6 +120,7 @@ footer .footer-inner
     height: 15em
     text-align: left
     position: relative
+    margin-bottom: $line-height
 
     .card-badge
       position: absolute
@@ -87,15 +131,15 @@ footer .footer-inner
 
     a
       overflow: hidden
-      border: 2px solid rgba(255, 255, 255, 0.2)
+      border: 2px solid $border-color
       +border-radius(4px)
       +box-sizing(border-box)
       display: block
-      +box-shadow(0 1px 2px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.1) inset)
+      +box-shadow(0 1px 2px $background-color, 0 0 10px $background-color inset)
       width: 100%
       height: 100%
       padding: 0 14px (($line-height / 2) - 2px)
-      background: rgba(0, 0, 0, 0.1)
+      background: $background-color
       color: inherit
       +transition-property("background")
       +transition-duration(0.2s)
@@ -116,7 +160,7 @@ footer .footer-inner
     .card-body
       margin: ($line-height / 2) -14px 0
       padding: (($line-height / 2) - 1px) 14px 0
-      border-top: 1px solid rgba(255, 255, 255, 0.2)
+      border-top: 1px solid $border-color
 
     .card-body.large-plus
       text-align: center
@@ -129,6 +173,14 @@ footer .footer-inner
       font-size: $font-size
       color: $font-color
 
+.userset li
+  height: 10em
+  text-align: center
+
+  [class^="icon-"], [class*=" icon-"]
+    font-size: 80px
+    line-height: 1
+
 .centered .cardset
   &.row
     margin-left: 0
@@ -138,11 +190,61 @@ footer .footer-inner
     margin: 10px
 
 #map
-  border: 2px solid rgba(255, 255, 255, 0.2)
+  border: 2px solid $border-color
   +border-radius(4px)
   +box-sizing(border-box)
-  background: rgba(0, 0, 0, 0.1)
-  margin-bottom: $line-height
+  background: $background-color
+  // margin-bottom: $line-height
 
 .event-map
-  height: 150px
+  height: 200px
+
+// TinyMCE theme
+.defaultSkin table.mceLayout
+  border: 1px solid $border-color !important
+
+.defaultSkin .mceIframeContainer
+  border-top: 1px solid $border-color !important
+  border-bottom: 1px solid $border-color !important
+
+.defaultSkin table.mceLayout.focus
+  border-color: #4a90c7 !important
+  border: 1px solid #4a90c7 !important
+
+.defaultSkin td.mceToolbar, .defaultSkin .mceStatusbar
+  background: #aaa !important
+
+.defaultSkin .mceButton
+  border-color: #aaa !important
+
+.defaultSkin a.mceButtonEnabled:hover
+  border-color: #0A246A !important
+
+// Leaflet map
+.leaflet-popup-content-wrapper
+  +border-radius(4px)
+
+.leaflet-popup-content
+  font: 14px/22px Lato, "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+  margin: 10px
+
+.leaflet-popup-close-button
+  top: 3px
+  right: 3px
+
+.leaflet-popup-content-wrapper, .leaflet-popup-tip
+  color: white
+  background: rgba(34, 34, 34, 0.95)
+  +box-shadow(0 0 10px #444)
+
+.leaflet-popup-close-button
+  background-color: transparent
+
+.leaflet-container .leaflet-control-attribution
+  color: $font-color
+  background-color: rgba(0, 0, 0, 0.7)
+  font: 12px/1.5 Lato, "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+  +box-shadow(0 0 7px #444)
+
+.disabled
+  color: $font-faint-color

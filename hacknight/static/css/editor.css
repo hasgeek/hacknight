@@ -1,0 +1,40 @@
+@import url("//fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic");
+body {
+  font-family: Lato, "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-size: 14px;
+  line-height: 22px;
+  color: #aaa;
+  background-color: transparent;
+  background-color: rgba(0, 0, 0, 0.1);
+  margin: 11px 8px 8px;
+}
+
+p {
+  margin: 0 0 22px;
+}
+
+ul, ol {
+  padding: 0;
+  margin: 0 0 22px 25px;
+}
+
+h1 {
+  font-size: 30px;
+  line-height: 44px;
+  margin-top: 0;
+  margin-bottom: 22px;
+}
+
+h2 {
+  font-size: 25px;
+  line-height: 44px;
+  margin-top: 22px;
+  margin-bottom: 0;
+}
+
+h3 {
+  font-size: 19px;
+  line-height: 22px;
+  margin-top: 22px;
+  margin-bottom: 0;
+}

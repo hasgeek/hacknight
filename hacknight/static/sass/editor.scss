@@ -1,0 +1,44 @@
+$body-font-family: Lato, "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+$body-font-size: 14px;
+$body-line-height: 22px;
+@import url("//fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic");
+
+body {
+    font-family: $body-font-family;
+    font-size: $body-font-size;
+    line-height: $body-line-height;
+    color: #aaa;
+    background-color: transparent;
+    background-color: rgba(0, 0, 0, 0.1);
+    margin: 11px 8px 8px;
+}
+
+p {
+  margin: 0 0 $body-line-height;
+}
+
+ul, ol {
+  padding: 0;
+  margin: 0 0 $body-line-height 25px;
+}
+
+h1 {
+    font-size: 30px;
+    line-height: $body-line-height * 2;
+    margin-top: 0;
+    margin-bottom: $body-line-height;
+}
+
+h2 {
+    font-size: 25px;
+    line-height: $body-line-height * 2;
+    margin-top: $body-line-height;
+    margin-bottom: 0;
+}
+
+h3 {
+    font-size: 19px;
+    line-height: $body-line-height;
+    margin-top: $body-line-height;
+    margin-bottom: 0;
+}

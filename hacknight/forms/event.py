@@ -14,7 +14,8 @@ class EventForm(Form):
             AvailableName(u"There’s another event with the same name")],
         description="URL identifier, leave blank to autogenerate")
     blurb = wtf.TextField("Blurb", description="Single line blurb introducing the event")
-    description = RichTextField("Description", description="Detailed description of the event")
+    description = RichTextField("Description", description="Detailed description of the event",
+        content_css="/static/css/editor.css")
     venue = wtf.QuerySelectField("Venue",
         description=Markup('Venue for this event (<a href="/venue/new">make new</a>)'),
         query_factory=lambda: Venue.query, get_label='title',

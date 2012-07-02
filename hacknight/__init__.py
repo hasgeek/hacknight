@@ -23,11 +23,12 @@ app.register_blueprint(baseframe)
 
 assets = Environment(app)
 js = Bundle(baseframe_js,
-    'js/scripts.js', 'js/leaflet/leaflet.js',
-    )
+    'js/leaflet/leaflet.js',
+    'js/scripts.js')
 
 css = Bundle(baseframe_css,
-             'css/app.css', 'js/leaflet/leaflet.css',)
+    'js/leaflet/leaflet.css',
+    'css/app.css')
 assets.register('js_all', js)
 assets.register('css_all', css)
 

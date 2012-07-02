@@ -9,7 +9,8 @@ __all__ = ['VenueForm']
 
 class VenueForm(Form):
     title = wtf.TextField("Name", description="Name of the venue", validators=[wtf.Required()])
-    description = RichTextField("Notes", description="Notes about the venue")
+    description = RichTextField("Notes", description="Notes about the venue",
+        content_css="/static/css/editor.css")
     address1 = wtf.TextField("Address (line 1)", validators=[wtf.Required()])
     address2 = wtf.TextField("Address (line 2)", validators=[wtf.Optional()])
     city = wtf.TextField("City", validators=[wtf.Required()])

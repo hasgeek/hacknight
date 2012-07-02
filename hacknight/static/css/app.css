@@ -20,18 +20,23 @@ footer .footer-inner {
   text-align: center;
 }
 
-.form-horizontal {
-  background: #eeeeee;
-  padding: 1em;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  -o-border-radius: 4px;
-  -ms-border-radius: 4px;
-  -khtml-border-radius: 4px;
-  border-radius: 4px;
+label {
+  color: #aaaaaa;
 }
-.form-horizontal .form-actions {
-  margin: 22px -1em -1em;
+
+.help-block {
+  color: #666666;
+}
+
+input, textarea, select, .uneditable-input {
+  color: #aaaaaa;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.form-actions {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
   -moz-border-radius-bottomleft: 4px;
   -webkit-border-bottom-left-radius: 4px;
   -o-border-bottom-left-radius: 4px;
@@ -68,9 +73,34 @@ footer .footer-inner {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.1) inset;
   background: rgba(0, 0, 0, 0.1);
 }
+.well .nav.nav-list:first-child {
+  margin-top: -1px;
+}
 .well.nav.nav-list {
   padding-top: 20px;
   padding-bottom: 20px;
+}
+.well .pager {
+  margin-bottom: 0;
+}
+
+.pager-nav, .voting {
+  text-align: center;
+  line-height: 1;
+  font-size: 42px;
+}
+.pager-nav div.votecount, .voting div.votecount {
+  font-size: 28px;
+  line-height: 1;
+}
+.pager-nav a, .voting a {
+  display: block;
+  width: 100%;
+  height: 100%;
+  vertical-align: top;
+}
+.pager-nav a:hover, .voting a:hover {
+  text-decoration: none;
 }
 
 .nav-list > li > a, .nav-list .nav-header {
@@ -89,10 +119,10 @@ footer .footer-inner {
   color: #aaaaaa;
 }
 
-.cardset {
+.cardset, .userset {
   list-style: none;
 }
-.cardset li {
+.cardset li, .userset li {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -ms-box-sizing: border-box;
@@ -100,14 +130,15 @@ footer .footer-inner {
   height: 15em;
   text-align: left;
   position: relative;
+  margin-bottom: 22px;
 }
-.cardset li .card-badge {
+.cardset li .card-badge, .userset li .card-badge {
   position: absolute;
   right: 6px;
   top: 2px;
   color: #595959;
 }
-.cardset li a {
+.cardset li a, .userset li a {
   overflow: hidden;
   border: 2px solid rgba(255, 255, 255, 0.2);
   -moz-border-radius: 4px;
@@ -139,7 +170,7 @@ footer .footer-inner {
   -o-transition-duration: 0.2s;
   transition-duration: 0.2s;
 }
-.cardset li a:hover {
+.cardset li a:hover, .userset li a:hover {
   color: inherit;
   text-decoration: none;
   background: rgba(0, 0, 0, 0.2);
@@ -152,28 +183,37 @@ footer .footer-inner {
   -o-transition-duration: 0.2s;
   transition-duration: 0.2s;
 }
-.cardset li .card-title, .cardset li .card-body {
+.cardset li .card-title, .cardset li .card-body, .userset li .card-title, .userset li .card-body {
   text-overflow: ellipsis;
 }
-.cardset li .card-title {
+.cardset li .card-title, .userset li .card-title {
   padding: 9px 0 11px 0;
 }
-.cardset li .card-body {
+.cardset li .card-body, .userset li .card-body {
   margin: 11px -14px 0;
   padding: 10px 14px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
-.cardset li .card-body.large-plus {
+.cardset li .card-body.large-plus, .userset li .card-body.large-plus {
   text-align: center;
   font-size: 100px;
   line-height: 1;
 }
-.cardset li h2, .cardset li h3 {
+.cardset li h2, .cardset li h3, .userset li h2, .userset li h3 {
   margin-top: 0;
 }
-.cardset li h3 {
+.cardset li h3, .userset li h3 {
   font-size: 14px;
   color: #aaaaaa;
+}
+
+.userset li {
+  height: 10em;
+  text-align: center;
+}
+.userset li [class^="icon-"], .userset li [class*=" icon-"] {
+  font-size: 80px;
+  line-height: 1;
 }
 
 .centered .cardset.row {
@@ -205,9 +245,80 @@ footer .footer-inner {
   -ms-box-sizing: border-box;
   box-sizing: border-box;
   background: rgba(0, 0, 0, 0.1);
-  margin-bottom: 22px;
 }
 
 .event-map {
-  height: 300px;
+  height: 200px;
+}
+
+.defaultSkin table.mceLayout {
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.defaultSkin .mceIframeContainer {
+  border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.defaultSkin table.mceLayout.focus {
+  border-color: #4a90c7 !important;
+  border: 1px solid #4a90c7 !important;
+}
+
+.defaultSkin td.mceToolbar, .defaultSkin .mceStatusbar {
+  background: #aaaaaa !important;
+}
+
+.defaultSkin .mceButton {
+  border-color: #aaaaaa !important;
+}
+
+.defaultSkin a.mceButtonEnabled:hover {
+  border-color: #0a246a !important;
+}
+
+.leaflet-popup-content-wrapper {
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -o-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  border-radius: 4px;
+}
+
+.leaflet-popup-content {
+  font: 14px/22px Lato, "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  margin: 10px;
+}
+
+.leaflet-popup-close-button {
+  top: 3px;
+  right: 3px;
+}
+
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+  color: white;
+  background: rgba(34, 34, 34, 0.95);
+  -moz-box-shadow: 0 0 10px #444444;
+  -webkit-box-shadow: 0 0 10px #444444;
+  -o-box-shadow: 0 0 10px #444444;
+  box-shadow: 0 0 10px #444444;
+}
+
+.leaflet-popup-close-button {
+  background-color: transparent;
+}
+
+.leaflet-container .leaflet-control-attribution {
+  color: #aaaaaa;
+  background-color: rgba(0, 0, 0, 0.7);
+  font: 12px/1.5 Lato, "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  -moz-box-shadow: 0 0 7px #444444;
+  -webkit-box-shadow: 0 0 7px #444444;
+  -o-box-shadow: 0 0 7px #444444;
+  box-shadow: 0 0 7px #444444;
+}
+
+.disabled {
+  color: #666666;
 }

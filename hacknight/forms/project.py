@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
 
 import flask.ext.wtf as wtf
+from coaster import getbool
 from baseframe.forms import Form, RichTextField
 
 __all__ = ['ProjectForm']
 
 
 class ProjectForm(Form):
-    title = wtf.TextField('Title', description="Title of the project", validators=[wtf.Required('A title is required')])
-
-    description = RichTextField(u"Description", description="Describe your project with supporting links to datasets or other preperatory material. Also say why you want to work on it.")
-    status = wtf.RadioField("Are you hacking?",default=0, coerce=int,
-        choices=[(0, u"I will be working on this project"),
-                 (1, u"I’m proposing to invite someone to take it up")])
-
+    title = wtf.TextField("Title", description="Title of the project", validators=[wtf.Required("A title is required")])
+    blurb = wtf.TextField("Blurb", description="A single-line summary of the project",
+        validators=[wtf.Required("A blurb is required")])
+    description = RichTextField(u"Description",
+        description="Detailed description of your project", width="50%",
+        content_css="/static/css/editor.css")
+    participating = wtf.RadioField("Will you be participating?", default=1, coerce=getbool,
+        choices=[(1,  u"I will be working on this project"),
+                 (0, u"I’m proposing an idea for others to take up")])

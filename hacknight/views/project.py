@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 from flask import render_template, g, abort, flash, url_for, request, redirect
 from coaster.views import load_models
 from baseframe.forms import render_form, render_redirect, ConfirmDeleteForm
 from hacknight import app
 from hacknight.models import db, Profile, Event, Project, ProjectMember, Participant, PARTICIPANT_STATUS, User
-from hacknight.models.event import profile_types
 from hacknight.forms.project import ProjectForm
-from hacknight.forms.comment import CommentForm, DeleteCommentForm, ConfirmDeleteForm
+from hacknight.forms.comment import CommentForm, DeleteCommentForm
 from hacknight.views.login import lastuser
 from hacknight.models.vote import Vote
 from hacknight.models.comment import Comment
@@ -41,9 +41,9 @@ def project_new(profile, event, form=None):
         db.session.add(project_member)
         db.session.commit()
         flash("Project saved")
-        return render_redirect(url_for('project_view', profile=profile.name, project=project.url_name, event=event.name))
+        return render_redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
     return render_form(form=form, title=u"New Project", submit=u"Save",
-        cancel_url=url_for('index'), ajax=False)
+        cancel_url=url_for('event_view', profile=profile.name, event=event.name), ajax=False)
 
 
 @app.route('/<profile>/<event>/projects/<project>/edit', methods=['GET', 'POST'])
@@ -58,13 +58,17 @@ def project_edit(profile, project, event):
         abort(403)
     else:
         form = ProjectForm(obj=project)
+        if request.method == 'GET':
+            form.participating.data = str(int(project.participating))
         if form.validate_on_submit():
             form.populate_obj(project)
             db.session.commit()
             flash(u"Your changes have been saved", 'success')
-            return render_redirect(url_for('index'), code=303)
+            return render_redirect(url_for('project_view', profile=profile.name, event=event.name,
+                project=project.url_name), code=303)
         return render_form(form=form, title=u"Edit project", submit=u"Save",
-            cancel_url=url_for('index'), ajax=True)
+            cancel_url=url_for('project_view', profile=profile.name, event=event.name,
+                project=project.url_name), ajax=True)
 
 
 @app.route('/<profile>/<event>/projects/<project>/delete', methods=["GET", "POST"])
@@ -100,18 +104,17 @@ def project_delete(profile, project, event):
         message=u"Delete '%s' ? It will remove comments, votes and all information related to the project. This operation cannot be undone." % (project.title))
 
 
-@app.route('/<profile>/<event>/projects', methods=["GET","POST"])
-@load_models((Profile, {'name':'profile'}, 'profile'),
-    (Event, {'name':'event'}, 'event'))
+@app.route('/<profile>/<event>/projects', methods=["GET", "POST"])
 def projects(profile, event):
-    projects = Project.query.filter_by(event_id=event.id)
-    return render_template('projects.html', projects=projects, event=event)
+    return redirect(url_for('event_view', profile=profile, event=event))
 
-@app.route('/<profile>/<event>/projects/<project>', methods=["GET","POST"])
-@load_models((Profile, {'name':'profile'}, 'profile'),
-    (Project, {'url_name': 'project'}, 'project'),
-    (Event, {'name':'event'}, 'event'))
-def project_view(profile,project,event):
+
+@app.route('/<profile>/<event>/projects/<project>', methods=["GET", "POST"])
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
+    (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
+def project_view(profile, event, project):
     if not profile:
         abort(404)
     if not event:
@@ -172,7 +175,7 @@ def project_view(profile,project,event):
             db.session.commit()
             # Redirect despite this being the same page because HTTP 303 is required to not break
             # the browser Back button
-            return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
+            return redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
 
         elif request.form.get('form.id') == 'delcomment' and delcommentform.validate():
             comment = Comment.query.get(int(delcommentform.comment_id.data))
@@ -186,18 +189,19 @@ def project_view(profile,project,event):
                     flash("You did not post that comment.", "error")
             else:
                 flash("No such comment.", "error")
-            return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
-    return render_template('project_view.html', event=event, project=project, profile=profile,
+            return redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
+    return render_template('project.html', event=event, project=project, profile=profile,
         comments=comments, commentform=commentform, delcommentform=delcommentform,
         breadcrumbs=[(url_for('index'), "home")], userIsMember=userIsMember)
 
 
 @app.route('/<profile>/<event>/projects/<project>/voteup')
-@load_models((Profile, {'name':'profile'}, 'profile'),
-    (Project, {'url_name': 'project'}, 'project'),
-    (Event, {'name':'event'}, 'event'))
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
+    (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
 @lastuser.requires_login
-def voteupsession(profile, project,event):
+def project_voteup(profile, project, event):
     if not event:
         abort(404)
     if not project:
@@ -205,16 +209,17 @@ def voteupsession(profile, project,event):
     project.votes.vote(g.user, votedown=False)
     db.session.commit()
     flash("Your vote has been recorded", "info")
-    return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
+    return redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
 
 
 # FIXME: This voting method uses GET but makes db changes. Not correct. Should be POST
 @app.route('/<profile>/<event>/projects/<project>/votedown')
-@load_models((Profile, {'name':'profile'}, 'profile'),
-    (Project, {'url_name': 'project'}, 'project'),
-    (Event, {'name':'event'}, 'event'))
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
+    (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
 @lastuser.requires_login
-def votedownsession(profile, project,event):
+def project_votedown(profile, event, project):
     if not event:
         abort(404)
     if not project:
@@ -222,14 +227,15 @@ def votedownsession(profile, project,event):
     project.votes.vote(g.user, votedown=True)
     db.session.commit()
     flash("Your vote has been recorded", "info")
-    return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
+    return redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
 
 
 # FIXME: This voting method uses GET but makes db changes. Not correct. Should be POST
 @app.route('/<profile>/<event>/projects/<project>/cancelvote')
-@load_models((Profile, {'name':'profile'}, 'profile'),
-    (Project, {'url_name': 'project'}, 'project'),
-    (Event, {'name':'event'}, 'event'))
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
+    (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
 @lastuser.requires_login
 def votecancelsession(profile, project, event):
     if not event:
@@ -239,13 +245,15 @@ def votecancelsession(profile, project, event):
     project.votes.cancelvote(g.user)
     db.session.commit()
     flash("Your vote has been withdrawn", "info")
-    return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
+    return redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
+
 
 @app.route('/<profile>/<event>/projects/<project>/comments/<int:cid>/voteup')
-@load_models((Profile, {'name':'profile'}, 'profile'),
-    (Project, {'url_name': 'project'}, 'project'),
-    (Event, {'name':'event'}, 'event'),
-    (Comment, {'id':'cid'}, 'comment'))
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
+    (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
+    (Comment, {'id': 'cid'}, 'comment'))
 @lastuser.requires_login
 def voteupcomment(profile, project, event, comment):
     if not event:
@@ -257,7 +265,7 @@ def voteupcomment(profile, project, event, comment):
     comment.votes.vote(g.user, votedown=False)
     db.session.commit()
     flash("Your vote has been recorded", "info")
-    return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
+    return redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
 
 
 # FIXME: This voting method uses GET but makes db changes. Not correct. Should be POST
@@ -359,7 +367,7 @@ def prevsession(profile, project, event):
 @load_models((Profile, {'name':'profile'}, 'profile'),
     (Project, {'url_name': 'project'}, 'project'),
     (Event, {'name':'event'}, 'event'))
-def join(profile, project, event):
+def project_join(profile, project, event):
     if not profile:
         abort(404)
     if not event:

@@ -2,10 +2,10 @@
 {% block title %}{{ event.title }}{% endblock %}
 
 {% macro participant_list(participants) -%}
-  <ul>
+  <ul class="userset row">
     {% for participant in participants -%}
-      <li>
-        <a href="{{ url_for('profile_view', profile=participant.user.profile.name) }}">{{ participant.user.fullname }}</a>
+      <li class="span2">
+        <a href="{{ url_for('profile_view', profile=participant.user.profile.name) }}"><i class="icon-user"></i><br>{{ participant.user.fullname }}</a>
       </li>
     {% endfor -%}
   </ul>
@@ -20,6 +20,8 @@
         <h1>{{ self.title() }}</h1>
       </div>
       {{ event.description|safe }}
+      {{ participant_list(acceptedparticipants) }}
+      {{ participant_list(restparticipants) }}
     </div>
     <div class="span4">
       <ul class="well nav nav-list">
@@ -67,8 +69,6 @@
     </div>
   </div>
 
-  <div id="map" class="event-map"></div>
-
   <ul class="cardset row">
     {% for p in projects %}
       <li class="span4">
@@ -77,7 +77,7 @@
             <h2>{{ p.title }}</h2>
           </div>
           <div class="card-body">
-            {{ p.description|safe }}
+            {{ p.blurb }}
           </div>
         </a>
       </li>
@@ -91,37 +91,9 @@
       </a>
     </li>
   </ul>
-{#
-                {% for p in projects %}
-                <tbody>
-                  <tr>
-                    <td><a href="{{ url_for('project_view', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.id }}</a></td>
-                    <td><a href="{{ url_for('project_view', profile=profile.name ,project=p.url_name,event=event.name) }}"	><strong>{{ p.title }}</strong></a></td>
-                    <td><a href="{{ url_for('project_view', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.members.filter_by(status=0).first().participant.user.fullname }}</a></td>
-                    <td><a href="{{ url_for('project_view', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.votes.count }}</a></td>
-                    <td><a href="{{ url_for('project_view', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.comments.count }}</a></td>
-                    <td><a href="{{ url_for('project_view', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.members.count() }}</a></td>
 
-                    <td><a href="{{ url_for('project_view', profile=profile.name ,project=p.url_name,event=event.name) }}">{{ p.created_at.strftime("%a, %b %e") }}</a></td>
-                  </tr>
+  <div id="map" class="event-map"></div>
 
-                {% endfor %}
-                </tbody>
-              </table>
-     {%- else -%}
-      <h2>No projects submitted yet</h2>
-     {% endif %}
-    </div>
-  </div>
-
-  <div class="section row">
-    <div class="span12">
-      <h2>Registered Participants</h2>
-      {{ participant_list(acceptedparticipants) }}
-      {{ participant_list(restparticipants) }}
-    </div>
-  </div>
-#}
 {% endblock %}
 
 {% block footerscripts %}
