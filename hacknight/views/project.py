@@ -270,10 +270,11 @@ def voteupcomment(profile, project, event, comment):
 
 # FIXME: This voting method uses GET but makes db changes. Not correct. Should be POST
 @app.route('/<profile>/<event>/projects/<project>/comments/<int:cid>/votedown')
-@load_models((Profile, {'name':'profile'}, 'profile'),
-    (Project, {'url_name': 'project'}, 'project'),
-    (Event, {'name':'event'}, 'event'),
-    (Comment, {'id':'cid'}, 'comment'))
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
+    (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
+    (Comment, {'id': 'cid'}, 'comment'))
 @lastuser.requires_login
 def votedowncomment(profile, project, event, comment):
     if not event:
@@ -288,10 +289,11 @@ def votedowncomment(profile, project, event, comment):
     return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
 
 @app.route('/<profile>/<event>/projects/<project>/comments/<int:cid>/json')
-@load_models((Profile, {'name':'profile'}, 'profile'),
-    (Project, {'name': 'project'}, 'project'),
-    (Event, {'name':'event'}, 'event'),
-    (Comment, {'id':'cid'}, 'comment'))
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
+    (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
+    (Comment, {'id': 'cid'}, 'comment'))
 def jsoncomment(profile, project, event):
     if not event:
         abort(404)
@@ -309,10 +311,11 @@ def jsoncomment(profile, project, event):
 
 # FIXME: This voting method uses GET but makes db changes. Not correct. Should be POST
 @app.route('/<profile>/<event>/projects/<project>/comments/<int:cid>/cancelvote')
-@load_models((Profile, {'name':'profile'}, 'profile'),
-    (Project, {'url_name': 'project'}, 'project'),
-    (Event, {'name':'event'}, 'event'),
-    (Comment, {'id':'cid'}, 'comment'))
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
+    (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
+    (Comment, {'id': 'cid'}, 'comment'))
 @lastuser.requires_login
 def votecancelcomment(profile, project, event, comment):
     if not event:
@@ -328,9 +331,10 @@ def votecancelcomment(profile, project, event, comment):
 
 
 @app.route('/<profile>/<event>/projects/<project>/next')
-@load_models((Profile, {'name':'profile'}, 'profile'),
-    (Project, {'url_name': 'project'}, 'project'),
-    (Event, {'name':'event'}, 'event'))
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
+    (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
 def nextsession(profile, project, event):
     if not event:
         abort(404)
@@ -346,9 +350,10 @@ def nextsession(profile, project, event):
 
 
 @app.route('/<profile>/<event>/projects/<project>/prev')
-@load_models((Profile, {'name':'profile'}, 'profile'),
-    (Project, {'url_name': 'project'}, 'project'),
-    (Event, {'name':'event'}, 'event'))
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
+    (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
 def prevsession(profile, project, event):
     if not event:
         abort(404)
@@ -364,9 +369,10 @@ def prevsession(profile, project, event):
 
 @app.route('/<profile>/<event>/projects/<project>/join')
 @lastuser.requires_login
-@load_models((Profile, {'name':'profile'}, 'profile'),
-    (Project, {'url_name': 'project'}, 'project'),
-    (Event, {'name':'event'}, 'event'))
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
+    (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
 def project_join(profile, project, event):
     if not profile:
         abort(404)
