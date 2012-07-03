@@ -17,17 +17,17 @@
     <div class="grid" id="contact-info">
       {% if not participant.status == 2 %}
         <br/>
-        Contact Information
-        <ul>
-          <li class="grid"> Reason To Join: {{ participant.reason_to_join | safe }}
+        <h3> Contact Information </h3>
+        <ul class="grid">
+          <li > Reason To Join: {{ participant.reason_to_join | safe }}
           </li>
-          <li class="grid"> Job Title: {{ participant.job_title}}
+          <li > Job Title: {{ participant.job_title}}
           </li>
-          <li class="grid"> Company: {{ participant.company}}
+          <li > Company: {{ participant.company}}
           </li>
-          <li class="grid"> Phone no: {{ participant.phone_no}}
+          <li > Phone no: {{ participant.phone_no}}
           </li>
-          <li class="grid"> Email: {{ participant.email}}
+          <li > Email: {{ participant.email}}
           </li>
         </ul>
       {% endif %}
