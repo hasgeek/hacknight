@@ -237,7 +237,7 @@ def project_votedown(profile, event, project):
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
 @lastuser.requires_login
-def votecancelsession(profile, project, event):
+def project_cancelvote(profile, project, event):
     if not event:
         abort(404)
     if not project:

@@ -8,9 +8,25 @@
   <div class="row">
     <div class="span1 centered voting">
       {%- with vote = project.votes.getvote(g.user) %}
-        <a title="Vote up" href="{{ url_for('project_voteup', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-up"></i></a>
+      {%- if not vote -%}
+        <a class="votechoice" title="Vote up" href="{{ url_for('project_voteup', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-up"></i></a>
+
         <div class="votecount">{% if project.votes.count > 0 %}+{% endif %}{{ project.votes.count }}</div>
-        <a title="Vote down" href="{{ url_for('project_votedown', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-down"></i></a>
+
+        <a class="votechoice" title="Vote down" href="{{ url_for('project_votedown', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-down"></i></a>
+      {%- elif vote.votedown -%}
+        <a class="votechoice" title="Vote up" href="{{ url_for('project_voteup', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-up"></i></a>
+
+        <div class="votecount">{% if project.votes.count > 0 %}+{% endif %}{{ project.votes.count }}</div>
+
+        <a class="votechoice selected" title="Vote down" href="{{ url_for('project_cancelvote', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-down"></i></a>
+      {%- else -%}
+        <a class="votechoice selected" title="Vote up" href="{{ url_for('project_cancelvote', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-up"></i></a>
+
+        <div class="votecount">{% if project.votes.count > 0 %}+{% endif %}{{ project.votes.count }}</div>
+        
+        <a class="votechoice" title="Vote down" href="{{ url_for('project_votedown', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-down"></i></a>
+      {%- endif -%}
       {% endwith %}
     </div>
     <div class="span9">

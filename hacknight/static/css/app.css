@@ -322,3 +322,7 @@ input, textarea, select, .uneditable-input {
 .disabled {
   color: #666666;
 }
+
+.votechoice.selected {
+  color: #666666;
+}
