@@ -1,6 +1,6 @@
 # -*- coding: utf-8- *-
 
-from hacknight.models import BaseMixin, BaseScopedIdNameMixin
+from hacknight.models import BaseMixin, BaseScopedIdNameMixin, BaseScopedIdMixin
 from hacknight.models import db
 from hacknight.models.event import Event
 from hacknight.models.participant import Participant
@@ -35,7 +35,7 @@ class CommentSpace(BaseMixin, db.Model):
         self.count = 0
 
 
-class Comment(BaseMixin, db.Model):
+class Comment(BaseMixin, BaseScopedIdMixin, db.Model):
     __tablename__ = 'comment'
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     user = db.relationship(User, primaryjoin=user_id == User.id,

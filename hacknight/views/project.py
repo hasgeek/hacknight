@@ -150,7 +150,6 @@ def project_view(profile, event, project):
     if request.method == 'POST':
         if request.form.get('form.id') == 'newcomment' and commentform.validate():
             if commentform.edit_id.data:
-                comment = Comment.query.get(int(commentform.edit_id.data))
                 if comment:
                     if comment.user == g.user:
                         comment.message = commentform.message.data
@@ -170,6 +169,7 @@ def project_view(profile, event, project):
                 comment.message_html = markdown(comment.message)
                 project.comments.count += 1
                 comment.votes.vote(g.user)  # Vote for your own comment
+                comment.make_id()
                 db.session.add(comment)
                 flash("Your comment has been posted", "info")
             db.session.commit()
@@ -253,7 +253,7 @@ def project_cancelvote(profile, project, event):
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
-    (Comment, {'id': 'cid'}, 'comment'))
+    (Comment, {'url_id': 'cid'}, 'comment'))
 @lastuser.requires_login
 def voteupcomment(profile, project, event, comment):
     if not event:
@@ -274,7 +274,7 @@ def voteupcomment(profile, project, event, comment):
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
-    (Comment, {'id': 'cid'}, 'comment'))
+    (Comment, {'url_id': 'cid'}, 'comment'))
 @lastuser.requires_login
 def votedowncomment(profile, project, event, comment):
     if not event:
@@ -293,7 +293,7 @@ def votedowncomment(profile, project, event, comment):
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
-    (Comment, {'id': 'cid'}, 'comment'))
+    (Comment, {'url_id': 'cid'}, 'comment'))
 def jsoncomment(profile, project, event):
     if not event:
         abort(404)
@@ -302,7 +302,7 @@ def jsoncomment(profile, project, event):
     if not comment:
         abort(404)
 
-    comment = Comment.query.get(cid)
+    # comment = Comment.query.get(cid)
     if comment:
         return jsonp(message=comment.message)
     else:
@@ -315,7 +315,7 @@ def jsoncomment(profile, project, event):
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
-    (Comment, {'id': 'cid'}, 'comment'))
+    (Comment, {'url_id': 'cid'}, 'comment'))
 @lastuser.requires_login
 def votecancelcomment(profile, project, event, comment):
     if not event:
