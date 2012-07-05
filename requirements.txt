@@ -9,3 +9,4 @@ https://github.com/jace/pydocflow/zipball/master
 ordereddict
 fabric
 markdown
+Flask-WTF

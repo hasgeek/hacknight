@@ -5,9 +5,9 @@ Test configuration for Hacknight
 #: Timezone for displayed datetimes
 TIMEZONE = 'Asia/Calcutta'
 #: Database backend
-SQLALCHEMY_DATABASE_URI = 'sqlite:///'
+SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
 #: Secret key
-SECRET_KEY = 'test' 
+SECRET_KEY = 'test'
 #: Folderto upload the participants list
 UPLOAD_FOLDER = 'uploads/'
 #: Supported extensions
