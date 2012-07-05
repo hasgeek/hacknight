@@ -86,7 +86,6 @@ class Test_User():
             u = User(**user)
             self.db.session.add(u)
         self.db.session.commit()
-        self.db.session.add(u)
 
 
     def testTearDown(self):
