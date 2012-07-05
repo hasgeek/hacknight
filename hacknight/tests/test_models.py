@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from hacknight.models import db
-from hacknight.tests import Event, Profile, PROFILE_TYPE, User, Venue, Project, Participant, ProjectMember
+from hacknight.models.user import User
 from test_data import EVENTS, USERS, PROFILES, VENUES, PROJECTS, PARTICIPANTS, PROJECT_MEMBERS
 from nose.tools import ok_, assert_raises
 import sqlalchemy
 
-def test_setup():
+"""def test_setup():
     global db
     db.create_all()
 
@@ -75,3 +75,23 @@ def test_teardown():
     global db
     db.session.expunge_all()
     db.drop_all()
+"""
+class Test_User():
+    def __init__(self):
+        self.db = db
+
+    def testSetUp(self):
+        self.db.drop_all()
+        self.db.create_all()
+
+    def testAddUser(self):
+        for user in USERS:
+            u = User(**user)
+            self.db.session.add(u)
+        self.db.session.commit()
+        self.db.session.add(u)
+        assert_raises(sqlalchemy.exceptions.IntegrityError, self.db.session.commit())
+
+    def testTearDown(self):
+        self.db.session.expunge_all()
+        self.db.drop_all()

@@ -22,3 +22,4 @@ env/
 dev/
 error.log
 hacknight/static/js/packed.js
+settings.py
