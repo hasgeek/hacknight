@@ -5,36 +5,34 @@
 <div id="main" class="participant-list">
 
   <h1>Participants</h1>
+  <ul class="grid container-fluid">
+    <li class="row-fluid header">
+      <div class="span2">Name</div>
+      <div class="span2">Status</div>
+      <div class="span3">Email</div>
+      <div class="span3">Phone</div>
+      <div class="span2"></div>
+      <div class="span12"></div>
+  
+    </li>
   {% for participant in participants %}
-  <div class="row participant-{{ participant.id }}" data-status="{{ participant.status }}">
-    <div class="span1">{{ participant.user.fullname }}</div>
-    <div class="span2 participant-status-label">{{ participant.status | show_participant_status}}</div>
-    <div class="span2 ">
-      <a href="#" class="update-participant-status" data-id="{{ participant.id }}" data-status="2" title="Accept">accept</a>&nbsp;&nbsp;&nbsp;&nbsp;
-      <a href="#" class="update-participant-status" data-id="{{ participant.id }}" data-status="3" title="Reject">reject</a>&nbsp;&nbsp;&nbsp;&nbsp;
+    <li class="row-fluid item participant-{{ participant.id }}" data-status="{{ participant.status }}">
+      <div class="span2">{{ participant.user.fullname }}</div>
+      <div class="span2 participant-status-label">{{ participant.status | show_participant_status}}</div>
+      <div class="span3">{{ participant.email }}</div>
+      <div class="span3">{{ participant.phone_no }}</div>
+      <div class="span2">
+      <a href="#" class="update-participant-status" data-id="{{ participant.id }}" data-status="2" title="Accept">accept</a> |
+      <a href="#" class="update-participant-status" data-id="{{ participant.id }}" data-status="3" title="Reject">reject</a> |
       <a href="#" class="update-participant-status" data-id="{{ participant.id }}" data-status="1" title="Wait-list">wait-list</a>
     </div>
-    <div class="grid" id="contact-info">
-      {% if not participant.status == 2 %}
-        <br/>
-        <h3> Contact Information </h3>
-        <ul class="grid">
-          <li > Reason To Join: {{ participant.reason_to_join | safe }}
-          </li>
-          <li > Job Title: {{ participant.job_title}}
-          </li>
-          <li > Company: {{ participant.company}}
-          </li>
-          <li > Phone no: {{ participant.phone_no}}
-          </li>
-          <li > Email: {{ participant.email}}
-          </li>
-        </ul>
-      {% endif %}
-    </div>
-  </div>
+      <div class="span12">{{ participant.reason_to_join|safe }}</div>
+  </li>
   {% endfor %}
-</div>
+</ul>
+  </div>
+
+    
 {% endblock %}
 {% block footerscripts %}
   <script type="text/javascript">

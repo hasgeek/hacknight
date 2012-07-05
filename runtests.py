@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+#!/usr/bin/env python
 import os
 import nose
 
