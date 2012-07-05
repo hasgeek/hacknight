@@ -8,25 +8,25 @@
   <ul class="grid container-fluid">
     <li class="row-fluid header">
       <div class="span2">Name</div>
-      <div class="span1">Status</div>
-      <div class="span2">Email</div>
-      <div class="span4">Reason</div>
-      <div class="span2">Phone</div>
+      <div class="span2">Status</div>
+      <div class="span3">Email</div>
+      <div class="span3">Phone</div>
       <div class="span2"></div>
+      <div class="span12"></div>
   
     </li>
   {% for participant in participants %}
     <li class="row-fluid item participant-{{ participant.id }}" data-status="{{ participant.status }}">
       <div class="span2">{{ participant.user.fullname }}</div>
-      <div class="span1 participant-status-label">{{ participant.status | show_participant_status}}</div>
-      <div class="span2">{{ participant.email }}</div>
-      <div class="span4">{{ participant.reason_to_join|safe }}</div>
-      <div class="span2">{{ participant.phone_no }}</div>
-<div class="span2">
+      <div class="span2 participant-status-label">{{ participant.status | show_participant_status}}</div>
+      <div class="span3">{{ participant.email }}</div>
+      <div class="span3">{{ participant.phone_no }}</div>
+      <div class="span2">
       <a href="#" class="update-participant-status" data-id="{{ participant.id }}" data-status="2" title="Accept">accept</a> |
-      <a href="#" class="update-participant-status" data-id="{{ participant.id }}" data-status="3" title="Reject">reject</a>|
+      <a href="#" class="update-participant-status" data-id="{{ participant.id }}" data-status="3" title="Reject">reject</a> |
       <a href="#" class="update-participant-status" data-id="{{ participant.id }}" data-status="1" title="Wait-list">wait-list</a>
     </div>
+      <div class="span12">{{ participant.reason_to_join|safe }}</div>
   </li>
   {% endfor %}
 </ul>
