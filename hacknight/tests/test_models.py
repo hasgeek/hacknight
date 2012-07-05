@@ -79,9 +79,6 @@ def test_teardown():
 class Test_User():
     def __init__(self):
         self.db = db
-
-    def testSetUp(self):
-        self.db.drop_all()
         self.db.create_all()
 
     def testAddUser(self):
