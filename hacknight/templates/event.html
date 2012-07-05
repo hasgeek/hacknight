@@ -82,6 +82,8 @@
         </a>
       </li>
     {% endfor %}
+
+    {% if current_participant.status == 2 %}
     <li class="span4">
       <a href="{{ url_for('project_new', profile=profile.name, event=event.name) }}">
         <div class="card-title">
@@ -90,6 +92,7 @@
         <div class="card-body large-plus"><i class="icon-plus"></i></div>
       </a>
     </li>
+    {% endif %}
   </ul>
 
   <div id="map" class="event-map"></div>
