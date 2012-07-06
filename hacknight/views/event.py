@@ -110,7 +110,7 @@ def event_open(profile, event):
         Participant.status != PARTICIPANT_STATUS.WITHDRAWN,
         Participant.event == event)
     return render_template('manage_event.html', profile=profile, event=event,
-        participants=participants, statuslabels=participant_status_labels)
+        participants=participants, statuslabels=participant_status_labels, enumerate=enumerate)
 
 
 @app.route('/<profile>/<event>/manage/update', methods=['POST'])
