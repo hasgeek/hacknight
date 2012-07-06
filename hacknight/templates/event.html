@@ -27,7 +27,9 @@
       <ul class="well nav nav-list">
         <li><i class="icon-calendar"></i> {{ event.start_datetime | fulldate }} &mdash; {{ event.end_datetime | fulldate }}</li>
         {% if event.ticket_price -%}
-          <li><i class="icon-money"></i> {{ event.ticket_price }}</li>
+          <li><i class="icon-money"></i> Entry Fee Rs. {{ event.ticket_price }}</li>
+          <li><span>The hacknight is free if you have purchased your ticket to the event.</span>
+          </li>
         {%- endif %}
         <li><a href="{{ url_for('venue_view', venue=event.venue.name) }}"><i class="icon-map-marker"></i> {{ event.venue.title }}</a></li>
         <li><i class="icon-blank"></i> {{ event.venue.address1 }}</li>
