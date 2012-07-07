@@ -1,24 +1,14 @@
 # -*- coding: utf-8 -*-
 #: Site title
-SITE_TITLE = 'HasGeek Hacknight'
+SITE_TITLE = 'Hacknight'
 #: Site id (for network bar)
 SITE_ID = 'hacknight'
 #: Timezone
 TIMEZONE = 'Asia/Calcutta'
-#secret key
-SECRET_KEY = '5\x07\xcf\xdb\xb2\x1b\xbb\x8a\x984W\xd1\x0faN\xd3U\xabb\xf2[\xb2\xd2\xf1\x13\x1c\xe7W&\t\xd9\xdb'
-#: Database backend
-SQLALCHEMY_DATABASE_URI = 'sqlite:///dev.db'
 #: LastUser server
-#LASTUSER_SERVER = 'https://auth.hasgeek.com/'
-#LASTUSER_SERVER = 'https://login.hasgeek.com/'
-LASTUSER_SERVER = 'http://lastuser.local:7000/'
-#: LastUser client id
-LASTUSER_CLIENT_ID = 'SL1E163NT5yCDVt9K8OoxQ'
-#: LastUser client secret
-LASTUSER_CLIENT_SECRET = 'Kj4SkuNjRj68xaFn2b6zIgtEpIcpwVRkGFlEl6SZQNCA'
+LASTUSER_SERVER = 'https://auth.hasgeek.com/'
 #: Typekit id
-TYPEKIT_CODE = 'qhx6vtv'
+TYPEKIT_CODE = ''
 #: Mail settings
 #: MAIL_FAIL_SILENTLY : default True
 #: MAIL_SERVER : default 'localhost'

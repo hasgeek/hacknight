@@ -7,6 +7,7 @@
   <h1>Participants</h1>
   <ul class="grid container-fluid">
     <li class="row-fluid header">
+      <div class="span1">#</div>
       <div class="span2">Name</div>
       <div class="span2">Status</div>
       <div class="span3">Email</div>
@@ -15,8 +16,9 @@
       <div class="span12"></div>
   
     </li>
-  {% for participant in participants %}
+  {% for i, participant in enumerate(participants) %}
     <li class="row-fluid item participant-{{ participant.id }}" data-status="{{ participant.status }}">
+      <div class="span1">{{ i+1 }}</div>
       <div class="span2">{{ participant.user.fullname }}</div>
       <div class="span2 participant-status-label">{{ participant.status | show_participant_status}}</div>
       <div class="span3">{{ participant.email }}</div>
