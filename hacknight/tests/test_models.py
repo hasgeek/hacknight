@@ -87,6 +87,9 @@ class Test_User():
             self.db.session.add(u)
         self.db.session.commit()
 
+    def testCountUser(self):
+        ok_(len(USERS), self.db.session.query(User).count())
+
 
     def testTearDown(self):
         self.db.session.expunge_all()
