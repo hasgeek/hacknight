@@ -3,94 +3,99 @@
 
 from hacknight.models import db
 from hacknight.models.user import User
-from test_data import USERS
-from nose.tools import ok_, assert_raises
-import sqlalchemy
-
-"""def test_setup():
-    global db
-    db.create_all()
-
-def test_users():
-    global db
-    for user in USERS:
-        u = User(**user)
-        db.session.add(u)
-    db.session.commit()
-    db.session.add(u)
-    assert_raises(sqlalchemy.exceptions.IntegrityError, db.session.commit())
-
-def test_profiles():
-    global db
-    for profile in PROFILES:
-        p = Profile(**profile)
-        db.session.add(p)
-    db.session.commit()
-    db.session.add(p)
-    assert_raises(sqlalchemy.exceptions.IntegrityError, db.session.commit())
-
-def test_event():
-    global db
-    for event in EVENTS:
-        profile = db.session.query(Profile).filter_by(userid=event['userid']).first()
-        e = Event(profile_id=profile.id, title=event['title'], start_datetime=event['start_date'], end_datetime=event['end_date'],website=event['website'], name=event['name'])
-        db.session.add(e)
-    db.session.commit()
-    db.session.add(e)
-    assert_raises(sqlalchemy.exceptions.IntegrityError, db.session.commit())
-
-def test_venue():
-    global db
-    for venue in VENUES:
-        l = Venue(**venue)
-        db.session.add(l)
-    db.session.commit()
-    db.session.add(l)
-    assert_raises(sqlalchemy.exceptions.IntegrityError, db.session.commit())
+from hacknight.models.event import Profile, Event
+from hacknight.models.venue import Venue
+from hacknight.models.participant import Participant
+from hacknight.models.project import Project, ProjectMember
+from test_data import USERS, PROFILES, VENUES, EVENTS, PARTICIPANTS, PROJECTS
+import unittest
 
 
-def test_project():
-    global db
-    for project in PROJECTS:
-        event = db.session.query(Event).filter_by(name=project['event_name']).first()
-        prjct = Project(event_id = event.id,title=project['title'], description=project['description'], name=project['name'])
-        db.session.add(prjct)
-    db.session.commit()
-    db.session.add(prjct)
-    assert_raises(sqlalchemy.exceptions.IntegrityError, db.session.commit())
-
-def test_participant():
-    global db
-    for participant in PARTICIPANTS:
-        user = db.session.query(User).filter_by(fullname=participant['fullname']).first()
-        event = db.session.query(Event).filter_by(name=participant['event_name']).first()
-        p = Participant(user_id = user.id, event_id = event.id)
-        db.session.add(p)
-    db.session.commit()
-    db.session.add(p)
-    assert_raises(sqlalchemy.exceptions.IntegrityError, db.session.commit())
-
-
-def test_teardown():
-    global db
-    db.session.expunge_all()
-    db.drop_all()
-"""
-class Test_User():
-    def __init__(self):
+class TestCase(unittest.TestCase):
+    """ Test Case to test all models"""
+    def setUp(self):
         self.db = db
         self.db.create_all()
 
-    def testAddUser(self):
+    def test_add(self):
+        """
+            All DB insertion is performed here.
+        """
+        #test user insertion
         for user in USERS:
             u = User(**user)
             self.db.session.add(u)
         self.db.session.commit()
+        #test profile insertion
+        for profile in PROFILES:
+            p = Profile(**profile)
+            self.db.session.add(p)
+        self.db.session.commit()
+        #test venue insertion
+        profile = db.session.query(Profile).first()
+        for venue in VENUES:
+            v = Venue(profile_id=profile.id, **venue)
+            self.db.session.add(v)
+        self.db.session.commit()
+        #test event insertion
+        venue = db.session.query(Venue).first()
+        for event in EVENTS:
+            e = Event(profile_id=profile.id, venue_id=venue.id, **event)
+            self.db.session.add(e)
+        self.db.session.commit()
+        #test participant insertion
+        event = db.session.query(Event).first()
+        user = db.session.query(User).first()
+        for participant in PARTICIPANTS:
+            p = Participant(user_id=user.id, event_id=event.id, **participant)
+            self.db.session.add(p)
+        self.db.session.commit()
+        #test project insertion
+        participant = self.db.session.query(Participant).first()
+        for project in PROJECTS:
+            p = Project(participant_id=participant.id, event_id=participant.event_id, **project)
+            p.votes.vote(participant.user)
+            self.db.session.add(p)
+        self.db.session.commit()
+        #test project member
+        projects = db.session.query(Project).all()
+        for project in projects:
+            project_member = ProjectMember(project=project, participant=project.participant)
+            self.db.session.add(project_member)
+        self.db.session.commit()
 
-    def testCountUser(self):
-        ok_(len(USERS), self.db.session.query(User).count())
+    def test_delete(self):
+        #Delete all users
+        users = self.db.session.query(User).all()
+        for user in users:
+            self.db.session.delete(user)
+        self.db.session.commit()
+        #Delete all Events
+        events = self.db.session.query(Event).all()
+        for event in events:
+            self.db.session.delete(event)
+        self.db.session.commit()
+        #Delete all profiles
+        profiles = self.db.session.query(Profile).all()
+        for profile in profiles:
+            self.db.session.delete(profile)
+        self.db.session.commit()
+        #Delete Venues
+        venues = self.db.session.query(Event).all()
+        for venue in venues:
+            self.db.session.delete(venue)
+        self.db.session.commit()
+        #Delete Participants
+        participants = self.db.session.query(Participant).all()
+        for participant in participants:
+            self.db.session.delete(participant)
+        self.db.session.commit()
+        #Delete Projects
+        projects = self.db.session.query(Project).all()
+        for project in projects:
+            self.db.session.delete(project)
+        self.db.session.commit()
 
-
-    def testTearDown(self):
+    def tearDown(self):
         self.db.session.expunge_all()
         self.db.drop_all()
