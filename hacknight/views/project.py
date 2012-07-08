@@ -17,11 +17,11 @@ markdown = Markdown(safe_mode="escape").convert
 
 
 @app.route('/<profile>/<event>/new', methods=['GET', 'POST'])
+@lastuser.requires_login
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     )
-@lastuser.requires_login
 def project_new(profile, event, form=None):
     participant = Participant.get(user=g.user, event=event)
     if participant == None:
@@ -47,12 +47,12 @@ def project_new(profile, event, form=None):
 
 
 @app.route('/<profile>/<event>/projects/<project>/edit', methods=['GET', 'POST'])
+@lastuser.requires_login
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project')
     )
-@lastuser.requires_login
 def project_edit(profile, project, event):
     if g.user not in project.users:
         abort(403)
@@ -72,12 +72,12 @@ def project_edit(profile, project, event):
 
 
 @app.route('/<profile>/<event>/projects/<project>/delete', methods=["GET", "POST"])
+@lastuser.requires_login
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project')
     )
-@lastuser.requires_login
 def project_delete(profile, project, event):
     if not lastuser.has_permission('siteadmin') and g.user not in project.users:
         abort(403)
@@ -197,11 +197,11 @@ def project_view(profile, event, project):
 
 
 @app.route('/<profile>/<event>/projects/<project>/voteup')
+@lastuser.requires_login
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
-@lastuser.requires_login
 def project_voteup(profile, project, event):
     if not event:
         abort(404)
@@ -215,11 +215,11 @@ def project_voteup(profile, project, event):
 
 # FIXME: This voting method uses GET but makes db changes. Not correct. Should be POST
 @app.route('/<profile>/<event>/projects/<project>/votedown')
+@lastuser.requires_login
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
-@lastuser.requires_login
 def project_votedown(profile, event, project):
     if not event:
         abort(404)
@@ -233,11 +233,11 @@ def project_votedown(profile, event, project):
 
 # FIXME: This voting method uses GET but makes db changes. Not correct. Should be POST
 @app.route('/<profile>/<event>/projects/<project>/cancelvote')
+@lastuser.requires_login
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
-@lastuser.requires_login
 def project_cancelvote(profile, project, event):
     if not event:
         abort(404)
@@ -250,12 +250,12 @@ def project_cancelvote(profile, project, event):
 
 
 @app.route('/<profile>/<event>/projects/<project>/comments/<int:cid>/voteup')
+@lastuser.requires_login
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
-    (Comment, {'url_id': 'cid', 'commentspace': 'project'}, 'comment'))
-@lastuser.requires_login
+    (Comment, {'url_id': 'cid', 'commentspace': 'project.comments'}, 'comment'))
 def voteupcomment(profile, project, event, comment):
     if not event:
         abort(404)
@@ -271,12 +271,12 @@ def voteupcomment(profile, project, event, comment):
 
 # FIXME: This voting method uses GET but makes db changes. Not correct. Should be POST
 @app.route('/<profile>/<event>/projects/<project>/comments/<int:cid>/votedown')
+@lastuser.requires_login
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
-    (Comment, {'url_id': 'cid', 'commentspace': 'project'}, 'comment'))
-@lastuser.requires_login
+    (Comment, {'url_id': 'cid', 'commentspace': 'project.comments'}, 'comment'))
 def votedowncomment(profile, project, event, comment):
     if not event:
         abort(404)
@@ -294,7 +294,7 @@ def votedowncomment(profile, project, event, comment):
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
-    (Comment, {'url_id': 'cid', 'commentspace': 'project'}, 'comment'))
+    (Comment, {'url_id': 'cid', 'commentspace': 'project.comments'}, 'comment'))
 def jsoncomment(profile, project, event, comment):
     if not event:
         abort(404)
@@ -312,12 +312,12 @@ def jsoncomment(profile, project, event, comment):
 
 # FIXME: This voting method uses GET but makes db changes. Not correct. Should be POST
 @app.route('/<profile>/<event>/projects/<project>/comments/<int:cid>/cancelvote')
+@lastuser.requires_login
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
-    (Comment, {'url_id': 'cid', 'commentspace': 'project'}, 'comment'))
-@lastuser.requires_login
+    (Comment, {'url_id': 'cid', 'commentspace': 'project.comments'}, 'comment'))
 def votecancelcomment(profile, project, event, comment):
     if not event:
         abort(404)
