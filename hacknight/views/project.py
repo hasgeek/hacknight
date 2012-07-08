@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from flask import render_template, g, abort, flash, url_for, request, redirect
-from coaster.views import load_models
+from coaster.views import load_models, jsonp
 from baseframe.forms import render_form, render_redirect, ConfirmDeleteForm
 from hacknight import app
 from hacknight.models import db, Profile, Event, Project, ProjectMember, Participant, PARTICIPANT_STATUS, User
@@ -150,6 +150,7 @@ def project_view(profile, event, project):
     if request.method == 'POST':
         if request.form.get('form.id') == 'newcomment' and commentform.validate():
             if commentform.edit_id.data:
+                comment = Comment.query.get(int(commentform.edit_id.data))
                 if comment:
                     if comment.user == g.user:
                         comment.message = commentform.message.data
@@ -294,7 +295,7 @@ def votedowncomment(profile, project, event, comment):
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
     (Comment, {'url_id': 'cid', 'commentspace': 'project'}, 'comment'))
-def jsoncomment(profile, project, event):
+def jsoncomment(profile, project, event, comment):
     if not event:
         abort(404)
     if not project:
