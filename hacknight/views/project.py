@@ -143,7 +143,7 @@ def project_view(profile, event, project):
     #   project_member = query.first()
     #   print project_member.project.name
 
-    comments = sorted(Comment.query.filter_by(commentspace=project.comments, parent=None).order_by('created_at').all(),
+    comments = sorted(Comment.query.filter_by(commentspace=project.comments, reply_to=None).order_by('created_at').all(),
         key=lambda c: c.votes.count, reverse=True)
     commentform = CommentForm()
     delcommentform = DeleteCommentForm()
@@ -162,10 +162,11 @@ def project_view(profile, event, project):
                     flash("No such comment", "error")
             else:
                 comment = Comment(user=g.user, commentspace=project.comments, message=commentform.message.data)
-                if commentform.parent_id.data:
-                    parent = Comment.query.get(int(commentform.parent_id.data))
-                    if parent and parent.commentspace == project.comments:
-                        comment.parent = parent
+                print "Reply yo data = ",commentform.reply_to_id.data
+                if commentform.reply_to_id.data:
+                    reply_to = Comment.query.get(int(commentform.reply_to_id.data))
+                    if reply_to and reply_to.commentspace == project.comments:
+                        comment.reply_to = reply_to
                 comment.message_html = markdown(comment.message)
                 project.comments.count += 1
                 comment.votes.vote(g.user)  # Vote for your own comment

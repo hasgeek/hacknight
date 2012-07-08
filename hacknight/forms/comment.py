@@ -7,7 +7,7 @@ __all__ = ['CommentForm', 'DeleteCommentForm', 'ConfirmDeleteForm']
 
 
 class CommentForm(wtf.Form):
-    parent_id = wtf.HiddenField('Parent', default="", id="comment_parent_id")
+    reply_to_id = wtf.HiddenField('Parent', default="", id="comment_reply_to_id")
     edit_id = wtf.HiddenField('Edit', default="", id="comment_edit_id")
     message = wtf.TextAreaField('Add comment', id="comment_message", validators=[wtf.Required()])
 

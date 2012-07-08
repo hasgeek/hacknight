@@ -46,7 +46,7 @@
             {%- endif %}
           {%- endif %}
           <a title="Permalink" class="comment-permalink" href="#c{{ comment.url_id }}">[link]</a>
-          {% if comment.parent %}<a title="Parent" class="comment-parent" href="#c{{ comment.parent.url_id }}">[parent]</a>{% endif %}
+          {% if comment.reply_to %}<a title="Parent" class="comment-parent" href="#c{{ comment.reply_to.url_id }}">[parent]</a>{% endif %}
         </div>
       </div>
     </div>
