@@ -59,6 +59,8 @@ class Comment(BaseMixin, BaseScopedIdMixin, db.Model):
 
     parent = db.synonym('commentspace')
 
+    __table_args__ = (db.UniqueConstraint('url_id', 'commentspace_id'),)
+
     def __init__(self, **kwargs):
         super(Comment, self).__init__(**kwargs)
         self.votes = VoteSpace(type=SPACETYPE.COMMENT)
