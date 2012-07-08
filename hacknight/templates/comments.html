@@ -37,7 +37,7 @@
         {% if not comment.is_deleted -%}
           {{ comment.message_html|safe }}
         {%- endif %}
-        <div data-id="{{ comment.id }}" class="com-footer">
+        <div data-id="{{ comment.url_id }}" class="com-footer">
           {% if not comment.is_deleted %}
             <a title="Reply" class="comment-reply" href="#c{{ comment.url_id }}">[reply]</a>
             {% if comment.user == currentuser -%}
