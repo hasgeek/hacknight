@@ -162,7 +162,6 @@ def project_view(profile, event, project):
                     flash("No such comment", "error")
             else:
                 comment = Comment(user=g.user, commentspace=project.comments, message=commentform.message.data)
-                print "Reply yo data = ",commentform.reply_to_id.data
                 if commentform.reply_to_id.data:
                     reply_to = Comment.query.get(int(commentform.reply_to_id.data))
                     if reply_to and reply_to.commentspace == project.comments:
@@ -254,7 +253,7 @@ def project_cancelvote(profile, project, event):
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
-    (Comment, {'url_id': 'cid'}, 'comment'))
+    (Comment, {'url_id': 'cid', 'commentspace': 'project'}, 'comment'))
 @lastuser.requires_login
 def voteupcomment(profile, project, event, comment):
     if not event:
@@ -275,7 +274,7 @@ def voteupcomment(profile, project, event, comment):
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
-    (Comment, {'url_id': 'cid'}, 'comment'))
+    (Comment, {'url_id': 'cid', 'commentspace': 'project'}, 'comment'))
 @lastuser.requires_login
 def votedowncomment(profile, project, event, comment):
     if not event:
@@ -294,7 +293,7 @@ def votedowncomment(profile, project, event, comment):
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
-    (Comment, {'url_id': 'cid'}, 'comment'))
+    (Comment, {'url_id': 'cid', 'commentspace': 'project'}, 'comment'))
 def jsoncomment(profile, project, event):
     if not event:
         abort(404)
@@ -316,7 +315,7 @@ def jsoncomment(profile, project, event):
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
-    (Comment, {'url_id': 'cid'}, 'comment'))
+    (Comment, {'url_id': 'cid', 'commentspace': 'project'}, 'comment'))
 @lastuser.requires_login
 def votecancelcomment(profile, project, event, comment):
     if not event:
