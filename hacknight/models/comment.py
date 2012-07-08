@@ -57,7 +57,7 @@ class Comment(BaseMixin, BaseScopedIdMixin, db.Model):
 
     edited_at = db.Column(db.DateTime, nullable=True)
 
-    parent = db.synonym('profile')
+    parent = db.synonym('commentspace')
 
     def __init__(self, **kwargs):
         super(Comment, self).__init__(**kwargs)
