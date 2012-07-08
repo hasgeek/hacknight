@@ -34,6 +34,12 @@ class CommentSpace(BaseMixin, db.Model):
         super(CommentSpace, self).__init__(**kwargs)
         self.count = 0
 
+    def get_comment(self, comment_id):
+        """
+        Fetch a comment from this comment space given its id
+        """
+        return Comment.query.filter_by(commentspace_id=self.id, url_id=comment_id).one()
+
 
 class Comment(BaseMixin, BaseScopedIdMixin, db.Model):
     __tablename__ = 'comment'

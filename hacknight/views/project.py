@@ -147,10 +147,11 @@ def project_view(profile, event, project):
         key=lambda c: c.votes.count, reverse=True)
     commentform = CommentForm()
     delcommentform = DeleteCommentForm()
+    commentspace = project.comments
     if request.method == 'POST':
         if request.form.get('form.id') == 'newcomment' and commentform.validate():
             if commentform.edit_id.data:
-                comment = Comment.query.get(int(commentform.edit_id.data))
+                comment = commentspace.get_comment(int(commentform.edit_id.data))
                 if comment:
                     if comment.user == g.user:
                         comment.message = commentform.message.data
@@ -164,7 +165,7 @@ def project_view(profile, event, project):
             else:
                 comment = Comment(user=g.user, commentspace=project.comments, message=commentform.message.data)
                 if commentform.reply_to_id.data:
-                    reply_to = Comment.query.get(int(commentform.reply_to_id.data))
+                    reply_to = commentspace.get_comment(int(commentform.reply_to_id.data))
                     if reply_to and reply_to.commentspace == project.comments:
                         comment.reply_to = reply_to
                 comment.message_html = markdown(comment.message)
@@ -179,7 +180,7 @@ def project_view(profile, event, project):
             return redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
 
         elif request.form.get('form.id') == 'delcomment' and delcommentform.validate():
-            comment = Comment.query.get(int(delcommentform.comment_id.data))
+            comment = commentspace.get_comment(int(delcommentform.comment_id.data))
             if comment:
                 if comment.user == g.user:
                     comment.delete()
