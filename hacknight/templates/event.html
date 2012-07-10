@@ -69,6 +69,14 @@
         {% endif -%}
       </ul>
     </div>
+    {% if event.sponsors %}
+    <div class="span4">
+      {% for sponsor in event.sponsors %}
+      <a href="{{ url_for('sponsor_view', profile=profile.name, event=event.name, sponsor=sponsor.name) }}"><img src="{{ sponsor.image_url }}"></a>
+    {% endfor %}
+    </div>
+    {% endif %}
+
   </div>
 
   <ul class="cardset row">
