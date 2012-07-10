@@ -3,12 +3,10 @@
 
 {% block headline %}{% endblock %}
 {% block content %}
-	 <div class="span12">
       <div class="page-header">
         <h3><a href="{{ url_for('event_view', profile=profile.name, event=event.name) }}">{{ event.title }}</a> &raquo;</h3>
         <h1>{{ sponsor.title }}</h1>
-	</div>
+	  </div>
 		<a href="{{ sponsor.website }}"><img class="sponsor-logo" src="{{ sponsor.image_url }}"></a>
   		{{ sponsor.description|safe }}
-</div>
 {% endblock %}

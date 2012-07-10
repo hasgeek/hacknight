@@ -14,7 +14,6 @@ class Sponsor(BaseScopedNameMixin, db.Model):
         backref=db.backref('sponsors', cascade='all, delete-orphan'))
     parent = db.synonym('event')
 
-    title = db.Column(db.Unicode(250), nullable=False)
     website = db.Column(db.Unicode(250), nullable=True)
     image_url = db.Column(db.Unicode(250), nullable=False)
     description = db.Column(db.UnicodeText, nullable=False)

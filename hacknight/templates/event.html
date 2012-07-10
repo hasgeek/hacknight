@@ -68,14 +68,14 @@
           <li><a href="{{ url_for('event_delete', event=event.name, profile=profile.name) }}"><i class="icon-trash"></i> Delete event...</a></li>
         {% endif -%}
       </ul>
+        {% if event.sponsors %}
         <h3>Sponsors</h3>
         <ul class="sponsor-box">
-        {% if event.sponsors %}
           {% for sponsor in event.sponsors %}
             <li><a href="{{ url_for('sponsor_view', profile=profile.name, event=event.name, sponsor=sponsor.name) }}"><img src="{{ sponsor.image_url }}" class="sponsor-logo"></a></li>
           {% endfor %}
-        {% endif %}
         </ul>
+        {% endif %}
     </div>
 
 

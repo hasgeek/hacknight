@@ -16,6 +16,8 @@ from hacknight.forms.sponsor import SponsorForm
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     )
 def sponsor_new(profile, event, form=None):
+    if profile.userid not in g.user.user_organizations_owned_ids():
+        abort(403)
 
     form = SponsorForm()
     if form.validate_on_submit():
