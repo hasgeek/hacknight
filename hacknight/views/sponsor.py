@@ -77,7 +77,6 @@ def sponsor_delete(profile, event, sponsor):
 
 
 @app.route('/<profile>/<event>/sponsors/<sponsor>', methods=['GET', 'POST'])
-@lastuser.requires_login
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),

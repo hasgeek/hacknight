@@ -7,6 +7,10 @@
         <h3><a href="{{ url_for('event_view', profile=profile.name, event=event.name) }}">{{ event.title }}</a> &raquo;</h3>
         <h1>{{ sponsor.title }}</h1>
 	  </div>
+	  {% if sponsor.website %}
 		<a href="{{ sponsor.website }}"><img class="sponsor-logo" src="{{ sponsor.image_url }}"></a>
-  		{{ sponsor.description|safe }}
+	  {% else %}
+	  <img class="sponsor-logo" src="{{ sponsor.image_url }}" />
+	  {% endif %}
+  	  {{ sponsor.description|safe }}
 {% endblock %}
