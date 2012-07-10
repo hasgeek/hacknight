@@ -1,0 +1,19 @@
+# -*- coding: utf-8 -*-
+
+import flask.ext.wtf as wtf
+from coaster import getbool
+from baseframe.forms import Form, RichTextField
+
+__all__ = ['SponsorForm']
+
+
+class SponsorForm(Form):
+    title = wtf.TextField("Title", description="Title of the project", validators=[wtf.Required("A title is required")])
+    description = RichTextField(u"Description",
+        description="Detailed description of your project", width="50%",
+        content_css="/static/css/editor.css")
+    home_page = wtf.TextField("Home Page", description="URL to the home page")
+    image_url = wtf.TextField("Image URL", description="URL to the image", validators=[wtf.Required(
+    	"An image is required.")])
+
+    

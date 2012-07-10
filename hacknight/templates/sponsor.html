@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ sponsor.title }}{% endblock %}
+
+{% block content %}
+<a href="{{ sponsor.home_page }}"><img src="{{ sponsor.image_url }}"></a>
+  <p>{{ sponsor.description|safe }}</p>
+
+{% endblock %}
