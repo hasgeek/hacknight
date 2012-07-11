@@ -41,7 +41,7 @@ class CommentSpace(BaseMixin, db.Model):
         return Comment.query.filter_by(commentspace_id=self.id, url_id=comment_id).one()
 
 
-class Comment(BaseMixin, BaseScopedIdMixin, db.Model):
+class Comment(BaseScopedIdMixin, db.Model):
     __tablename__ = 'comment'
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     user = db.relationship(User, primaryjoin=user_id == User.id,
