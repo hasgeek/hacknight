@@ -9,7 +9,7 @@ class ParticipantForm(Form):
         description="Why would you love to join Hacknight",
         validators=[wtf.Required()],
         content_css="/static/css/editor.css")
-    phone_no = wtf.html5.TextField("Telephone No", description="Telephone No",
+    phone_no = wtf.TextField("Telephone No", description="Telephone No",
         validators=[wtf.Required()])
     email = wtf.html5.EmailField("Email",
         description="Email Address, We will never spam you .",
