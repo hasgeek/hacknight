@@ -73,3 +73,4 @@ class Event(BaseScopedNameMixin, db.Model):
         from hacknight.models.participant import Participant, PARTICIPANT_STATUS
         p = Participant.get(user, self)
         return p and p.status == PARTICIPANT_STATUS.CONFIRMED
+
