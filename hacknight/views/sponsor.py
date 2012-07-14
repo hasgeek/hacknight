@@ -82,7 +82,6 @@ def sponsor_delete(profile, event, sponsor):
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Sponsor, {'name': 'sponsor', 'event': 'event'}, 'sponsor'),
     )
-
 def sponsor_view(profile, event, sponsor):
     return render_template('sponsor.html', sponsor=sponsor, profile=profile, event=event)
 
@@ -92,5 +91,5 @@ def sponsor_view(profile, event, sponsor):
     (Event, {'name': 'event', 'profile': 'profile'}, 'event')
     )
 def sponsors_view(profile, event):
-    raise
-    return render_template('sponsor.html', sponsor=sponsor, profile=profile, event=event)
+    sponsor = db.session.query(Sponsor.event_id = event.id).all()
+    return render_template('sponsors.html', sponsors=sponsors, profile=profile, event=event)
