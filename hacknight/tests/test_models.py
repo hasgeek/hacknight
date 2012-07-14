@@ -65,7 +65,7 @@ class TestCase(unittest.TestCase):
             self.db.session.add(project_member)
         self.db.session.commit()
         for sponsor in SPONSORS:
-            sponsor = Sponsor(event_id = event.id, **sponsor)
+            sponsor = Sponsor(event_id=event.id, **sponsor)
             self.db.session.add(sponsor)
         self.db.session.commit()
 
@@ -105,7 +105,6 @@ class TestCase(unittest.TestCase):
         for sponsor in sponsors:
             self.db.session.delete(sponsor)
         self.db.session.commit()
-
 
     def tearDown(self):
         self.db.session.expunge_all()
