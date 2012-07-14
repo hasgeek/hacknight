@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from flask import render_template, g, abort, flash, url_for, request, redirect
-from coaster.views import load_models
+from coaster.views import load_models, jsonp
 from baseframe.forms import render_form, render_redirect, ConfirmDeleteForm
 from hacknight import app
 from hacknight.models import db, Profile, Event, Project, ProjectMember, Participant, PARTICIPANT_STATUS, User
@@ -17,11 +17,11 @@ markdown = Markdown(safe_mode="escape").convert
 
 
 @app.route('/<profile>/<event>/new', methods=['GET', 'POST'])
+@lastuser.requires_login
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     )
-@lastuser.requires_login
 def project_new(profile, event, form=None):
     participant = Participant.get(user=g.user, event=event)
     if participant == None:
@@ -47,12 +47,12 @@ def project_new(profile, event, form=None):
 
 
 @app.route('/<profile>/<event>/projects/<project>/edit', methods=['GET', 'POST'])
+@lastuser.requires_login
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project')
     )
-@lastuser.requires_login
 def project_edit(profile, project, event):
     if g.user not in project.users:
         abort(403)
@@ -72,12 +72,12 @@ def project_edit(profile, project, event):
 
 
 @app.route('/<profile>/<event>/projects/<project>/delete', methods=["GET", "POST"])
+@lastuser.requires_login
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project')
     )
-@lastuser.requires_login
 def project_delete(profile, project, event):
     if not lastuser.has_permission('siteadmin') and g.user not in project.users:
         abort(403)
@@ -143,13 +143,15 @@ def project_view(profile, event, project):
     #   project_member = query.first()
     #   print project_member.project.name
 
-    comments = sorted(Comment.query.filter_by(commentspace=project.comments, parent=None).order_by('created_at').all(),
+    comments = sorted(Comment.query.filter_by(commentspace=project.comments, reply_to=None).order_by('created_at').all(),
         key=lambda c: c.votes.count, reverse=True)
     commentform = CommentForm()
     delcommentform = DeleteCommentForm()
+    commentspace = project.comments
     if request.method == 'POST':
         if request.form.get('form.id') == 'newcomment' and commentform.validate():
             if commentform.edit_id.data:
+                comment = commentspace.get_comment(int(commentform.edit_id.data))
                 if comment:
                     if comment.user == g.user:
                         comment.message = commentform.message.data
@@ -162,10 +164,10 @@ def project_view(profile, event, project):
                     flash("No such comment", "error")
             else:
                 comment = Comment(user=g.user, commentspace=project.comments, message=commentform.message.data)
-                if commentform.parent_id.data:
-                    parent = Comment.query.get(int(commentform.parent_id.data))
-                    if parent and parent.commentspace == project.comments:
-                        comment.parent = parent
+                if commentform.reply_to_id.data:
+                    reply_to = commentspace.get_comment(int(commentform.reply_to_id.data))
+                    if reply_to and reply_to.commentspace == project.comments:
+                        comment.reply_to = reply_to
                 comment.message_html = markdown(comment.message)
                 project.comments.count += 1
                 comment.votes.vote(g.user)  # Vote for your own comment
@@ -178,7 +180,7 @@ def project_view(profile, event, project):
             return redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
 
         elif request.form.get('form.id') == 'delcomment' and delcommentform.validate():
-            comment = Comment.query.get(int(delcommentform.comment_id.data))
+            comment = commentspace.get_comment(int(delcommentform.comment_id.data))
             if comment:
                 if comment.user == g.user:
                     comment.delete()
@@ -196,11 +198,11 @@ def project_view(profile, event, project):
 
 
 @app.route('/<profile>/<event>/projects/<project>/voteup')
+@lastuser.requires_login
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
-@lastuser.requires_login
 def project_voteup(profile, project, event):
     if not event:
         abort(404)
@@ -214,11 +216,11 @@ def project_voteup(profile, project, event):
 
 # FIXME: This voting method uses GET but makes db changes. Not correct. Should be POST
 @app.route('/<profile>/<event>/projects/<project>/votedown')
+@lastuser.requires_login
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
-@lastuser.requires_login
 def project_votedown(profile, event, project):
     if not event:
         abort(404)
@@ -232,11 +234,11 @@ def project_votedown(profile, event, project):
 
 # FIXME: This voting method uses GET but makes db changes. Not correct. Should be POST
 @app.route('/<profile>/<event>/projects/<project>/cancelvote')
+@lastuser.requires_login
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
-@lastuser.requires_login
 def project_cancelvote(profile, project, event):
     if not event:
         abort(404)
@@ -249,12 +251,12 @@ def project_cancelvote(profile, project, event):
 
 
 @app.route('/<profile>/<event>/projects/<project>/comments/<int:cid>/voteup')
+@lastuser.requires_login
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
-    (Comment, {'url_id': 'cid'}, 'comment'))
-@lastuser.requires_login
+    (Comment, {'url_id': 'cid', 'commentspace': 'project.comments'}, 'comment'))
 def voteupcomment(profile, project, event, comment):
     if not event:
         abort(404)
@@ -270,12 +272,12 @@ def voteupcomment(profile, project, event, comment):
 
 # FIXME: This voting method uses GET but makes db changes. Not correct. Should be POST
 @app.route('/<profile>/<event>/projects/<project>/comments/<int:cid>/votedown')
+@lastuser.requires_login
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
-    (Comment, {'url_id': 'cid'}, 'comment'))
-@lastuser.requires_login
+    (Comment, {'url_id': 'cid', 'commentspace': 'project.comments'}, 'comment'))
 def votedowncomment(profile, project, event, comment):
     if not event:
         abort(404)
@@ -293,8 +295,8 @@ def votedowncomment(profile, project, event, comment):
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
-    (Comment, {'url_id': 'cid'}, 'comment'))
-def jsoncomment(profile, project, event):
+    (Comment, {'url_id': 'cid', 'commentspace': 'project.comments'}, 'comment'))
+def jsoncomment(profile, project, event, comment):
     if not event:
         abort(404)
     if not project:
@@ -311,12 +313,12 @@ def jsoncomment(profile, project, event):
 
 # FIXME: This voting method uses GET but makes db changes. Not correct. Should be POST
 @app.route('/<profile>/<event>/projects/<project>/comments/<int:cid>/cancelvote')
+@lastuser.requires_login
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
-    (Comment, {'url_id': 'cid'}, 'comment'))
-@lastuser.requires_login
+    (Comment, {'url_id': 'cid', 'commentspace': 'project.comments'}, 'comment'))
 def votecancelcomment(profile, project, event, comment):
     if not event:
         abort(404)

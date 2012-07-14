@@ -7,7 +7,8 @@ from hacknight.models.event import Profile, Event
 from hacknight.models.venue import Venue
 from hacknight.models.participant import Participant
 from hacknight.models.project import Project, ProjectMember
-from test_data import USERS, PROFILES, VENUES, EVENTS, PARTICIPANTS, PROJECTS
+from hacknight.models.sponsor import Sponsor
+from test_data import USERS, PROFILES, VENUES, EVENTS, PARTICIPANTS, PROJECTS, SPONSORS
 import unittest
 
 
@@ -63,6 +64,10 @@ class TestCase(unittest.TestCase):
             project_member = ProjectMember(project=project, participant=project.participant)
             self.db.session.add(project_member)
         self.db.session.commit()
+        for sponsor in SPONSORS:
+            sponsor = Sponsor(event_id = event.id, **sponsor)
+            self.db.session.add(sponsor)
+        self.db.session.commit()
 
     def test_delete(self):
         #Delete all users
@@ -95,6 +100,12 @@ class TestCase(unittest.TestCase):
         for project in projects:
             self.db.session.delete(project)
         self.db.session.commit()
+        #Delete sponsors
+        sponsors = self.db.session.query(Sponsor).all()
+        for sponsor in sponsors:
+            self.db.session.delete(sponsor)
+        self.db.session.commit()
+
 
     def tearDown(self):
         self.db.session.expunge_all()

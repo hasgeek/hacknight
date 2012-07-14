@@ -7,3 +7,4 @@ import hacknight.views.project
 import hacknight.views.venue
 import hacknight.views.event
 import hacknight.views.workflow
+import hacknight.views.sponsor

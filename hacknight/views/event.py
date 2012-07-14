@@ -37,7 +37,8 @@ def event_view(profile, event):
         acceptedparticipants=acceptedP,
         restparticipants=restP,
         applied=applied,
-        current_participant=current_participant)
+        current_participant=current_participant,
+        sponsors=event.sponsors)
 
 
 @app.route('/<profile>/new', methods=['GET', 'POST'])

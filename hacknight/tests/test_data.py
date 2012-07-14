@@ -29,3 +29,4 @@ HasGeek will provide you with food, beverages and a cool hacknight t-shirt durin
 PARTICIPANTS = [{'reason_to_join': u'Curiosity', 'email': u'kracekumar@hasgeek.in', 'phone_no': u'+91-85530-29521', 'job_title': u'Software Engineer', 'company': u'HasGeek', 'status': 2}]
 PROJECTS = [{'url_id': u'twitter_mining', 'name': u'Twitter Minner', 'title': u'Twitter Mining', 'description': u'Twitter is assest of the decade, mine to become rich, Find patterns, trends, what people tweet',\
               'blurb': u'Twitter is assest of the decade, mine to become rich, Find patterns, trends, what people tweet', }]
+SPONSORS = [{'name': 'neo4j', 'description': 'World Leading graph database', 'image_url': 'http://fifthelephant.in/_themes/fifthelephant/img/2012/sponsors/neo4j-logo-hacknight.png', 'title': 'neo4j', 'title': 'neo4j - Test'}]

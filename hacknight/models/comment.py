@@ -34,8 +34,14 @@ class CommentSpace(BaseMixin, db.Model):
         super(CommentSpace, self).__init__(**kwargs)
         self.count = 0
 
+    def get_comment(self, comment_id):
+        """
+        Fetch a comment from this comment space given its id
+        """
+        return Comment.query.filter_by(commentspace_id=self.id, url_id=comment_id).one()
 
-class Comment(BaseMixin, BaseScopedIdMixin, db.Model):
+
+class Comment(BaseScopedIdMixin, db.Model):
     __tablename__ = 'comment'
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     user = db.relationship(User, primaryjoin=user_id == User.id,
@@ -44,8 +50,8 @@ class Comment(BaseMixin, BaseScopedIdMixin, db.Model):
     commentspace = db.relationship(CommentSpace, primaryjoin=commentspace_id == CommentSpace.id,
         backref=db.backref('comments', cascade="all, delete-orphan"))
 
-    parent_id = db.Column(db.Integer, db.ForeignKey('comment.id'), nullable=True)
-    children = db.relationship("Comment", backref=db.backref("parent", remote_side="Comment.id"))
+    reply_to_id = db.Column(db.Integer, db.ForeignKey('comment.id'), nullable=True)
+    children = db.relationship("Comment", backref=db.backref("reply_to", remote_side="Comment.id"))
 
     message = db.Column(db.Text, nullable=False)
     message_html = db.Column(db.Text, nullable=False)
@@ -56,6 +62,10 @@ class Comment(BaseMixin, BaseScopedIdMixin, db.Model):
     votes = db.relationship(VoteSpace, uselist=False)
 
     edited_at = db.Column(db.DateTime, nullable=True)
+
+    parent = db.synonym('commentspace')
+
+    __table_args__ = (db.UniqueConstraint('url_id', 'commentspace_id'),)
 
     def __init__(self, **kwargs):
         super(Comment, self).__init__(**kwargs)
@@ -71,12 +81,12 @@ class Comment(BaseMixin, BaseScopedIdMixin, db.Model):
             self.message = ''
             self.message_html = ''
         else:
-            if self.parent and self.parent.is_deleted:
-                # If the parent is deleted, ask it to reconsider removing itself
-                parent = self.parent
-                parent.children.remove(self)
+            if self.reply_to and self.reply_to.is_deleted:
+                # If the parent comment is deleted, ask it to reconsider removing itself
+                reply_to = self.reply_to
+                reply_to.children.remove(self)
                 db.session.delete(self)
-                parent.delete()
+                reply_to.delete()
             else:
                 db.session.delete(self)
 
