@@ -31,15 +31,3 @@ css = Bundle(baseframe_css,
     'css/app.css')
 assets.register('js_all', js)
 assets.register('css_all', css)
-
-# Fourth, setup admin for the models
-
-#from flask.ext import admin
-#from flask.ext.admin.datastore.sqlalchemy import SQLAlchemyDatastore
-#from hacknight.views.login import lastuser
-
-#admin_datastore = SQLAlchemyDatastore(hacknight.models, hacknight.models.db.session)
-#admin_blueprint = admin.create_admin_blueprint(admin_datastore,
-#    view_decorator=lastuser.requires_permission('siteadmin'))
-
-#app.register_blueprint(admin_blueprint, url_prefix='/admin')
