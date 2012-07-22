@@ -13,6 +13,7 @@ import unittest
 from flask.ext.testing import TestCase, Twill
 from hacknight import configureapp, app
 
+
 class TestDB(unittest.TestCase):
     """ Test Case to test all models"""
     def setUp(self):
@@ -140,4 +141,4 @@ class TestWorkFlow(TestBase):
         with Twill(self.app, port=8000) as t:
             b = t.browser
             b.go(t.url('/someuser/new'))
-            assert b.get_code() == 404  # while creating a new event, login is require, this redirects to lastuser login, since lastuser isn't up we should get 404
+            assert b.get_code() == 404  # while creating a new event, login is required, this redirects to lastuser login, since lastuser isn't up we should get 404
