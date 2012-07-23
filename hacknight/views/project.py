@@ -12,6 +12,8 @@ from hacknight.views.login import lastuser
 from hacknight.models.vote import Vote
 from hacknight.models.comment import Comment
 from markdown import Markdown
+import bleach
+
 
 markdown = Markdown(safe_mode="escape").convert
 
@@ -154,8 +156,8 @@ def project_view(profile, event, project):
                 comment = commentspace.get_comment(int(commentform.edit_id.data))
                 if comment:
                     if comment.user == g.user:
-                        comment.message = commentform.message.data
-                        comment.message_html = markdown(comment.message)
+                        comment.message = bleach.clean(commentform.message.data)
+                        comment.message_html = bleach.linkify(markdown(comment.message))
                         comment.edited_at = datetime.utcnow()
                         flash("Your comment has been edited", "info")
                     else:
@@ -168,7 +170,7 @@ def project_view(profile, event, project):
                     reply_to = commentspace.get_comment(int(commentform.reply_to_id.data))
                     if reply_to and reply_to.commentspace == project.comments:
                         comment.reply_to = reply_to
-                comment.message_html = markdown(comment.message)
+                comment.message_html = bleach.linkify(markdown((bleach.clean(commentform.message.data))))
                 project.comments.count += 1
                 comment.votes.vote(g.user)  # Vote for your own comment
                 comment.make_id()
@@ -288,7 +290,8 @@ def votedowncomment(profile, project, event, comment):
     comment.votes.vote(g.user, votedown=True)
     db.session.commit()
     flash("Your vote has been recorded", "info")
-    return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
+    return redirect(url_for('project_view', profile=profile.name, project=project.url_name, event=event.name))
+
 
 @app.route('/<profile>/<event>/projects/<project>/comments/<int:cid>/json')
 @load_models(
@@ -329,7 +332,7 @@ def votecancelcomment(profile, project, event, comment):
     comment.votes.cancelvote(g.user)
     db.session.commit()
     flash("Your vote has been withdrawn", "info")
-    return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
+    return redirect(url_for('project_view', profile=profile.name, project=project.url_name, event=event.name))
 
 
 @app.route('/<profile>/<event>/projects/<project>/next')
@@ -345,10 +348,10 @@ def nextsession(profile, project, event):
 
     next = project.getnext()
     if next:
-        return redirect(url_for('project_view',profile=profile.name, project=next.url_name, event=event.name))
+        return redirect(url_for('project_view', profile=profile.name, project=next.url_name, event=event.name))
     else:
         flash("You were at the last project", "info")
-        return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
+        return redirect(url_for('project_view', profile=profile.name, project=project.url_name, event=event.name))
 
 
 @app.route('/<profile>/<event>/projects/<project>/prev')
@@ -364,10 +367,11 @@ def prevsession(profile, project, event):
 
     prev = project.getprev()
     if prev:
-        return redirect(url_for('project_view',profile=profile.name, project=prev.url_name, event=event.name))
+        return redirect(url_for('project_view', profile=profile.name, project=prev.url_name, event=event.name))
     else:
         flash("You were at the first project", "info")
-        return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
+        return redirect(url_for('project_view', profile=profile.name, project=project.url_name, event=event.name))
+
 
 @app.route('/<profile>/<event>/projects/<project>/join')
 @lastuser.requires_login
@@ -385,9 +389,9 @@ def project_join(profile, project, event):
 
     user = User.query.filter_by(userid=g.user.userid).first()
     participant = Participant.query.filter_by(user_id=user.id, event_id=event.id, status=PARTICIPANT_STATUS.CONFIRMED).first()
-    if participant==None:
+    if participant == None:
         flash("You need to be a confirmed participant to join this team.", "fail")
-        return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
+        return redirect(url_for('project_view', profile=profile.name, project=project.url_name, event=event.name))
     elif ProjectMember.query.filter_by(project_id=project.id, participant_id=participant.id).first():
         flash("You are already part of this team!", "fail")
     else:
@@ -397,8 +401,5 @@ def project_join(profile, project, event):
         db.session.add(project_member)
         db.session.commit()
         flash("You are now part of this team!", "success")
-        return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
-    return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
-
-
-
+        return redirect(url_for('project_view', profile=profile.name, project=project.url_name, event=event.name))
+    return redirect(url_for('project_view', profile=profile.name, project=project.url_name, event=event.name))

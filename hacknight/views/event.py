@@ -11,7 +11,6 @@ from hacknight.models.project import Project
 from hacknight.forms.event import EventForm, ConfirmWithdrawForm
 from hacknight.forms.participant import ParticipantForm
 from hacknight.views.login import lastuser
-import bleach
 
 
 @app.route('/<profile>/<event>', methods=["GET"])
@@ -53,7 +52,6 @@ def event_new(profile):
         form.populate_obj(event)
         if not event.name:
             event.make_name()
-        event.description = bleach.linkify(bleach.clean(form.description.data))
         db.session.add(event)
         participant = Participant(user=g.user, event=event, status=PARTICIPANT_STATUS.CONFIRMED)
         db.session.add(participant)

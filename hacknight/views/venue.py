@@ -8,6 +8,7 @@ from hacknight import app
 from hacknight.models import db, Venue
 from hacknight.forms.venue import VenueForm
 from hacknight.views.login import lastuser
+import bleach
 
 
 @app.route('/venue')
@@ -30,6 +31,7 @@ def venue_new():
     if form.validate_on_submit():
         venue = Venue()
         form.populate_obj(venue)
+        venue.description = bleach.linkify(bleach.clean(form.description.data))
         venue.make_name()
         db.session.add(venue)
         db.session.commit()
@@ -49,6 +51,7 @@ def venue_edit(venue):
     if form.validate_on_submit():
         form.populate_obj(venue)
         venue.make_name()
+        venue.description = bleach.linkify(bleach.clean(form.description.data))
         db.session.commit()
         flash(u"You have edited details for venue %s" % venue.title, "success")
         return render_redirect(url_for('venue_view', venue=venue.name), code=303)

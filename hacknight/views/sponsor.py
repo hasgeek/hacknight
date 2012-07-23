@@ -7,6 +7,7 @@ from hacknight import app
 from hacknight.views.login import lastuser
 from hacknight.models import db, Profile, Event, Sponsor
 from hacknight.forms.sponsor import SponsorForm
+import bleach
 
 
 @app.route('/<profile>/<event>/sponsors/new', methods=['GET', 'POST'])
@@ -24,6 +25,7 @@ def sponsor_new(profile, event, form=None):
         sponsor = Sponsor(event=event)
         form.populate_obj(sponsor)
         sponsor.make_name()
+        sponsor.description = bleach.linkify(bleach.clean(form.description.data))
         db.session.add(sponsor)
         db.session.commit()
         flash("Sponsor added")
@@ -50,6 +52,7 @@ def sponsor_edit(profile, event, sponsor):
         form = SponsorForm(obj=sponsor)
         if form.validate_on_submit():
             form.populate_obj(sponsor)
+            sponsor.description = bleach.linkify(bleach.clean(form.description.data))
             db.session.commit()
             flash(u"Your changes have been saved", 'success')
             return render_redirect(url_for('sponsor_view',
