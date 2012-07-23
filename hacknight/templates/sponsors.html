@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block title %}Sponsors {% endblock %}
+{% block content %}
+    {% if sponsors %}
+        <h3><a href="{{ url_for('profile_view', profile=profile.name) }}">{{ profile.title }}</a> &raquo; <a href="{{ url_for('event_view', profile=profile.name, event=event.name) }}">{{ event.title }}</a> &raquo;</h3>
+        {% for sponsor in sponsors %}
+            <h1>{{ sponsor.title }}</h1>
+                {%- if sponsor.website %}
+                    <a href="{{ sponsor.website }}"><img class="sponsor-logo" src="{{ sponsor.image_url }}"></a>
+                {%- else %}
+                    <img class="sponsor-logo" src="{{ sponsor.image_url }}" />
+                {%- endif %}
+                {{ sponsor.description|safe }}
+        {% endfor %}
+
+    {% else %}
+       Currently there are no sponsors.
+    {% endif %}
+{% endblock %}
