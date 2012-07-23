@@ -10,3 +10,4 @@ ordereddict
 fabric
 markdown
 Flask-WTF
+Flask-Testing
