@@ -64,6 +64,19 @@ class TestCase(unittest.TestCase):
             project_member = ProjectMember(project=project, participant=project.participant)
             self.db.session.add(project_member)
         self.db.session.commit()
+        #test voteup votedown cancelvote
+        project = projects[0]
+        #test votedown
+        project.votes.vote(user, votedown=True)
+        #print project.votes.count
+        assert project.votes.count == -1
+        #test cancel vote
+        project.votes.cancelvote(user)
+        assert project.votes.count == 0
+        #test voteup
+        project.votes.vote(user, votedown=False)
+        #print project.votes.count
+        assert project.votes.count == 2
         for sponsor in SPONSORS:
             sponsor = Sponsor(event_id=event.id, **sponsor)
             self.db.session.add(sponsor)
