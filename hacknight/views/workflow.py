@@ -27,12 +27,9 @@ class ParticipantWorkflow(DocumentWorkflow):
     #Yes it is very vague name, I need to comeup with very nice name
     path_to_hacknight = WorkflowStateGroup([pending, waiting_list], title=u'Path to hacknight',
         description=u'If the participant is in any one of the state he/she can become hacknight member')
-    reject_member = WorkflowStateGroup([pending, waiting_list],
-    title=u'Path to remove a member from to hacknight',
-    description=u'If the participant is in any one of the state he/she can be rejected for hacknight')
     withdrawn_member = WorkflowStateGroup([confirmed, waiting_list, pending],
-    title=u'Path to withdraw membership',
-    description=u'If the participant is in any one of the state he/she can withdraw for hacknight')
+        title=u'Path to withdraw membership',
+        description=u'If the participant is in any one of the state he/she can withdraw for hacknight')
     #copied from geekup, in hacknight only event owner can approve
 
     def permissions(self):
@@ -118,7 +115,7 @@ class EventWorkflow(DocumentWorkflow):
 
     @draft.transition(active, 'owner', title=u"Open", category="primary",
         description=u"Open the hacknight for registrations.", view="event_open")
-    def openit(self):
+    def open(self):
         """
         Open the hacknight.
         """
@@ -147,7 +144,7 @@ class EventWorkflow(DocumentWorkflow):
         """
         Reject the hacknight
         """
-        pass
+        self.document.status = EVENT_STATUS.REJECTED
 
     @draft.transition(withdrawn, 'owner', title=u"Withdraw", category="danger",
         description=u"Withdraw the hacknight", view="event_withdraw")
@@ -155,7 +152,7 @@ class EventWorkflow(DocumentWorkflow):
         """
         Withdraw the hacknight
         """
-        pass
+        self.document.status = EVENT_STATUS.WITHDRAWN
 
     @active.transition(closed, 'owner', title=u"Close", category="primary",
         description=u"Close registrations for the hacknight", view="event_close")
@@ -163,7 +160,7 @@ class EventWorkflow(DocumentWorkflow):
         """
         Close the hacknight
         """
-        pass
+        self.document.status = EVENT_STATUS.CLOSED
 
     @closed.transition(completed, 'owner', title=u"Complete", category="success",
         description=u"hacknight completed", view="event_completed")
