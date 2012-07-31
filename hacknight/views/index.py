@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from flask import render_template
 from hacknight import app
 from hacknight.models.event import Event

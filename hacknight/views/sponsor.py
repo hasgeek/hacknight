@@ -82,6 +82,15 @@ def sponsor_delete(profile, event, sponsor):
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Sponsor, {'name': 'sponsor', 'event': 'event'}, 'sponsor'),
     )
-
 def sponsor_view(profile, event, sponsor):
     return render_template('sponsor.html', sponsor=sponsor, profile=profile, event=event)
+
+
+@app.route('/<profile>/<event>/sponsors')
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event')
+    )
+def sponsors_view(profile, event):
+    sponsors = Sponsor.query.filter_by(event_id = event.id).all()
+    return render_template('sponsors.html', sponsors=sponsors, profile=profile, event=event)
