@@ -119,8 +119,7 @@ class EventWorkflow(DocumentWorkflow):
         """
         Open the hacknight.
         """
-        if not self.document.status == EVENT_STATUS.PUBLISHED:
-            self.document.status = EVENT_STATUS.PUBLISHED
+        self.document.status = EVENT_STATUS.PUBLISHED
 
     @draft.transition(cancelled, 'owner', title=u"Cancel", category="warning",
         description=u"Cancel the hacknight, before opening.", view="event_cancel")
@@ -162,13 +161,13 @@ class EventWorkflow(DocumentWorkflow):
         """
         self.document.status = EVENT_STATUS.CLOSED
 
-    @closed.transition(completed, 'owner', title=u"Complete", category="success",
+    @active.transition(completed, 'owner', title=u"Complete", category="success",
         description=u"hacknight completed", view="event_completed")
     def complete(self):
         """
         Hacknight is now completed.
         """
-        pass
+        self.document.status = EVENT_STATUS.COMPLETED
 
     def is_public(self):
         """
