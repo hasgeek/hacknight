@@ -204,7 +204,6 @@ def project_view(profile, event, project):
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
 def project_voteup(profile, project, event):
-    raise
     if not event:
         abort(404)
     if not project:
