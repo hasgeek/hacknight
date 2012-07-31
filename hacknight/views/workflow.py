@@ -46,12 +46,12 @@ class ParticipantWorkflow(DocumentWorkflow):
        description=u"Move to pending list, waiting for event owner approval",
        view="")
     def waiting_list_to_pending(self):
-        pass
+        self.document.status = PARTICIPANT_STATUS.PENDING
 
     @pending.transition(confirmed, 'owner', title=u'move to confirmed',
        description=u"Move to confirmed from pending list with project owner or event owner approval", view="")
     def pending_to_confirm(self):
-        pass
+        self.document.status = PARTICIPANT_STATUS.CONFIRMED
 
     @confirmed.transition(withdrawn, 'participant', title=u'withdrawn from confimed',
        description=u"Withdraw from hacknight", view="withdraw_confirm")
