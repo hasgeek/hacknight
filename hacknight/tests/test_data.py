@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from hacknight.models.event import PROFILE_TYPE, EVENT_STATUS
 import datetime
-
+from markdown import Markdown
+markdown = Markdown(safe_mode="escape").convert
 now = datetime.datetime.now()
 USERS = [{'userid': u'kRxvoscJQg6kCE3FWErj_w', 'username': u'kracekumar', 'fullname': u'kracekumar', 'lastuser_token': u'Qfy22E2RSsyrym6DT8NcQw', 'lastuser_token_type': u'bearer', 'lastuser_token_scope': u'organizations id', 'userinfo': {"username": "kracekumar", "organizations": {"owner": [{"userid": "7ZAJMXDHT4ayE9yN8Fqqzw", "name": "pycon", "title": "pycon"}, {"userid": "EkDqDfW6SqOZxu5KYKZqfw", "name": "hasgeek", "title": "Hasgeek"}], "member": [{"userid": "7ZAJMXDHT4ayE9yN8Fqqzw", "name": "pycon", "title": "pycon"}, {"userid": "EkDqDfW6SqOZxu5KYKZqfw", "name": "hasgeek", "title": "Hasgeek"}]}, "fullname": "kracekumar", "userid": "kRxvoscJQg6kCE3FWErj_w", "teams": [{"org": "EkDqDfW6SqOZxu5KYKZqfw", "userid": "xDDIgGbKSl-doTzna5MnBA", "title": "Owners"}, {"org": "EkDqDfW6SqOZxu5KYKZqfw", "userid": "4wEMkG7JRMydWKG-ZI361g", "title": "hackers"}, {"org": "7ZAJMXDHT4ayE9yN8Fqqzw", "userid": "9D3_SX5MRgqpFsZFYJqDSA", "title": "Owners"}, {"org": "7ZAJMXDHT4ayE9yN8Fqqzw", "userid": "8M_bkHq8RFemUrpwqfOmcw", "title": "python hackers"}]}}]
 PROFILES = [{'userid': u'kRxvoscJQg6kCE3FWErj_w', 'description': u'User kracekumar', 'name': u'kracekumar', 'title': u'kracekumar', 'type': PROFILE_TYPE.PERSON}]
@@ -30,3 +31,5 @@ PARTICIPANTS = [{'reason_to_join': u'Curiosity', 'email': u'kracekumar@hasgeek.i
 PROJECTS = [{'url_id': u'twitter_mining', 'name': u'Twitter Minner', 'title': u'Twitter Mining', 'description': u'Twitter is assest of the decade, mine to become rich, Find patterns, trends, what people tweet',\
               'blurb': u'Twitter is assest of the decade, mine to become rich, Find patterns, trends, what people tweet', }]
 SPONSORS = [{'name': 'neo4j', 'description': 'World Leading graph database', 'image_url': 'http://fifthelephant.in/_themes/fifthelephant/img/2012/sponsors/neo4j-logo-hacknight.png', 'title': 'neo4j', 'title': 'neo4j - Test'}]
+COMMENTS = [{'message': "checking COMMENTS", 'message_html': markdown("checking COMMENTS")}]
+REPLY_COMMENTS = [{'message': "REPLY: checking COMMENTS", 'message_html': markdown("REPLY: checking COMMENTS")}]
