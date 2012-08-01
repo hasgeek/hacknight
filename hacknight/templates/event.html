@@ -62,6 +62,7 @@
         {%- if event.owner_is(g.user) %}
           <li class="nav-header">Manage event</li>
           <li><a href="{{ url_for('event_open', event=event.name, profile=profile.name) }}"><i class="icon-wrench"></i> Manage event</a></li>
+          <li><a href="{{ url_for('event_export', profile=profile.name, event=event.name) }}"><i class="icon-wrench"></i> Export participants list</a></li>
           <li><a href="{{ url_for('event_edit', event=event.name, profile=profile.name) }}"><i class="icon-pencil"></i> Edit details...</a></li>
           <li><a href="{{ url_for('event_delete', event=event.name, profile=profile.name) }}"><i class="icon-trash"></i> Delete event...</a></li>
         {% endif -%}
