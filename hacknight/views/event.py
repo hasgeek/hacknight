@@ -8,7 +8,6 @@ from hacknight.models import db, Profile
 from hacknight.models.event import Event
 from hacknight.models.participant import Participant, PARTICIPANT_STATUS
 from hacknight.models.project import Project
-from hacknight.models.venue import Venue
 from hacknight.forms.event import EventForm, ConfirmWithdrawForm
 from hacknight.forms.participant import ParticipantForm
 from hacknight.views.login import lastuser
@@ -219,7 +218,7 @@ def event_publish(profile, event):
     workflow = event.workflow()
     if not workflow.can_edit():
         abort(403)
-    workflow.openit()
+    workflow.open()
     db.session.add(event)
     db.session.commit()
     flash(u"You have published the event %s" % event.title, "success")

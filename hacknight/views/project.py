@@ -288,7 +288,8 @@ def votedowncomment(profile, project, event, comment):
     comment.votes.vote(g.user, votedown=True)
     db.session.commit()
     flash("Your vote has been recorded", "info")
-    return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
+    return redirect(url_for('project_view', profile=profile.name, project=project.url_name, event=event.name))
+
 
 @app.route('/<profile>/<event>/projects/<project>/comments/<int:cid>/json')
 @load_models(
@@ -329,7 +330,7 @@ def votecancelcomment(profile, project, event, comment):
     comment.votes.cancelvote(g.user)
     db.session.commit()
     flash("Your vote has been withdrawn", "info")
-    return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
+    return redirect(url_for('project_view', profile=profile.name, project=project.url_name, event=event.name))
 
 
 @app.route('/<profile>/<event>/projects/<project>/next')

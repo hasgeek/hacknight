@@ -27,12 +27,9 @@ class ParticipantWorkflow(DocumentWorkflow):
     #Yes it is very vague name, I need to comeup with very nice name
     path_to_hacknight = WorkflowStateGroup([pending, waiting_list], title=u'Path to hacknight',
         description=u'If the participant is in any one of the state he/she can become hacknight member')
-    reject_member = WorkflowStateGroup([pending, waiting_list],
-    title=u'Path to remove a member from to hacknight',
-    description=u'If the participant is in any one of the state he/she can be rejected for hacknight')
     withdrawn_member = WorkflowStateGroup([confirmed, waiting_list, pending],
-    title=u'Path to withdraw membership',
-    description=u'If the participant is in any one of the state he/she can withdraw for hacknight')
+        title=u'Path to withdraw membership',
+        description=u'If the participant is in any one of the state he/she can withdraw for hacknight')
     #copied from geekup, in hacknight only event owner can approve
 
     def permissions(self):
@@ -49,12 +46,12 @@ class ParticipantWorkflow(DocumentWorkflow):
        description=u"Move to pending list, waiting for event owner approval",
        view="")
     def waiting_list_to_pending(self):
-        pass
+        self.document.status = PARTICIPANT_STATUS.PENDING
 
     @pending.transition(confirmed, 'owner', title=u'move to confirmed',
        description=u"Move to confirmed from pending list with project owner or event owner approval", view="")
     def pending_to_confirm(self):
-        pass
+        self.document.status = PARTICIPANT_STATUS.CONFIRMED
 
     @confirmed.transition(withdrawn, 'participant', title=u'withdrawn from confimed',
        description=u"Withdraw from hacknight", view="withdraw_confirm")
@@ -118,12 +115,11 @@ class EventWorkflow(DocumentWorkflow):
 
     @draft.transition(active, 'owner', title=u"Open", category="primary",
         description=u"Open the hacknight for registrations.", view="event_open")
-    def openit(self):
+    def open(self):
         """
         Open the hacknight.
         """
-        if not self.document.status == EVENT_STATUS.PUBLISHED:
-            self.document.status = EVENT_STATUS.PUBLISHED
+        self.document.status = EVENT_STATUS.PUBLISHED
 
     @draft.transition(cancelled, 'owner', title=u"Cancel", category="warning",
         description=u"Cancel the hacknight, before opening.", view="event_cancel")
@@ -147,7 +143,7 @@ class EventWorkflow(DocumentWorkflow):
         """
         Reject the hacknight
         """
-        pass
+        self.document.status = EVENT_STATUS.REJECTED
 
     @draft.transition(withdrawn, 'owner', title=u"Withdraw", category="danger",
         description=u"Withdraw the hacknight", view="event_withdraw")
@@ -155,7 +151,7 @@ class EventWorkflow(DocumentWorkflow):
         """
         Withdraw the hacknight
         """
-        pass
+        self.document.status = EVENT_STATUS.WITHDRAWN
 
     @active.transition(closed, 'owner', title=u"Close", category="primary",
         description=u"Close registrations for the hacknight", view="event_close")
@@ -163,15 +159,15 @@ class EventWorkflow(DocumentWorkflow):
         """
         Close the hacknight
         """
-        pass
+        self.document.status = EVENT_STATUS.CLOSED
 
-    @closed.transition(completed, 'owner', title=u"Complete", category="success",
+    @active.transition(completed, 'owner', title=u"Complete", category="success",
         description=u"hacknight completed", view="event_completed")
     def complete(self):
         """
         Hacknight is now completed.
         """
-        pass
+        self.document.status = EVENT_STATUS.COMPLETED
 
     def is_public(self):
         """
