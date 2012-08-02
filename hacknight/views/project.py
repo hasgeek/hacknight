@@ -157,7 +157,7 @@ def project_view(profile, event, project):
                 if comment:
                     if comment.user == g.user:
                         comment.message = bleach.clean(commentform.message.data)
-                        comment.message_html = bleach.linkify(markdown(comment.message))
+                        comment.message_html = markdown(comment.message)
                         comment.edited_at = datetime.utcnow()
                         flash("Your comment has been edited", "info")
                     else:
@@ -170,7 +170,7 @@ def project_view(profile, event, project):
                     reply_to = commentspace.get_comment(int(commentform.reply_to_id.data))
                     if reply_to and reply_to.commentspace == project.comments:
                         comment.reply_to = reply_to
-                comment.message_html = bleach.linkify(markdown((bleach.clean(commentform.message.data))))
+                comment.message_html = bleach.linkify(markdown((commentform.message.data)))
                 project.comments.count += 1
                 comment.votes.vote(g.user)  # Vote for your own comment
                 comment.make_id()
