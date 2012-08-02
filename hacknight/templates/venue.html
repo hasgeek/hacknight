@@ -7,6 +7,11 @@
 <p>
   {{ venue.address1 }}<br>
   {% if venue.address2 %}{{ venue.address2 }}<br>{% endif %}
-  {{ venue.city }}, {{ venue.state }}, {{ venue.country }} , <a href="{{venue.website}}" target="_blank"> {{venue.website}} </a>
+  {{ venue.city }},{{ venue.state }},{{ venue.country }}
+  {% if venue.website %}
+    ,<a href="{{venue.website}}" target="_blank">{{ venue.website|cleanurl }}</a>
+  {% else %}
+    . <!--If no website is mentioned put a pullstop-->
+  {% endif %}
 </p>
 {% endblock %}
