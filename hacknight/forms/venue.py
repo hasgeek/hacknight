@@ -17,6 +17,7 @@ class VenueForm(Form):
     state = wtf.TextField("State", validators=[wtf.Optional()])
     postcode = wtf.TextField("Post code", validators=[wtf.Optional()])
     country = wtf.SelectField("Country", validators=[wtf.Required()], choices=country_codes, default="IN")
+    website = wtf.html5.URLField("Website", description="Venue Website.", validators=[wtf.Optional()])
     latitude = wtf.DecimalField("Latitude", places=None, validators=[wtf.Optional(), wtf.NumberRange(-90, 90)])
     longitude = wtf.DecimalField("Longitude", places=None, validators=[wtf.Optional(), wtf.NumberRange(-180, 180)])
     profile_id = wtf.SelectField("Owner", description="The owner of this listing", coerce=int, validators=[wtf.Required()])
