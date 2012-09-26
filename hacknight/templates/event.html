@@ -25,24 +25,24 @@
     </div>
     <div class="span4">
       <ul class="well nav nav-list">
-        <li><i class="icon-calendar"></i> {{ event.start_datetime | fulldate }} &mdash; {{ event.end_datetime | fulldate }}</li>
+        <li><span class="icon-calendar">{{ event.start_datetime | fulldate }} &mdash; {{ event.end_datetime | fulldate }}</span></li>
         {% if event.ticket_price -%}
-          <li><i class="icon-money"></i> Entry Fee: {{ event.ticket_price }}</li>
+          <li><span class="icon-money">Entry Fee: {{ event.ticket_price }}</span></li>
         {%- endif %}
-        <li><a href="{{ url_for('venue_view', venue=event.venue.name) }}"><i class="icon-map-marker"></i> {{ event.venue.title }}</a></li>
-        <li><i class="icon-blank"></i> {{ event.venue.address1 }}</li>
+        <li><a href="{{ url_for('venue_view', venue=event.venue.name) }}"><span class="icon-map-marker">{{ event.venue.title }}</span></a></li>
+        <li><span class="icon-blank">{{ event.venue.address1 }}</span></li>
         {% if event.venue.address2 -%}
-          <li><i class="icon-blank"></i> {{ event.venue.address2 }}</li>
+          <li><span class="icon-blank">{{ event.venue.address2 }}</span></li>
         {%- endif %}
-        <li><i class="icon-blank"></i> {{ event.venue.city }}, {{ event.venue.state }}{%- if event.venue.postcode %} &ndash; {{ event.venue.postcode }}{% endif %}, {{ event.venue.country }}</li>
+        <li><span class="icon-blank">{{ event.venue.city }}, {{ event.venue.state }}{%- if event.venue.postcode %} &ndash; {{ event.venue.postcode }}{% endif %}, {{ event.venue.country }}</span></li>
         {% if event.website -%}
-          <li><a href="{{ event.website }}" target="_blank"><i class="icon-link"></i> {{ event.website|cleanurl }}</a></li>
+          <li><a href="{{ event.website }}" target="_blank"><span class="icon-link">{{ event.website|cleanurl }}</span></a></li>
         {%- endif %}
         <li class="nav-header">Your participation</li>
         {% if not current_participant or current_participant.status == 4 -%}
-          <li><a href="{{ url_for('event_apply', profile=profile.name, event=event.name) }}"><i class="icon-signin"></i> Register now {%- if not g.user %} (login required) {%- endif %}...</a></li>
+          <li><a href="{{ url_for('event_apply', profile=profile.name, event=event.name) }}"><span class="icon-signin">Register now {%- if not g.user %} (login required) {%- endif %}...</span></a></li>
         {% else %}
-          <li><i class="icon-user"></i> {% if event.owner_is(g.user) -%}
+          <li><span class="icon-user">{% if event.owner_is(g.user) -%}
             You are an owner
           {%- else -%}
             {% if current_participant.status == 0 -%}
@@ -56,24 +56,24 @@
             {%- elif current_participant.status == 4 -%}
               Withdrawn
             {%- endif -%}
-          {% endif %}</li>
-          <li><a href="{{ url_for('event_withdraw', profile=profile.name, event=event.name) }}"><i class="icon-signout"></i> Withdraw registration...</a></li>
+          {%- endif %}</span></li>
+          <li><a href="{{ url_for('event_withdraw', profile=profile.name, event=event.name) }}"><span class="icon-signout">Withdraw registration...</span></a></li>
         {% endif %}
         {%- if event.owner_is(g.user) %}
           <li class="nav-header">Manage event</li>
-          <li><a href="{{ url_for('event_open', event=event.name, profile=profile.name) }}"><i class="icon-wrench"></i> Manage event</a></li>
-          <li><a href="{{ url_for('event_edit', event=event.name, profile=profile.name) }}"><i class="icon-pencil"></i> Edit details...</a></li>
-          <li><a href="{{ url_for('event_delete', event=event.name, profile=profile.name) }}"><i class="icon-trash"></i> Delete event...</a></li>
+          <li><a href="{{ url_for('event_open', event=event.name, profile=profile.name) }}"><span class="icon-wrench">Manage event</span></a></li>
+          <li><a href="{{ url_for('event_edit', event=event.name, profile=profile.name) }}"><span class="icon-pencil">Edit details...</span></a></li>
+          <li><a href="{{ url_for('event_delete', event=event.name, profile=profile.name) }}"><span class="icon-trash">Delete event...</span></a></li>
         {% endif -%}
       </ul>
-        {% if event.sponsors %}
+      {% if event.sponsors %}
         <h3>Sponsors</h3>
         <ul class="sponsor-box">
           {% for sponsor in event.sponsors %}
             <li><a href="{{ url_for('sponsor_view', profile=profile.name, event=event.name, sponsor=sponsor.name) }}"><img src="{{ sponsor.image_url }}" class="sponsor-logo"></a></li>
           {% endfor %}
         </ul>
-        {% endif %}
+      {% endif %}
     </div>
 
 
