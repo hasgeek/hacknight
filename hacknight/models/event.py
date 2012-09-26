@@ -57,7 +57,7 @@ class Event(BaseScopedNameMixin, db.Model):
     maximum_participants = db.Column(db.Integer, default=0, nullable=False)
     website = db.Column(db.Unicode(250), default=u'', nullable=False)
     status = db.Column(db.Integer, nullable=False, default=EVENT_STATUS.DRAFT)
-    ticket_price = db.Column(db.Unicode(250), nullable=False, default=0)
+    ticket_price = db.Column(db.Unicode(250), nullable=False, default=u'')
 
     __table_args__ = (db.UniqueConstraint('name', 'profile_id'),)
 
