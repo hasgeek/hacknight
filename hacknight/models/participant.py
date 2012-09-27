@@ -28,6 +28,7 @@ class Participant(BaseMixin, db.Model):
     phone_no = db.Column(db.Unicode(15), default=u'', nullable=False)
     job_title = db.Column(db.Unicode(120), default=u'', nullable=False)
     company = db.Column(db.Unicode(1200), default=u'', nullable=False)
+    skill_level = db.Column(db.Unicode(120), default=u'', nullable=False)
 
     def save_defaults(self):
         user = self.user

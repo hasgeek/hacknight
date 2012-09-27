@@ -5,6 +5,12 @@ __all__ = ['ParticipantForm']
 
 
 class ParticipantForm(Form):
+    skill_levels = [
+    ('Beginner', 'Beginner'),
+    ('Intermediate', 'Intermediate'),
+    ('Advanced', 'Advanced')
+    ]
+
     reason_to_join = RichTextField("Reason To Join",
         description="Why would you love to join Hacknight",
         validators=[wtf.Required()],
@@ -20,3 +26,5 @@ class ParticipantForm(Form):
         validators=[wtf.Required()])
     company = wtf.TextField("Company", description="Company Name",
         validators=[wtf.Optional()])
+    skill_level = wtf.RadioField("Skill Level", description="What is your skill level?",
+        choices=skill_levels)
