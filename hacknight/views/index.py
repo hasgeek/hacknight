@@ -11,7 +11,7 @@ tz = timezone(app.config['TIMEZONE'])
 @app.route('/')
 def index():
     # TODO: Filter events by status
-    events = Event.query.all()
+    events = Event.query.order_by('created_at').all()
     return render_template('index.html', events=events)
 
 
