@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #: Site title
-SITE_TITLE = 'HasGeek App'
+SITE_TITLE = 'HasGeek Hacknight'
 #: Site id (for network bar)
 SITE_ID = ''
 #: Database backend
@@ -10,7 +10,7 @@ SECRET_KEY = 'make this something random'
 #: Timezone
 TIMEZONE = 'Asia/Calcutta'
 #: LastUser server
-LASTUSER_SERVER = 'https://login.hasgeek.com/'
+LASTUSER_SERVER = 'https://auth.hasgeek.com/'
 #: LastUser client id
 LASTUSER_CLIENT_ID = ''
 #: LastUser client secret
