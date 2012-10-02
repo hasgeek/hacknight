@@ -4,6 +4,7 @@ from flask import render_template
 from hacknight import app
 from hacknight.models.event import Event
 from pytz import utc, timezone
+from sqlalchemy.sql.expression import desc
 
 tz = timezone(app.config['TIMEZONE'])
 
@@ -11,7 +12,7 @@ tz = timezone(app.config['TIMEZONE'])
 @app.route('/')
 def index():
     # TODO: Filter events by status
-    events = Event.query.order_by('created_at').all()
+    events = Event.query.order_by(desc(Event.start_datetime)).all()
     return render_template('index.html', events=events)
 
 
