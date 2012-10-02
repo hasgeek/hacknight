@@ -7,8 +7,7 @@ from hacknight import app
 from hacknight.models import db, Profile
 from hacknight.models.event import Event
 from hacknight.models.participant import Participant, PARTICIPANT_STATUS
-from hacknight.models.project import Project
-from hacknight.models.venue import Venue
+from hacknight.models.project import ProjectMember, Project
 from hacknight.forms.event import EventForm, ConfirmWithdrawForm
 from hacknight.forms.participant import ParticipantForm
 from hacknight.views.login import lastuser
@@ -23,9 +22,14 @@ def event_view(profile, event):
     participants = Participant.query.filter(
         Participant.status != PARTICIPANT_STATUS.WITHDRAWN,
         Participant.event == event)
-
-    acceptedP = [p for p in participants if p.status == PARTICIPANT_STATUS.CONFIRMED]
-    restP = [p for p in participants if p.status != PARTICIPANT_STATUS.CONFIRMED]
+    accepted_participants = [p for p in participants if p.status == PARTICIPANT_STATUS.CONFIRMED]
+    accepted_participants_projects = dict((participant.user.fullname, None) for participant in accepted_participants)
+    for p in accepted_participants:
+        accepted_participants_projects[p.user.fullname] = ProjectMember.query.filter_by(participant_id=p.id).all()
+    rest_participants = [p for p in participants if p.status != PARTICIPANT_STATUS.CONFIRMED]
+    rest_participants_projects = dict((participant.user.fullname, None) for participant in rest_participants)
+    for p in rest_participants:
+        rest_participants_projects[p.user.fullname] = Project.query.filter_by(participant_id=p.id).all()
     applied = 0
     for p in participants:
         if p.user == g.user:
@@ -34,8 +38,8 @@ def event_view(profile, event):
     current_participant = Participant.get(user=g.user, event=event) if g.user else None
     return render_template('event.html', profile=profile, event=event,
         projects=projects,
-        acceptedparticipants=acceptedP,
-        restparticipants=restP,
+        accepted_participants_projects=accepted_participants_projects,
+        rest_participants_projects=rest_participants_projects,
         applied=applied,
         current_participant=current_participant,
         sponsors=event.sponsors)

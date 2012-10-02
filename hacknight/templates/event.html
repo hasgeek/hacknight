@@ -1,14 +1,18 @@
 {% extends "layout.html" %}
 {% block title %}{{ event.title }}{% endblock %}
 
-{% macro participant_list(participants) -%}
-  <ul class="userset row">
-    {% for participant in participants -%}
-      <li class="span2">
-        <a href="{{ url_for('profile_view', profile=participant.user.profile.name) }}"><i class="icon-user"></i><br>{{ participant.user.fullname }}</a>
+{% macro participant_list(accepted_participants_projects) -%}
+  <ol>
+    {% for p in accepted_participants_projects -%}
+      <li > <b> {{ p }}</b>
+        <ul>
+          {% for item in accepted_participants_projects[p] -%}
+            <li> <a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=item.get_project().url_name) }}">{{ item.get_project().name }}</a></li>
+          {% endfor -%}
+      </ul>
       </li>
     {% endfor -%}
-  </ul>
+  </ol>
 {%- endmacro %}
 
 {% block headline %}{% endblock %}
@@ -20,8 +24,10 @@
         <h1>{{ self.title() }}</h1>
       </div>
       {{ event.description|safe }}
-      {{ participant_list(acceptedparticipants) }}
-      {{ participant_list(restparticipants) }}
+      <h3> Accepted Participants</h3><br/>
+      {{ participant_list(accepted_participants_projects) }}
+      <h3>Other Participants</h3><br/>
+      {{ participant_list(rest_participants_projects) }}
     </div>
     <div class="span4">
       <ul class="well nav nav-list">
@@ -129,7 +135,7 @@ if("{{ event.profile.userid }}"=="{{ g.user.userid }}")
 <script type="text/javascript">
   $(function() {
     var map = new L.Map('map');
-    
+
     //BC9A493B41014CAABB98F0471D759707
     var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/0cb2761ce981414391f2941dd891892c/999/256/{z}/{x}/{y}.png',
         subDomains = ['a','b','c'],
@@ -139,14 +145,14 @@ if("{{ event.profile.userid }}"=="{{ g.user.userid }}")
         console.log({{ event.venue.latitude }});
         var venue = new L.LatLng({{ event.venue.latitude }}, {{ event.venue.longitude }}); // geographical point (longitude and latitude)
         map.setView(venue, 16).addLayer(cloudmade);
-        
+
           var venue_marker = new L.Marker(venue);
             map.addLayer(venue_marker);
             venue_marker.bindPopup('{{ event.venue.title }}').openPopup();
             map.scrollWheelZoom.disable();
 
             map.on('zoomend', onZoomend);
-    function onZoomend(){ 
+    function onZoomend(){
         map.setView(venue, map.getZoom());
     };
   });
