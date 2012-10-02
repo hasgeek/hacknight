@@ -82,3 +82,6 @@ class ProjectMember(BaseMixin, db.Model):
     role = db.Column(db.Unicode(250), nullable=False, default=u'')
 
     __table_args__ = (db.UniqueConstraint('project_id', 'participant_id'),)
+
+    def get_project(self):
+        return Project.query.filter_by(id=self.project_id).first()
