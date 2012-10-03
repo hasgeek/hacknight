@@ -3,6 +3,7 @@
 from flask import render_template
 from hacknight import app
 from hacknight.models.event import Event
+from datetime import datetime
 from pytz import utc, timezone
 
 tz = timezone(app.config['TIMEZONE'])
@@ -11,7 +12,8 @@ tz = timezone(app.config['TIMEZONE'])
 @app.route('/')
 def index():
     # TODO: Filter events by status
-    events = Event.query.order_by(Event.start_datetime.desc()).all()
+    # FIXME: List past events separately.
+    events = Event.query.filter(Event.start_datetime>datetime.now()).all()
     return render_template('index.html', events=events)
 
 
