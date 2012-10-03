@@ -1,6 +1,10 @@
-{% macro cardset(events) %}
+{% macro cardset(events, type='upcoming') %}
   {% if events %}
-    <ul class="cardset row">
+    {% if type == 'upcoming' %}
+      <ul class="cardset row">
+    {% else %}
+      <ul class="cardset past row">
+    {% endif %}
       {% for e in events -%}
         <li class="span4">
           <a href="{{ url_for('event_view', profile=e.profile.name, event=e.name) }}">

@@ -12,9 +12,9 @@ tz = timezone(app.config['TIMEZONE'])
 @app.route('/')
 def index():
     # TODO: Filter events by status
-    # FIXME: List past events separately.
-    events = Event.query.filter(Event.start_datetime>datetime.now()).all()
-    return render_template('index.html', events=events)
+    upcoming_events = Event.query.filter(Event.end_datetime > datetime.now()).all()
+    past_events = Event.query.filter(Event.end_datetime < datetime.now()).all()
+    return render_template('index.html', upcoming_events=upcoming_events, past_events=past_events)
 
 
 @app.template_filter('shortdate')
