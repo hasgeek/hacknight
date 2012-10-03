@@ -23,5 +23,6 @@
       {% endif %}
     </div>
   </div>
-  <div class="centered">{{ cardset(events) }}</div>
+  <div class="centered">{{ cardset(upcoming_events, type = 'upcoming') }}</div>
+  <div class="centered"><hr>{{ cardset(past_events, type = 'past') }}</div>
 {% endblock %}
