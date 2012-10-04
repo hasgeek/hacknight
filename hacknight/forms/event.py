@@ -11,7 +11,7 @@ __all__ = ['EventForm', 'ConfirmWithdrawForm']
 class EventForm(Form):
     title = wtf.TextField("Title", description="Name of the Event", validators=[wtf.Required(), wtf.NoneOf(values=["new"])])
     name = wtf.TextField("URL name", validators=[wtf.Optional(), ValidName(),
-            AvailableName(u"There’s another event with the same name")],
+            AvailableName(u"There’s another event with the same name", scoped=True)],
         description="URL identifier, leave blank to autogenerate")
     blurb = wtf.TextField("Blurb", description="Single line blurb introducing the event")
     description = RichTextField("Description", description="Detailed description of the event",
