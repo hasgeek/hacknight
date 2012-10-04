@@ -115,6 +115,7 @@ input, textarea, select, .uneditable-input
 .cardset, .userset
   list-style: none
   // margin-left: 0
+
   li
     +box-sizing(border-box)
     height: 15em
@@ -188,6 +189,11 @@ input, textarea, select, .uneditable-input
     +inline-block
     float: none
     margin: 10px
+
+.cardset.past
+  li
+    height: 7em
+    opacity: 0.5
 
 #map
   border: 2px solid $border-color
