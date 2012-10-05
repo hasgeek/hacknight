@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from flask import render_template, abort, flash, url_for, g, request, Response
+from flask.ext.mail import Message
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
-from hacknight import app
+from hacknight import app, mail
 from hacknight.models import db, Profile
 from hacknight.models.event import Event
 from hacknight.models.participant import Participant, PARTICIPANT_STATUS
@@ -11,7 +12,6 @@ from hacknight.models.project import ProjectMember, Project
 from hacknight.forms.event import EventForm, ConfirmWithdrawForm
 from hacknight.forms.participant import ParticipantForm
 from hacknight.views.login import lastuser
-
 
 @app.route('/<profile>/<event>', methods=["GET"])
 @load_models(
@@ -126,6 +126,7 @@ def event_open(profile, event):
 def event_update_participant_status(profile, event):
     if  profile.userid not in g.user.user_organizations_owned_ids():
         return Response("Forbidden", 403)
+
     participantid = int(request.form['participantid'])
     status = int(request.form['status'])
     participant = Participant.query.get(participantid)
@@ -136,9 +137,25 @@ def event_update_participant_status(profile, event):
         return Response("Forbidden", 403)
 
     participant.status = status
+    if status == 2:
+        msg = Message(event.title + " hacknight: Confirmation")
+        msg.body = render_template('confirmation.md', name=participant.user.fullname, event=event)
+        msg.recipients = [participant.email]
+        mail.send(msg)
+    elif status == 3:
+        msg = Message(event.title + " hacknight: Wait listed")
+        msg.body = render_template('rejected.md', name=participant.user.fullname, event=event)
+        msg.recipients = [participant.email]
+        mail.send(msg)
+    elif status == 1:
+        msg = Message(event.title + " hacknight: Wait listed")
+        msg.body = render_template('rejected.md', name=participant.user.fullname, event=event)
+        msg.recipients = [participant.email]
+        mail.send(msg)
+
+    flash(u"Email sent!", "success")
     db.session.commit()
     return "Done"
-
 
 @app.route('/<profile>/<event>/apply', methods=['GET', 'POST'])
 @lastuser.requires_login

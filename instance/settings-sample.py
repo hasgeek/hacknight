@@ -26,7 +26,7 @@ LASTUSER_CLIENT_SECRET = ''
 #: DEFAULT_MAIL_SENDER : default None
 MAIL_FAIL_SILENTLY = False
 MAIL_SERVER = 'localhost'
-DEFAULT_MAIL_SENDER = ('HasGeek', 'test@example.com')
+DEFAULT_MAIL_SENDER = ('HasGeek Hacknight', 'test@example.com')
 #: Logging: recipients of error emails
 ADMINS = []
 #: Log file

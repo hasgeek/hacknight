@@ -6,17 +6,19 @@ from flask import Flask
 from flask.ext.assets import Environment, Bundle
 from baseframe import baseframe, baseframe_js, baseframe_css
 from coaster import configureapp
+from flask.ext.mail import Mail
 
+mail = Mail()
 # First, make an app and config it
 
 app = Flask(__name__, instance_relative_config=True)
 configureapp(app, 'ENVIRONMENT')
+mail.init_app(app)
 
 # Second, after config, import the models and views
 
 import hacknight.models
 import hacknight.views
-
 # Third, setup baseframe and assets
 
 app.register_blueprint(baseframe)
