@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import unicodecsv
+from cStringIO import StringIO
 from datetime import datetime
-from flask import render_template, g, abort, flash, url_for, request, redirect
+from flask import render_template, g, abort, flash, url_for, request, redirect, make_response
 from coaster.views import load_models, jsonp
 from baseframe.forms import render_form, render_redirect, ConfirmDeleteForm
 from hacknight import app
@@ -13,7 +15,6 @@ from hacknight.models.vote import Vote
 from hacknight.models.comment import Comment
 from markdown import Markdown
 import bleach
-
 
 markdown = Markdown(safe_mode="escape").convert
 
@@ -403,4 +404,35 @@ def project_join(profile, project, event):
     return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
 
 
+@app.route('/<profile>/<event>/export')
+@lastuser.requires_login
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
+    )
+def event_export(profile, event):
+    if profile.userid not in g.user.user_organizations_owned_ids():
+        abort(403)
 
+    participants = StringIO()
+    fieldnames = ['Ticket Number', 'Name', 'Email', 'Ticket Type', 'Company', 'Job', 'City', 'Twitter', 'Tshirt', 'Date', 'Order ID']
+    writer = unicodecsv.DictWriter(participants, fieldnames=fieldnames, delimiter=',', quotechar='|', quoting=unicodecsv.QUOTE_MINIMAL)
+    writer.writeheader()
+    for p in event.participants:
+        if p.status == PARTICIPANT_STATUS.CONFIRMED:
+            writer.writerow({"Ticket Number": p.id,
+            "Name": p.user.fullname,
+            "Email": p.email,
+            "Ticket Type": "Regular",
+            "Company": p.company,
+            "Job": p.job_title,
+            "City": "",
+            "Twitter": "",
+            "Tshirt": "",
+            "Date": p.created_at,
+            "Order ID": ""
+            })
+    response = make_response(participants.getvalue())
+    response.headers['Content-Type'] = 'text/csv;charset=utf-8'
+    response.headers['Content-Disposition'] = 'attachment; filename=participants.csv'
+    return response
