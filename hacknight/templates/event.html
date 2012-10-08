@@ -62,6 +62,7 @@
         {%- if event.owner_is(g.user) %}
           <li class="nav-header">Manage event</li>
           <li><a href="{{ url_for('event_open', event=event.name, profile=profile.name) }}"><i class="icon-wrench"></i> Manage event</a></li>
+          <li><a href="{{ url_for('event_export', profile=profile.name, event=event.name) }}"><i class="icon-wrench"></i> Export participants list</a></li>
           <li><a href="{{ url_for('event_edit', event=event.name, profile=profile.name) }}"><i class="icon-pencil"></i> Edit details...</a></li>
           <li><a href="{{ url_for('event_delete', event=event.name, profile=profile.name) }}"><i class="icon-trash"></i> Delete event...</a></li>
         {% endif -%}
@@ -129,7 +130,7 @@ if("{{ event.profile.userid }}"=="{{ g.user.userid }}")
 <script type="text/javascript">
   $(function() {
     var map = new L.Map('map');
-    
+
     //BC9A493B41014CAABB98F0471D759707
     var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/0cb2761ce981414391f2941dd891892c/999/256/{z}/{x}/{y}.png',
         subDomains = ['a','b','c'],
@@ -139,14 +140,14 @@ if("{{ event.profile.userid }}"=="{{ g.user.userid }}")
         console.log({{ event.venue.latitude }});
         var venue = new L.LatLng({{ event.venue.latitude }}, {{ event.venue.longitude }}); // geographical point (longitude and latitude)
         map.setView(venue, 16).addLayer(cloudmade);
-        
+
           var venue_marker = new L.Marker(venue);
             map.addLayer(venue_marker);
             venue_marker.bindPopup('{{ event.venue.title }}').openPopup();
             map.scrollWheelZoom.disable();
 
             map.on('zoomend', onZoomend);
-    function onZoomend(){ 
+    function onZoomend(){
         map.setView(venue, map.getZoom());
     };
   });
