@@ -4,7 +4,7 @@
 {% macro participant_list(accepted_participants_projects) -%}
   <ol>
     {%- for p in accepted_participants_projects -%}
-      <li><b>{{ p }}</b>
+      <li><b><a href="{{ p.user.profile_url }}">{{ p.user.fullname }}</a></b>
         {%- if accepted_participants_projects[p] %}
           <ul>
             {%- for item in accepted_participants_projects[p] -%}

@@ -23,13 +23,13 @@ def event_view(profile, event):
         Participant.status != PARTICIPANT_STATUS.WITHDRAWN,
         Participant.event == event)
     accepted_participants = [p for p in participants if p.status == PARTICIPANT_STATUS.CONFIRMED]
-    accepted_participants_projects = dict((participant.user.fullname, None) for participant in accepted_participants)
+    accepted_participants_projects = dict((participant, None) for participant in accepted_participants)
     for p in accepted_participants:
-        accepted_participants_projects[p.user.fullname] = ProjectMember.query.filter_by(participant_id=p.id).all()
+        accepted_participants_projects[p] = ProjectMember.query.filter_by(participant_id=p.id).all()
     rest_participants = [p for p in participants if p.status != PARTICIPANT_STATUS.CONFIRMED]
-    rest_participants_projects = dict((participant.user.fullname, None) for participant in rest_participants)
+    rest_participants_projects = dict((participant, None) for participant in rest_participants)
     for p in rest_participants:
-        rest_participants_projects[p.user.fullname] = Project.query.filter_by(participant_id=p.id).all()
+        rest_participants_projects[p] = Project.query.filter_by(participant_id=p.id).all()
     applied = 0
     for p in participants:
         if p.user == g.user:
