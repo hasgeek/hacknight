@@ -3,15 +3,17 @@
 
 {% macro participant_list(accepted_participants_projects) -%}
   <ol>
-    {% for p in accepted_participants_projects -%}
-      <li > <b> {{ p }}</b>
-        <ul>
-          {% for item in accepted_participants_projects[p] -%}
-            <li> <a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=item.get_project().url_name) }}">{{ item.get_project().name }}</a></li>
-          {% endfor -%}
-      </ul>
+    {%- for p in accepted_participants_projects -%}
+      <li><b>{{ p }}</b>
+        {%- if accepted_participants_projects[p] %}
+          <ul>
+            {%- for item in accepted_participants_projects[p] -%}
+              <li><a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=item.get_project().url_name) }}">{{ item.get_project().title }}</a></li>
+            {% endfor -%}
+          </ul>
+        {%- endif %}
       </li>
-    {% endfor -%}
+    {%- endfor %}
   </ol>
 {%- endmacro %}
 
