@@ -415,7 +415,7 @@ def event_export(profile, event):
         abort(403)
 
     participants = StringIO()
-    fieldnames = ['Ticket Number', 'Name', 'Email', 'Ticket Type', 'Company', 'Job', 'City', 'Twitter', 'Tshirt', 'Date', 'Order ID', "Skill Level"]
+    fieldnames = ['Ticket Number', 'Name', 'Email', 'Ticket Type', 'Company', 'Job', 'City', 'Twitter', 'Tshirt', 'Date', 'Order ID', "Skill Level", 'Phone No']
     writer = unicodecsv.DictWriter(participants, fieldnames=fieldnames, delimiter=',', quotechar='|', quoting=unicodecsv.QUOTE_MINIMAL)
     writer.writeheader()
     for p in event.participants:
@@ -431,7 +431,8 @@ def event_export(profile, event):
             "Tshirt": "",
             "Date": p.created_at,
             "Order ID": "",
-            "Skill Level": p.skill_level
+            "Skill Level": p.skill_level,
+            "Phone No": p.phone_no
             })
     response = make_response(participants.getvalue())
     response.headers['Content-Type'] = 'text/csv;charset=utf-8'
