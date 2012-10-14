@@ -59,8 +59,8 @@ def event_new(profile):
         if not event.name:
             event.make_name()
         """
-            Datetime from form is unaware of time zones.
-            All the hacknigts are in GMT for now, So convert the GMT timings
+            Datetime form is unaware of time zones.
+            All the hacknights timings are in GMT for now, So convert the GMT timings
             to UTC and store in the DB.
         """
         local_zone = tz.gettz(app.config['TIMEZONE'])
@@ -101,7 +101,7 @@ def event_edit(profile, event):
     # Convert UTC to GMT
     event.start_datetime = event.start_datetime.astimezone(local_zone)
     event.end_datetime = event.end_datetime.astimezone(local_zone)
-    # Note: Moving form initialization to top will not reflect the time conversion.
+    # Note: Moving form initialization to top will not reflect the time conversion in edit form.
     form = EventForm(obj=event)
     if form.validate_on_submit():
         form.populate_obj(event)
