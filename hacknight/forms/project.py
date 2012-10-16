@@ -12,7 +12,7 @@ class ProjectForm(Form):
     blurb = wtf.TextField("Blurb", description="A single-line summary of the project",
         validators=[wtf.Required("A blurb is required")])
     description = RichTextField(u"Description",
-        description="Detailed description of your project", width="50%",
+        description="Detailed description of your project",
         content_css="/static/css/editor.css")
     participating = wtf.RadioField("Will you be participating?", default=1, coerce=getbool,
         choices=[(1,  u"I will be working on this project"),
