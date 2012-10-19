@@ -8,9 +8,9 @@ __all__ = ['ProjectForm']
 
 
 class ProjectForm(Form):
-    title = wtf.TextField("Title", description="Title of the project", validators=[wtf.Required("A title is required")])
+    title = wtf.TextField("Title", description="Title of the project", validators=[wtf.Required("A title is required"), wtf.validators.length(max=250)])
     blurb = wtf.TextField("Blurb", description="A single-line summary of the project",
-        validators=[wtf.Required("A blurb is required")])
+        validators=[wtf.Required("A blurb is required"), wtf.validators.length(max=250)])
     description = RichTextField(u"Description",
         description="Detailed description of your project",
         content_css="/static/css/editor.css")
