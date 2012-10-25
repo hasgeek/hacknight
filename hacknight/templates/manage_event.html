@@ -14,7 +14,6 @@
       <div class="span3">Phone</div>
       <div class="span2"></div>
       <div class="span12"></div>
-
     </li>
   {% set sorted_participants = participants.all() | sort(attribute='user.username') %}
   {% for i, participant in enumerate(sorted_participants) %}
@@ -34,8 +33,6 @@
   {% endfor %}
 </ul>
   </div>
-
-
 {% endblock %}
 {% block footerscripts %}
   <script type="text/javascript">
