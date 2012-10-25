@@ -14,9 +14,10 @@
       <div class="span3">Phone</div>
       <div class="span2"></div>
       <div class="span12"></div>
-  
+
     </li>
-  {% for i, participant in enumerate(participants) %}
+  {% set sorted_participants = participants.all() | sort(attribute='user.username') %}
+  {% for i, participant in enumerate(sorted_participants) %}
     <li class="row-fluid item participant-{{ participant.id }}" data-status="{{ participant.status }}">
       <div class="span1">{{ i+1 }}</div>
       <div class="span2">{{ participant.user.fullname }}</div>
@@ -34,7 +35,7 @@
 </ul>
   </div>
 
-    
+
 {% endblock %}
 {% block footerscripts %}
   <script type="text/javascript">
