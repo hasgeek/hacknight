@@ -15,8 +15,8 @@
       <div class="span2"></div>
       <div class="span12"></div>
     </li>
-  {% set sorted_participants = participants.all() | sort(attribute='user.username') %}
-  {% for i, participant in enumerate(sorted_participants) %}
+  {#{% set sorted_participants = participants.all() | sort(attribute='user.username') %}#}
+  {% for i, participant in enumerate(participants) %}
     <li class="row-fluid item participant-{{ participant.id }}" data-status="{{ participant.status }}">
       <div class="span1">{{ i+1 }}</div>
       <div class="span2">{{ participant.user.fullname }}</div>

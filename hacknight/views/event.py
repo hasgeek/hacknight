@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from collections import OrderedDict
 from flask import render_template, abort, flash, url_for, g, request, Response
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
@@ -23,11 +24,13 @@ def event_view(profile, event):
         Participant.status != PARTICIPANT_STATUS.WITHDRAWN,
         Participant.event == event)
     accepted_participants = [p for p in participants if p.status == PARTICIPANT_STATUS.CONFIRMED]
-    accepted_participants_projects = dict((participant, None) for participant in accepted_participants)
+    accepted_participants_projects_dict = dict((participant, None) for participant in accepted_participants)
+    accepted_participants_projects = OrderedDict(sorted(accepted_participants_projects_dict.items(), key=lambda item: item[0].user.username))
     for p in accepted_participants:
         accepted_participants_projects[p] = ProjectMember.query.filter_by(participant_id=p.id).all()
     rest_participants = [p for p in participants if p.status != PARTICIPANT_STATUS.CONFIRMED]
-    rest_participants_projects = dict((participant, None) for participant in rest_participants)
+    rest_participants_projects_dict = dict((participant, None) for participant in rest_participants)
+    rest_participants_projects = OrderedDict(sorted(rest_participants_projects_dict.items(), key=lambda item: item.user['username']))
     for p in rest_participants:
         rest_participants_projects[p] = Project.query.filter_by(participant_id=p.id).all()
     applied = 0
@@ -113,7 +116,7 @@ def event_open(profile, event):
         abort(403)
     participants = Participant.query.filter(
         Participant.status != PARTICIPANT_STATUS.WITHDRAWN,
-        Participant.event == event)
+        Participant.event == event).order_by('created_at')
     return render_template('manage_event.html', profile=profile, event=event,
         participants=participants, statuslabels=participant_status_labels, enumerate=enumerate)
 
