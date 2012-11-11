@@ -3,6 +3,7 @@
 from flask import Markup
 import flask.ext.wtf as wtf
 from baseframe.forms import Form, RichTextField, DateTimeField, ValidName, AvailableName
+from hacknight import app
 from hacknight.models import Venue
 
 __all__ = ['EventForm', 'ConfirmWithdrawForm']
@@ -20,8 +21,8 @@ class EventForm(Form):
         description=Markup('Venue for this event (<a href="/venue/new">make new</a>)'),
         query_factory=lambda: Venue.query, get_label='title',
         )
-    start_datetime = DateTimeField("Start date/time", description="The date and time at which this event begins", validators=[wtf.Required()])
-    end_datetime = DateTimeField("End date/time", description="The date and time at which this event ends", validators=[wtf.Required()])
+    start_datetime = DateTimeField("Start date/time", description="The date and time at which this event begins", validators=[wtf.Required()], timezone=app.config['TIMEZONE'])
+    end_datetime = DateTimeField("End date/time", description="The date and time at which this event ends", validators=[wtf.Required()], timezone=app.config['TIMEZONE'])
     ticket_price = wtf.TextField("Ticket price", description="Entry fee, if any, to be paid at the venue", validators=[wtf.validators.length(max=250)])
     total_participants = wtf.IntegerField("Venue capacity", description="The number of people this venue can accommodate. Registrations will be closed after that. Use 0 to indicate unlimited capacity", default=50, validators=[wtf.Required()])
     website = wtf.TextField("Website", description="Related Website (Optional)", validators=[wtf.Optional(), wtf.validators.length(max=250)])
