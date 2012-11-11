@@ -11,3 +11,4 @@ fabric
 markdown
 Flask-WTF
 unicodecsv
+python-dateutil

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-
+from pytz import timezone
+from dateutil import tz
 from flask import render_template, abort, flash, url_for, g, request, Response
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
@@ -57,6 +58,19 @@ def event_new(profile):
         form.populate_obj(event)
         if not event.name:
             event.make_name()
+        """
+            Datetime form is unaware of time zones.
+            All the hacknights timings are in GMT for now, So convert the GMT timings
+            to UTC and store in the DB.
+        """
+        local_zone = tz.gettz(app.config['TIMEZONE'])
+        utc_zone = tz.gettz('UTC')
+        event.start_datetime = event.start_datetime.replace(tzinfo=local_zone)
+        # replace timezone info to GMT
+        event.end_datetime = event.end_datetime.replace(tzinfo=local_zone)
+        # convert timezone info to UTC
+        event.start_datetime = event.start_datetime.astimezone(utc_zone)
+        event.end_datetime = event.end_datetime.astimezone(utc_zone)
         db.session.add(event)
         participant = Participant(user=g.user, event=event, status=PARTICIPANT_STATUS.CONFIRMED)
         db.session.add(participant)
@@ -76,12 +90,41 @@ def event_edit(profile, event):
     workflow = event.workflow()
     if not workflow.can_edit():
         abort(403)
+    local_zone = tz.gettz(app.config['TIMEZONE'])
+    utc_zone = tz.gettz('UTC')
+    # If the datetime object is unaware of timezone info replace with UTC time zone since all db entries are
+    # converted to UTC and stored
+    if not event.start_datetime.tzinfo:
+        event.start_datetime = event.start_datetime.replace(tzinfo=utc_zone)
+    if not event.end_datetime.tzinfo:
+        event.end_datetime = event.end_datetime.replace(tzinfo=utc_zone)
+    # Convert UTC to GMT
+    event.start_datetime = event.start_datetime.astimezone(local_zone)
+    event.end_datetime = event.end_datetime.astimezone(local_zone)
+    # Note: Moving form initialization to top will not reflect the time conversion in edit form.
     form = EventForm(obj=event)
     if form.validate_on_submit():
         form.populate_obj(event)
         if not event.name:
             event.make_name()
         event.profile_id = profile.id
+        event.start_datetime = event.start_datetime.replace(tzinfo=local_zone)
+        event.end_datetime = event.end_datetime.replace(tzinfo=local_zone)
+        event.start_datetime = event.start_datetime.astimezone(utc_zone)
+        event.end_datetime = event.end_datetime.astimezone(utc_zone)
+        """
+        This is hack
+        ------------
+
+        SQLAlchemy compares the value of datetime object before storing to db. Newly entered values are
+        timezone aware but values fetched from db aren't time aware. Previous state value is stored
+        in `_sa_instance_state`. Injecting tzinfo, so that sqlalchemy understands how to compare the
+        datetime object.
+        """
+        if not event._sa_instance_state.committed_state['start_datetime'].tzinfo:
+            event._sa_instance_state.committed_state['start_datetime'] = event._sa_instance_state.committed_state['start_datetime'].replace(tzinfo=utc_zone)
+        if not event._sa_instance_state.committed_state['end_datetime'].tzinfo:
+            event._sa_instance_state.committed_state['end_datetime'] = event._sa_instance_state.committed_state['end_datetime'].replace(tzinfo=utc_zone)
         db.session.commit()
         flash(u"Your edits to %s are saved" % event.title, "success")
         return render_redirect(url_for('event_view', event=event.name, profile=profile.name), code=303)
