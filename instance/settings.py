@@ -2,7 +2,7 @@
 #: Site title
 SITE_TITLE = 'HasGeek Hacknight'
 #: Site id (for network bar)
-SITE_ID = ''
+SITE_ID = 'hacknight'
 #: Database backend
 SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
 #: Secret key
