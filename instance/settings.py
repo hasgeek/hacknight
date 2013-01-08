@@ -4,7 +4,7 @@ SITE_TITLE = 'HasGeek Hacknight'
 #: Site id (for network bar)
 SITE_ID = 'hacknight'
 #: Database backend
-SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
+SQLALCHEMY_DATABASE_URI = 'postgres://sqlalchemy:postgres-sqlalchemy@localhost:5432/hacknight'
 #: Secret key
 SECRET_KEY = 'make this something random'
 #: Timezone
@@ -12,9 +12,9 @@ TIMEZONE = 'Asia/Calcutta'
 #: LastUser server
 LASTUSER_SERVER = 'https://auth.hasgeek.com/'
 #: LastUser client id
-LASTUSER_CLIENT_ID = ''
+LASTUSER_CLIENT_ID = 'AQvus4y5Trm5RZ71Fu-OCQ'
 #: LastUser client secret
-LASTUSER_CLIENT_SECRET = ''
+LASTUSER_CLIENT_SECRET = 'Rk4QqRuZSL25D-Bl3N5Wqw6AjlT6FdTQuSAiRgUIqNnA'
 #: Mail settings
 #: MAIL_FAIL_SILENTLY : default True
 #: MAIL_SERVER : default 'localhost'
