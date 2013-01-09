@@ -45,7 +45,8 @@ def venue_edit(venue):
     if not (lastuser.has_permission('siteadmin') or venue.profile.userid  in g.user.user_organization_owned_ids()):
         abort(403)
     form = VenueForm(obj=venue)
-    form.profile_id.choices = [(venue.profile.id, venue.profile.title)]
+    form.profile_id.choices = [(p.id, p.title) for p in g.user.profiles]
+    form.profile_id.choices.insert(0, (venue.profile.id, venue.profile.title))
     if form.validate_on_submit():
         form.populate_obj(venue)
         venue.make_name()
