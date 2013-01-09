@@ -46,6 +46,7 @@ def venue_edit(venue):
         abort(403)
     form = VenueForm(obj=venue)
     form.profile_id.choices = [(p.id, p.title) for p in g.user.profiles]
+    form.profile_id.choices.insert(0, (venue.profile.id, venue.profile.title))
     if form.validate_on_submit():
         form.populate_obj(venue)
         venue.make_name()
