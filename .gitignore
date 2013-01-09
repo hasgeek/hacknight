@@ -16,10 +16,10 @@ nosetests.xml
 instance/testing.py
 instance/development.py
 instance/production.py
+instance/settings.py
 baseframe-packed.css
 baseframe-packed.js
 env/
 dev/
 error.log
 hacknight/static/js/packed.js
-settings.py
