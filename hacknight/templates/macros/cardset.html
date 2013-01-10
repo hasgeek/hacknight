@@ -18,7 +18,10 @@
             </div>
             <div class="card-title">
               <h2>{{ e.title }}</h2>
-              <h3>{{ e.start_datetime|weekdate }}, {{ e.venue.city }}</h3>
+              <h3>{{ e.start_datetime|weekdate }} 
+                {%- if e.end_datetime.day != e.start_datetime.day %}
+                - {{ e.end_datetime|weekdate }}
+                {% endif -%}, {{ e.venue.city }}</h3>
             </div>
           <div class="card-body">
             {{ e.blurb }}
