@@ -14,7 +14,6 @@
       <div class="span3">Phone</div>
       <div class="span2"></div>
       <div class="span12"></div>
-  
     </li>
   {% for i, participant in enumerate(participants) %}
     <li class="row-fluid item participant-{{ participant.id }}" data-status="{{ participant.status }}">
@@ -33,8 +32,6 @@
   {% endfor %}
 </ul>
   </div>
-
-    
 {% endblock %}
 {% block footerscripts %}
   <script type="text/javascript">
