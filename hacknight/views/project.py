@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import unicodecsv
 from cStringIO import StringIO
 from datetime import datetime
 from flask import render_template, g, abort, flash, url_for, request, redirect, make_response

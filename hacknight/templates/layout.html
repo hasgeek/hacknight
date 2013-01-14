@@ -4,11 +4,20 @@
 {% block headerbox %}
   <header>
     {{ networkbar(siteid=config['SITE_ID'], login=true, baseclass='hg-dark') }}
-    <div id="page-header" class="container">
-      <div class="logo">
-        <a href="{{ url_for('index') }}" title="Home">
-          <img src="{{ url_for('static', filename='img/hacknightlogo-small.png') }}" alt="Hacknight">
-        </a>
+    <div id="page-header-inner">
+      <div class="container">
+        <div class="row">
+          <div class="span10 logo">
+            <a href="{{ url_for('index') }}" title="Home">
+              <img src="{{ url_for('static', filename='img/hacknightlogo-small.png') }}" alt="Hacknight">
+            </a>
+          </div>
+          <div class="span2 home-buttons">
+            <div class="row" id="start-btn-after-login">
+              <a href="{{ url_for('login') }}" class="btn btn-primary btn-large" id="create">Start a hacknight</a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </header>
