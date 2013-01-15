@@ -14,11 +14,12 @@ from hacknight.models.participant import Participant
 @app.route('/<profile>')
 @load_model(Profile, {'name': 'profile'}, 'profile')
 def profile_view(profile):
-    events = Event.query.filter_by(profile_id=profile.id).all()
+    events = Event.query.filter_by(profile_id=profile.id).order_by(Event.start_datetime.desc()).all()
     user = User.query.filter_by(userid=profile.userid).first()
     if user is not None:
-        # User. Show all events this user owns or is participating in.
+        # User profile. Show all events this user owns or is participating in.
         events = list(set(events + [p.event for p in Participant.query.filter_by(user=user).all()]))
+        events.sort(key=lambda item: item.start_datetime, reverse=True)
     return render_template('profile.html', profile=profile, events=events, is_user=True if user else False)
 
 
