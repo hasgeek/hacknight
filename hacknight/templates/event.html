@@ -1,14 +1,14 @@
 {% extends "layout.html" %}
 {% block title %}{{ event.title }}{% endblock %}
 
-{% macro participant_list(participants) -%}
+{% macro participant_list(accepted_participants_projects) -%}
   <ol>
-    {%- for p in participants -%}
+    {%- for p in accepted_participants_projects -%}
       <li><b><a href="{{ p.user.profile_url }}">{{ p.user.fullname }}</a></b>
-        {%- if p.project_memberships %}
+        {%- if accepted_participants_projects[p] %}
           <ul>
-            {%- for membership in p.project_memberships -%}
-              <li><a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=membership.project.url_name) }}">{{ membership.project.title }}</a></li>
+            {%- for item in accepted_participants_projects[p] -%}
+              <li><a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=item.get_project().url_name) }}">{{ item.get_project().title }}</a></li>
             {% endfor -%}
           </ul>
         {%- endif %}
@@ -27,9 +27,9 @@
       </div>
       {{ event.description|safe }}
       <h3> Accepted Participants</h3><br/>
-      {{ participant_list(accepted_participants) }}
+      {{ participant_list(accepted_participants_projects) }}
       <h3>Other Participants</h3><br/>
-      {{ participant_list(rest_participants) }}
+      {{ participant_list(rest_participants_projects) }}
     </div>
     <div class="span4">
       <ul class="well nav nav-list">
@@ -114,7 +114,7 @@
     {% endif %}
   </ul>
 
-  <div id="map" class="event-map"></div>
+  <div id="map" {{ "class=event-map" if event.venue.latitude and event.venue.longitude }}></div>
 
 {% endblock %}
 
@@ -146,8 +146,9 @@ if("{{ event.profile.userid }}"=="{{ g.user.userid }}")
         var cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18, attribution: cloudmadeAttrib, subdomains: subDomains});
 
         console.log({{ event.venue.latitude }});
-        var venue = new L.LatLng({{ event.venue.latitude }}, {{ event.venue.longitude }}); // geographical point (longitude and latitude)
-        map.setView(venue, 16).addLayer(cloudmade);
+        {% if event.venue.latitude and event.venue.longitude %}
+          var venue = new L.LatLng({{ event.venue.latitude }}, {{ event.venue.longitude }}); // geographical point (longitude and latitude)
+          map.setView(venue, 16).addLayer(cloudmade);
 
           var venue_marker = new L.Marker(venue);
             map.addLayer(venue_marker);
@@ -155,6 +156,7 @@ if("{{ event.profile.userid }}"=="{{ g.user.userid }}")
             map.scrollWheelZoom.disable();
 
             map.on('zoomend', onZoomend);
+        {% endif %}
     function onZoomend(){
         map.setView(venue, map.getZoom());
     };
