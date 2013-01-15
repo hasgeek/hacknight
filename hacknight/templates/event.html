@@ -1,14 +1,14 @@
 {% extends "layout.html" %}
 {% block title %}{{ event.title }}{% endblock %}
 
-{% macro participant_list(accepted_participants_projects) -%}
+{% macro participant_list(participants) -%}
   <ol>
-    {%- for p in accepted_participants_projects -%}
+    {%- for p in participants -%}
       <li><b><a href="{{ p.user.profile_url }}">{{ p.user.fullname }}</a></b>
-        {%- if accepted_participants_projects[p] %}
+        {%- if p.project_memberships %}
           <ul>
-            {%- for item in accepted_participants_projects[p] -%}
-              <li><a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=item.get_project().url_name) }}">{{ item.get_project().title }}</a></li>
+            {%- for membership in p.project_memberships -%}
+              <li><a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=membership.project.url_name) }}">{{ membership.project.title }}</a></li>
             {% endfor -%}
           </ul>
         {%- endif %}
@@ -27,9 +27,9 @@
       </div>
       {{ event.description|safe }}
       <h3> Accepted Participants</h3><br/>
-      {{ participant_list(accepted_participants_projects) }}
+      {{ participant_list(accepted_participants) }}
       <h3>Other Participants</h3><br/>
-      {{ participant_list(rest_participants_projects) }}
+      {{ participant_list(rest_participants) }}
     </div>
     <div class="span4">
       <ul class="well nav nav-list">
@@ -113,7 +113,6 @@
     </li>
     {% endif %}
   </ul>
-
   <div id="map" {{ "class=event-map" if event.venue.latitude and event.venue.longitude }}></div>
 
 {% endblock %}
