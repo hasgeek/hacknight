@@ -23,7 +23,7 @@ class ParticipantForm(Form):
     job_title = wtf.TextField("Job Title",
         description="What is your job title? E.G: Senior Software "
                     "Engineer at Awesome company",
-        validators=[wtf.Required(), wtf.validators.length(max=120)])
+        validators=[wtf.Optional(), wtf.validators.length(max=120)])
     company = wtf.TextField("Company", description="Company Name",
         validators=[wtf.Optional(), wtf.validators.length(max=1200)])
     skill_level = wtf.RadioField("Skill Level", description="What is your skill level?",
