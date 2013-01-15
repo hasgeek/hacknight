@@ -150,11 +150,11 @@ if("{{ event.profile.userid }}"=="{{ g.user.userid }}")
           map.setView(venue, 16).addLayer(cloudmade);
 
           var venue_marker = new L.Marker(venue);
-            map.addLayer(venue_marker);
-            venue_marker.bindPopup('{{ event.venue.title }}').openPopup();
-            map.scrollWheelZoom.disable();
+          map.addLayer(venue_marker);
+          venue_marker.bindPopup('{{ event.venue.title }}').openPopup();
+          map.scrollWheelZoom.disable();
 
-            map.on('zoomend', onZoomend);
+          map.on('zoomend', onZoomend);
         {% endif %}
     function onZoomend(){
         map.setView(venue, map.getZoom());
