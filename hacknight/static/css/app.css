@@ -1,6 +1,21 @@
+/* Regular */
+@font-face {
+  font-family: "League Gothic";
+  src: url("../font/leaguegothic-regular-webfont.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Oswald";
+  src: url("../font/Oswald-Regular.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
   background-color: #203838;
-  background-image: url('../img/dark_brick_wall.png?1339688944');
+  background-image: url('../img/concrete_wall.png?1339688944');
   color: #aaaaaa;
 }
 
@@ -21,7 +36,7 @@ body {
 #page-header {
   height: 200px;
   width: 100%;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid #222426;
   background-color: black;
   opacity: 0.95;
   padding-top: 50px;
@@ -30,7 +45,7 @@ body {
 #page-header-inner {
   height: 75px;
   width: 100%;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid #222426;
   background-color: black;
   opacity: 0.7;
   padding-top: 18px;
@@ -41,31 +56,67 @@ footer .footer-inner {
 }
 
 h1 {
-  color: #f58555;
+  color: #b0603d;
+  font-family: "League Gothic";
+  text-transform: uppercase;
+  font-size: 35px;
+  letter-spacing: -2px;
+  padding-bottom: 10px;
+  padding-top: 8px;
 }
 
 h2 {
   color: #c1a7cc;
+  font-family: "Oswald";
+  letter-spacing: -0.5px;
+  font-size: 18px;
 }
 
-h3 a {
-  color: red;
+h3 {
+  color: #856a91;
+}
+
+#h3-title {
+  padding-top: 15px;
+  padding-bottom: 5px;
+  font-family: "Oswald";
+  letter-spacing: -1px;
+}
+
+.page-header h1 a {
+  color: #b0603d;
+  font-family: "League Gothic";
+  text-transform: uppercase;
+  font-size: 35px;
+  letter-spacing: -2px;
+  padding-bottom: 10px;
+  padding-top: 8px;
+}
+.page-header h1 a:hover {
+  color: #181818;
+  text-decoration: none;
+}
+.page-header h3, .page-header h3 a, .page-header h3 a:visited {
+  color: #0087cf;
+  font-family: "Oswald";
+  letter-spacing: 0px;
+  padding-top: 0;
+  padding-bottom: 5px;
 }
 
 hr {
   margin: 20px 0;
   border: 0;
-  border-top: 1px solid black;
-  border-bottom: 2px solid #333333;
+  border-top: 1px solid #262a2e;
+  border-bottom: 2px solid #353a3e;
 }
 
 .home-buttons .btn-primary {
   color: #0087cf;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: black;
+  background: transparent;
   background-image: none;
   border: 1px solid #0087cf;
-  width: 100%;
   margin-top: 11px;
   font-size: 18px;
 }
@@ -81,7 +132,7 @@ hr {
 }
 
 #start-btn-after-login {
-  margin-top: -10px;
+  margin-top: 2px;
 }
 
 .centered {
@@ -99,12 +150,12 @@ label {
 input, textarea, select, .uneditable-input {
   color: #aaaaaa;
   background-color: rgba(0, 0, 0, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: #222426;
 }
 
 .form-actions {
   background-color: rgba(0, 0, 0, 0.1);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid #222426;
   -moz-border-radius-bottomleft: 4px;
   -webkit-border-bottom-left-radius: 4px;
   border-bottom-left-radius: 4px;
@@ -119,7 +170,7 @@ input, textarea, select, .uneditable-input {
 
 .alert, .alert-success {
   background: rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid #222426;
   text-shadow: none;
 }
 .alert .close, .alert-success .close {
@@ -128,7 +179,9 @@ input, textarea, select, .uneditable-input {
 }
 
 .well {
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 6px solid #222426;
+  border-top: 6px solid #222426;
+  border-radius: 0;
   -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.1) inset;
   -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.1) inset;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.1) inset;
@@ -171,12 +224,18 @@ input, textarea, select, .uneditable-input {
   text-shadow: none;
 }
 
+.nav-list .nav-header {
+  font-family: "Oswald";
+  padding-top: 15px;
+  padding-bottom: 10px;
+}
+
 .nav-list > li > a [class^="icon-"]::before, .nav-list > li > a [class*=" icon-"]::before {
   color: #aaaaaa;
 }
 
 .nav > li > a:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: #222426;
   color: #aaaaaa;
 }
 
@@ -245,7 +304,7 @@ input, textarea, select, .uneditable-input {
 .cardset li .card-body, .userset li .card-body {
   margin: 11px -14px 0;
   padding: 10px 14px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid #222426;
 }
 .cardset li .card-body.large-plus, .userset li .card-body.large-plus {
   text-align: center;
@@ -261,6 +320,10 @@ input, textarea, select, .uneditable-input {
 }
 .cardset li h2, .userset li h2 {
   color: #c4b1cc;
+}
+
+.light-bg {
+  opacity: 0.7;
 }
 
 .userset li {
@@ -286,18 +349,16 @@ input, textarea, select, .uneditable-input {
   margin: 10px;
 }
 
+.cardset.past h2 {
+  font-size: 17px;
+}
 .cardset.past li {
   height: 7em;
   opacity: 0.7;
 }
 
 #map {
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  -ms-border-radius: 4px;
-  -o-border-radius: 4px;
-  border-radius: 4px;
+  border: 3px solid #222426;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -309,12 +370,12 @@ input, textarea, select, .uneditable-input {
 }
 
 .defaultSkin table.mceLayout {
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid #222426 !important;
 }
 
 .defaultSkin .mceIframeContainer {
-  border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-top: 1px solid #222426 !important;
+  border-bottom: 1px solid #222426 !important;
 }
 
 .defaultSkin table.mceLayout.focus {
@@ -388,4 +449,11 @@ input, textarea, select, .uneditable-input {
 
 .sponsor-logo {
   width: 250px;
+}
+
+li.project-name {
+  list-style-type: none;
+}
+li.project-name a {
+  color: #bb894d;
 }

@@ -1,10 +1,18 @@
 {% extends "layout.html" %}
 {% block title %}{{ event.title }}{% endblock %}
 
+{% block baseheadline -%}
+  {% block headline -%}
+    <div class="page-header">
+      <h1><a href="{{ url_for('event_view', profile=profile.name, event=event.name) }}">{{ self.title()|e }}</a></h1>
+    </div>
+  {%- endblock %}
+{%- endblock %}
+
 {% block content %}
 <div id="main" class="participant-list">
 
-  <h1>Participants</h1>
+  <h2>Participants</h2>
   <ul class="grid container-fluid">
     <li class="row-fluid header">
       <div class="span1">#</div>

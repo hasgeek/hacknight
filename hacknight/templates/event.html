@@ -8,7 +8,7 @@
         {%- if p.project_memberships %}
           <ul>
             {%- for membership in p.project_memberships -%}
-              <li><a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=membership.project.url_name) }}">{{ membership.project.title }}</a></li>
+              <li class="project-name"><i class="icon-briefcase"></i> <a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=membership.project.url_name) }}">{{ membership.project.title }}</a></li>
             {% endfor -%}
           </ul>
         {%- endif %}
@@ -27,9 +27,9 @@
         <h1>{{ self.title() }}</h1>
       </div>
       {{ event.description|safe }}
-      <h3> Accepted Participants</h3><br/>
+      <h3 id="h3-title"> Accepted Participants</h3>
       {{ participant_list(accepted_participants) }}
-      <h3>Other Participants</h3><br/>
+      <h3 id="h3-title">Other Participants</h3>
       {{ participant_list(rest_participants) }}
     </div>
     <div class="span4">
@@ -89,7 +89,7 @@
 
   </div>
 
-  <ul class="cardset row">
+  <ul class="cardset light-bg row">
     {% for p in projects %}
       <li class="span4">
         <a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=p.url_name) }}">
