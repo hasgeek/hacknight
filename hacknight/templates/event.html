@@ -113,7 +113,9 @@
     </li>
     {% endif %}
   </ul>
-  <div id="map" {{ "class=event-map" if event.venue.latitude and event.venue.longitude }}></div>
+  {% if event.venue.latitude and event.venue.longitude %}
+    <div id="map" class="event-map"></div>
+  {% endif %}
 
 {% endblock %}
 
