@@ -14,18 +14,18 @@
 }
 
 body {
-  background-color: #203838;
-  background-image: url('../img/concrete_wall.png');
+  background-color: #333333;
+  background-image: url('../img/concrete_wall.png?1358324650');
   color: #aaaaaa;
 }
 
 .wallpaper {
-  background-image: url('../img/hacknight.jpg');
+  background-image: url('../img/hacknight.jpg?1358324650');
   width: 100%;
   height: 600px;
   repeat: none;
   background-position: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 #hg-bar.hg-dark {
@@ -61,8 +61,8 @@ h1 {
   text-transform: uppercase;
   font-size: 35px;
   letter-spacing: -2px;
-  padding-bottom: 10px;
-  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-top: 10px;
 }
 
 h2 {
@@ -91,6 +91,7 @@ h3 {
   letter-spacing: -2px;
   padding-bottom: 10px;
   padding-top: 8px;
+  text-shadow: 1px 1px #262a2e;
 }
 .page-header h1 a:hover {
   color: #181818;
@@ -112,6 +113,7 @@ hr {
 }
 
 .home-buttons .btn-primary {
+  width: 170px;
   color: #0087cf;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   background: transparent;
@@ -132,6 +134,7 @@ hr {
 }
 
 #start-btn-after-login {
+  margin-left: 5px;
   margin-top: 2px;
 }
 
@@ -456,4 +459,215 @@ li.project-name {
 }
 li.project-name a {
   color: #bb894d;
+}
+
+@media (min-width: 980px) and (max-width: 1200px) {
+  .wallpaper {
+    height: 500px;
+    margin-bottom: 20px;
+  }
+
+  #page-header {
+    height: 180px;
+    padding-top: 30px;
+  }
+
+  #page-header-inner {
+    height: 75px;
+    width: 100%;
+    padding-top: 18px;
+  }
+
+  .masthead img {
+    width: 70%;
+    height: auto;
+  }
+
+  .home-buttons .btn-primary {
+    width: 170px;
+    margin-left: -35px;
+    margin-top: 11px;
+    font-size: 18px;
+  }
+
+  #start-btn-after-login {
+    margin-top: 2px;
+  }
+
+  .cardset li, .userset li {
+    height: 15em;
+  }
+
+  .userset li {
+    height: 10em;
+  }
+
+  .cardset.past li {
+    height: 7em;
+  }
+}
+@media (min-width: 768px) and (max-width: 979px) {
+  .wallpaper {
+    height: 450px;
+    margin-bottom: 20px;
+  }
+
+  #page-header {
+    height: 150px;
+    padding-top: 15px;
+  }
+
+  #page-header-inner {
+    height: 75px;
+    width: 100%;
+    padding-top: 18px;
+  }
+
+  .masthead img {
+    width: 60%;
+    height: auto;
+  }
+
+  .home-buttons .btn-primary {
+    width: 140px;
+    margin-left: -45px;
+    margin-top: 11px;
+    font-size: 15px;
+  }
+
+  #start-btn-after-login {
+    margin-left: 5px;
+    margin-top: 2px;
+  }
+
+  .cardset li, .userset li {
+    height: 17em;
+  }
+  .cardset h2, .userset h2 {
+    padding-top: 5px;
+  }
+
+  .userset li {
+    height: 10em;
+  }
+
+  .cardset.past li {
+    height: 9em;
+  }
+}
+@media screen and (max-width: 767px) {
+  .wallpaper {
+    height: 450px;
+    margin-bottom: 20px;
+  }
+
+  #page-header {
+    height: 140px;
+    padding-top: 15px;
+    text-align: center;
+  }
+
+  #page-header-inner {
+    height: 130px;
+    width: 100%;
+    padding-top: 18px;
+    text-align: center;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+  }
+
+  .masthead img {
+    width: 60%;
+    height: auto;
+  }
+
+  .home-buttons {
+    padding-top: 70px;
+  }
+  .home-buttons .btn-primary {
+    background-color: black;
+    opacity: 0.95;
+    width: 140px;
+    margin-top: 11px;
+    font-size: 15px;
+  }
+
+  #start-btn-after-login {
+    margin-left: 5px;
+    margin-top: 2px;
+    padding-top: 0px;
+  }
+
+  .cardset li, .userset li {
+    height: 15em;
+  }
+  .cardset h2, .userset h2 {
+    padding-top: 5px;
+  }
+
+  .userset li {
+    height: 10em;
+  }
+
+  .cardset.past li {
+    height: 8em;
+  }
+}
+@media (min-width: 400px) and (max-width: 500px) {
+  #page-header {
+    height: 120px;
+  }
+
+  #page-header-inner {
+    height: 100px;
+    width: 100%;
+    padding-top: 18px;
+  }
+
+  #inner-page-logo {
+    width: 220px;
+    height: auto;
+  }
+
+  #start-btn-after-login {
+    margin-left: -5px;
+    margin-top: 0px;
+  }
+}
+@media (max-width: 400px) {
+  #page-header {
+    height: 100px;
+  }
+
+  #page-header-inner {
+    height: 100px;
+    width: 100%;
+    padding-top: 18px;
+  }
+
+  #inner-page-logo {
+    width: 180px;
+    height: auto;
+  }
+
+  .masthead img {
+    width: 60%;
+    height: auto;
+  }
+
+  .home-buttons {
+    padding-top: 70px;
+  }
+  .home-buttons .btn-primary {
+    background-color: black;
+    opacity: 0.95;
+    width: 140px;
+    margin-top: 11px;
+    font-size: 15px;
+  }
+
+  #start-btn-after-login {
+    margin-left: -5px;
+    margin-top: 0px;
+  }
 }
