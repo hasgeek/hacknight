@@ -8,14 +8,16 @@
       <div class="container">
         <div class="row">
           <div class="span10 logo">
-            <a href="{{ url_for('index') }}" title="Home">
+              <a href="{{ url_for('index') }}" title="Home">
               <img src="{{ url_for('static', filename='img/hacknightlogo-small.png') }}" alt="Hacknight">
             </a>
           </div>
-          <div class="span2 home-buttons">
-            <div class="row" id="start-btn-after-login">
-              <a href="{{ url_for('login') }}" class="btn btn-primary btn-large" id="create">Start a hacknight</a>
-            </div>
+          <div class="span2 pull-right home-buttons" id="start-btn-after-login">
+            {% if not g.user %}
+              <a href="{{ url_for('login') }}" class="btn btn-primary" id="create" title="Create your event">Start a hacknight</a>
+            {% else %}
+              <a href="{{ url_for('event_new', profile=g.user.username) }}" class="btn btn-primary" id="create" title="Create your event">Start a hacknight</a>
+            {% endif %}
           </div>
         </div>
       </div>
