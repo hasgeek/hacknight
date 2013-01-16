@@ -5,11 +5,8 @@ from flask.ext.lastuser import LastUser
 from flask.ext.lastuser.sqlalchemy import UserManager
 from coaster.views import get_next_url
 
-from hacknight import app
+from hacknight import app, lastuser
 from hacknight.models import db, User, Profile, PROFILE_TYPE
-
-lastuser = LastUser(app)
-lastuser.init_usermanager(UserManager(db, User))
 
 
 @app.route('/login')
