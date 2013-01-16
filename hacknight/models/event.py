@@ -52,6 +52,7 @@ class Event(BaseScopedNameMixin, db.Model):
     venue = db.relationship('Venue')
     blurb = db.Column(db.Unicode(250), default=u'', nullable=False)
     description = db.Column(db.UnicodeText, default=u'', nullable=False)
+    apply_instructions = db.Column(db.UnicodeText, default=u'', nullable=False)
     start_datetime = db.Column(db.DateTime, nullable=False)
     end_datetime = db.Column(db.DateTime, nullable=False)
     maximum_participants = db.Column(db.Integer, default=0, nullable=False)

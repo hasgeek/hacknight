@@ -17,6 +17,8 @@ class EventForm(Form):
     blurb = wtf.TextField("Blurb", description="Single line blurb introducing the event", validators=[wtf.validators.length(max=250)])
     description = RichTextField("Description", description="Detailed description of the event",
         content_css="/static/css/editor.css")
+    apply_instructions = RichTextField("Instructions", description="Instructions for paricipants",
+        content_css="/static/css/editor.css")
     venue = wtf.QuerySelectField("Venue",
         description=Markup('Venue for this event (<a href="/venue/new">make new</a>)'),
         query_factory=lambda: Venue.query, get_label='title',
