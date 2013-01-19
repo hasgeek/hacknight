@@ -8,4 +8,4 @@ install:
 script: python runtests.py 
 notifications:
   email: false
-  irc: "irc.freenode.net#hasgeek"
+  irc: "irc.freenode.net#hasgeek-dev"
