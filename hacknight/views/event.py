@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from collections import OrderedDict
 from sqlalchemy.orm import joinedload
+from sqlalchemy import func
 from flask import render_template, abort, flash, url_for, g, request, Response
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
@@ -20,7 +20,7 @@ def event_view(profile, event):
     participants = [r[0] for r in db.session.query(Participant, User).filter(
         Participant.status != PARTICIPANT_STATUS.WITHDRAWN, Participant.event == event).join(
         (User, Participant.user)).options(
-        joinedload(Participant.project_memberships)).order_by(User.fullname).all()]
+        joinedload(Participant.project_memberships)).order_by(func.lower(User.fullname)).all()]
 
     accepted_participants = [p for p in participants if p.status == PARTICIPANT_STATUS.CONFIRMED]
     rest_participants = [p for p in participants if p.status != PARTICIPANT_STATUS.CONFIRMED]
@@ -47,6 +47,8 @@ def event_new(profile):
     if profile.userid not in g.user.user_organizations_owned_ids():
         abort(403)
     form = EventForm(parent=profile, model=Event)
+    form.start_datetime.timezone = app.config['tz']
+    form.end_datetime.timezone = app.config['tz']
     if form.validate_on_submit():
         event = Event(profile=profile)
         form.populate_obj(event)
