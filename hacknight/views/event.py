@@ -2,7 +2,8 @@
 
 from sqlalchemy.orm import joinedload
 from sqlalchemy import func
-from flask import render_template, abort, flash, url_for, g, request, Response
+import flask.ext.wtf as wtf
+from flask import render_template, abort, flash, url_for, g, request, Response, Markup
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app
@@ -160,9 +161,10 @@ def event_apply(profile, event):
             db.session.commit()
             flash(u"Your request to participate has been recorded; you will be notified by the event manager", "success")
         else:
-            return render_form(form=form, title="Participant Details",
-                submit=u"Participate", cancel_url=url_for('event_view',
-                event=event.name, profile=profile.name), ajax=False)
+            return render_form(form=form, message=Markup(event.apply_instructions) if event.apply_instructions else "",
+                title="Participant Details", submit=u"Participate",
+                cancel_url=url_for('event_view', event=event.name, 
+                profile=profile.name), ajax=False)
     # FIXME: Don't change anything unless this is a POST request
     elif participant.status == PARTICIPANT_STATUS.WITHDRAWN:
         participant.status = PARTICIPANT_STATUS.PENDING
