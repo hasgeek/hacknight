@@ -161,9 +161,9 @@ def event_apply(profile, event):
             db.session.commit()
             flash(u"Your request to participate has been recorded; you will be notified by the event manager", "success")
         else:
-            return render_form(form=form, message=Markup(event.apply_instructions), 
-                title="Participant Details", submit=u"Participate", 
-                cancel_url=url_for('event_view', event=event.name,  
+            return render_form(form=form, message=Markup(event.apply_instructions) if event.apply_instructions else "",
+                title="Participant Details", submit=u"Participate",
+                cancel_url=url_for('event_view', event=event.name, 
                 profile=profile.name), ajax=False)
     # FIXME: Don't change anything unless this is a POST request
     elif participant.status == PARTICIPANT_STATUS.WITHDRAWN:
