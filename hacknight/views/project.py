@@ -372,6 +372,7 @@ def prevsession(profile, project, event):
         flash("You were at the first project", "info")
         return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
 
+
 @app.route('/<profile>/<event>/projects/<project>/join')
 @lastuser.requires_login
 @load_models(
@@ -402,6 +403,31 @@ def project_join(profile, project, event):
         flash("You are now part of this team!", "success")
         return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
     return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
+
+
+@app.route('/<profile>/<event>/projects/<project>/leave', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
+    (Project, {'url_name': 'project', 'event': 'event'}, 'project')
+    )
+def project_leave(profile, project, event):
+    if not profile or not event or not project:
+        abort(404)
+    form = ConfirmDeleteForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(userid=g.user.userid).first()
+        member = ProjectMember.query.filter_by(project_id=project.id).join(Participant).filter(User.id == user.id).first()
+        if member:
+            db.session.delete(member)
+            db.session.commit()
+            flash("You are no more part of this team!", "success")
+        else:
+            flash("You need to be a participant to leave this team.", "fail")
+        return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
+    return render_template('baseframe/delete.html', form=form, title=u"Confirm delete",
+        message=u"Leave '%s' project ? It will remove your participation from this project. This operation cannot be undone." % (project.title))
 
 
 @app.route('/<profile>/<event>/export')
