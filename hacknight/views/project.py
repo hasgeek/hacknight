@@ -413,11 +413,9 @@ def project_join(profile, project, event):
     (Project, {'url_name': 'project', 'event': 'event'}, 'project')
     )
 def project_leave(profile, project, event):
-    if not profile or not event or not project:
-        abort(404)
     form = ConfirmDeleteForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(userid=g.user.userid).first()
+        user = g.user
         member = ProjectMember.query.filter_by(project_id=project.id).join(Participant).filter(User.id == user.id).first()
         if member:
             db.session.delete(member)
@@ -427,7 +425,7 @@ def project_leave(profile, project, event):
             flash("You need to be a participant to leave this team.", "fail")
         return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
     return render_template('baseframe/delete.html', form=form, title=u"Confirm delete",
-        message=u"Leave '%s' project ? It will remove your participation from this project. This operation cannot be undone." % (project.title))
+        message=u"Leave project '%s'? It will remove your participation from this project. This operation cannot be undone." % (project.title))
 
 
 @app.route('/<profile>/<event>/export')
