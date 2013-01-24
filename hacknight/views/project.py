@@ -416,11 +416,15 @@ def project_leave(profile, project, event):
     form = ConfirmDeleteForm()
     if form.validate_on_submit():
         user = g.user
+        participant = Participant.query.filter_by(user=user).first()
         member = ProjectMember.query.filter_by(project_id=project.id).join(Participant).filter(User.id == user.id).first()
         if member:
-            db.session.delete(member)
-            db.session.commit()
-            flash("You are no more part of this team!", "success")
+            if member.participant_id == project.participant_id:
+                flash("You are owner of the project, you can't leave the project", "fail")
+            else:
+                db.session.delete(member)
+                db.session.commit()
+                flash("You are no more part of this team!", "success")
         else:
             flash("You need to be a participant to leave this team.", "fail")
         return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
