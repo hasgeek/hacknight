@@ -1,3 +1,18 @@
+/* Regular */
+@font-face {
+  font-family: "League Gothic";
+  src: url("../font/leaguegothic-regular-webfont.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Oswald";
+  src: url("../font/Oswald-Regular.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
   background-color: #404040;
   background-image: url('../img/bg.png?1358827010');
@@ -339,7 +354,7 @@ input, textarea, select, .uneditable-input {
 .source-files {
   width: 100%;
   height: auto;
-  background-image: url('../img/footer_down_ipad.png');
+  background-image: url('../img/black_bg.png?1358664271');
   margin-top: 30px;
 }
 .source-files .nav > li > a {
