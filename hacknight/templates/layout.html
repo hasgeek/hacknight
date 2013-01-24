@@ -16,7 +16,7 @@
             {% if not g.user %}
               <a href="{{ url_for('login') }}" class="btn btn-primary" id="create" title="Create your event">Start a hacknight</a>
             {% else %}
-              <a href="{{ url_for('event_new', profile=g.user.username) }}" class="btn btn-primary" id="create" title="Create your event">Start a hacknight</a>
+              <a href="{{ url_for('event_new', profile=g.user.profile.name) }}" class="btn btn-primary" id="create" title="Create your event">Start a hacknight</a>
             {% endif %}
           </div>
         </div>

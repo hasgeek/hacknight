@@ -26,7 +26,7 @@
               </div>
             {% else %}
               <div class="row" id="start-btn-home-after-login">
-                <a href="{{ url_for('event_new', profile=g.user.username) }}" class="btn btn-primary btn-large" id="create" title="Create your event">Start a hacknight</a>
+                <a href="{{ url_for('event_new', profile=g.user.profile.name) }}" class="btn btn-primary btn-large" id="create" title="Create your event">Start a hacknight</a>
               </div>
             {% endif %}
           </div>
@@ -44,9 +44,7 @@
     {% block content %}
       
       <div class="row">
-        <div class="centered"><h1>In the queue</h1></div>
-        <div class="centered">{{ cardset(upcoming_events, type = 'upcoming') }}</div><hr/>
-        <div class="centered"><h1>Past events</h1></div>
+        <div class="centered upcoming">{{ cardset(upcoming_events, type = 'upcoming') }}</div><hr/>
         <div class="centered">{{ cardset(past_events, type = 'past') }}</div>
       </div>
     {% endblock %}

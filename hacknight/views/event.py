@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 
+from sqlalchemy.orm import joinedload
+from sqlalchemy import func
 from flask import render_template, abort, flash, url_for, g, request, Response
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app
-from hacknight.models import db, Profile
-from hacknight.models.event import Event
-from hacknight.models.participant import Participant, PARTICIPANT_STATUS
-from hacknight.models.project import ProjectMember, Project
+from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS
 from hacknight.forms.event import EventForm, ConfirmWithdrawForm
 from hacknight.forms.participant import ParticipantForm
 from hacknight.views.login import lastuser
@@ -18,28 +17,24 @@ from hacknight.views.login import lastuser
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_view(profile, event):
-    projects = Project.query.filter_by(event_id=event.id)
-    participants = Participant.query.filter(
-        Participant.status != PARTICIPANT_STATUS.WITHDRAWN,
-        Participant.event == event)
+    participants = [r[0] for r in db.session.query(Participant, User).filter(
+        Participant.status != PARTICIPANT_STATUS.WITHDRAWN, Participant.event == event).join(
+        (User, Participant.user)).options(
+        joinedload(Participant.project_memberships)).order_by(func.lower(User.fullname)).all()]
+
     accepted_participants = [p for p in participants if p.status == PARTICIPANT_STATUS.CONFIRMED]
-    accepted_participants_projects = dict((participant, None) for participant in accepted_participants)
-    for p in accepted_participants:
-        accepted_participants_projects[p] = ProjectMember.query.filter_by(participant_id=p.id).all()
     rest_participants = [p for p in participants if p.status != PARTICIPANT_STATUS.CONFIRMED]
-    rest_participants_projects = dict((participant, None) for participant in rest_participants)
-    for p in rest_participants:
-        rest_participants_projects[p] = Project.query.filter_by(participant_id=p.id).all()
-    applied = 0
+
+    applied = False
     for p in participants:
         if p.user == g.user:
-            applied = 1
+            applied = True
             break
     current_participant = Participant.get(user=g.user, event=event) if g.user else None
     return render_template('event.html', profile=profile, event=event,
-        projects=projects,
-        accepted_participants_projects=accepted_participants_projects,
-        rest_participants_projects=rest_participants_projects,
+        projects=event.projects,
+        accepted_participants=accepted_participants,
+        rest_participants=rest_participants,
         applied=applied,
         current_participant=current_participant,
         sponsors=event.sponsors)
@@ -52,6 +47,8 @@ def event_new(profile):
     if profile.userid not in g.user.user_organizations_owned_ids():
         abort(403)
     form = EventForm(parent=profile, model=Event)
+    form.start_datetime.timezone = app.config['tz']
+    form.end_datetime.timezone = app.config['tz']
     if form.validate_on_submit():
         event = Event(profile=profile)
         form.populate_obj(event)
@@ -113,7 +110,7 @@ def event_open(profile, event):
         abort(403)
     participants = Participant.query.filter(
         Participant.status != PARTICIPANT_STATUS.WITHDRAWN,
-        Participant.event == event)
+        Participant.event == event).order_by('created_at')
     return render_template('manage_event.html', profile=profile, event=event,
         participants=participants, statuslabels=participant_status_labels, enumerate=enumerate)
 

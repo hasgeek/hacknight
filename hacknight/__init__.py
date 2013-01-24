@@ -2,15 +2,18 @@
 
 # The imports in this file are order-sensitive
 
+from pytz import timezone
 from flask import Flask
+from flask.ext.lastuser import Lastuser
+from flask.ext.lastuser.sqlalchemy import UserManager
 from flask.ext.assets import Environment, Bundle
 from baseframe import baseframe, baseframe_js, baseframe_css
-from coaster import configureapp
+import coaster.app
 
 # First, make an app and config it
 
 app = Flask(__name__, instance_relative_config=True)
-configureapp(app, 'ENVIRONMENT')
+lastuser = Lastuser()
 
 # Second, after config, import the models and views
 
@@ -32,14 +35,9 @@ css = Bundle(baseframe_css,
 assets.register('js_all', js)
 assets.register('css_all', css)
 
-# Fourth, setup admin for the models
 
-#from flask.ext import admin
-#from flask.ext.admin.datastore.sqlalchemy import SQLAlchemyDatastore
-#from hacknight.views.login import lastuser
-
-#admin_datastore = SQLAlchemyDatastore(hacknight.models, hacknight.models.db.session)
-#admin_blueprint = admin.create_admin_blueprint(admin_datastore,
-#    view_decorator=lastuser.requires_permission('siteadmin'))
-
-#app.register_blueprint(admin_blueprint, url_prefix='/admin')
+def init_for(env):
+    coaster.app.init_app(app, env)
+    lastuser.init_app(app)
+    lastuser.init_usermanager(UserManager(hacknight.models.db, hacknight.models.User))
+    app.config['tz'] = timezone(app.config['TIMEZONE'])

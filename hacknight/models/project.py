@@ -76,12 +76,9 @@ class ProjectMember(BaseMixin, db.Model):
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
     # project = db.relationship(Project, backref=db.backref('members', cascade='all, delete-orphan'))
     participant_id = db.Column(db.Integer, db.ForeignKey('participant.id'), nullable=False)
-    participant = db.relationship(Participant, backref=db.backref('projects', cascade='all, delete-orphan'))
+    participant = db.relationship(Participant, backref=db.backref('project_memberships', cascade='all, delete-orphan'))
 
     status = db.Column(db.Integer, nullable=False, default=0)
     role = db.Column(db.Unicode(250), nullable=False, default=u'')
 
     __table_args__ = (db.UniqueConstraint('project_id', 'participant_id'),)
-
-    def get_project(self):
-        return Project.query.filter_by(id=self.project_id).first()

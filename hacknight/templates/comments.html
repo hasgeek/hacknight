@@ -2,17 +2,17 @@
   <div class="comment-vote">
     {%- set comvote = comment.votes.getvote(currentuser) %}
     {%- if not comvote -%}
-      <a class="comment-vote-up" title="Vote up" href="{{ votelinkbase }}/{{ comment.url_id }}/voteup">&#x25b2;</a><br/>
-      <span class="count">{{ comment.votes.count }}</span><br/>
-      <a class="comment-vote-down" title="Vote down" href="{{ votelinkbase }}/{{ comment.url_id }}/votedown">&#x25bc;</a><br/>
+      <a class="comment-vote-up" title="Vote up" href="{{ votelinkbase }}/{{ comment.url_id }}/voteup"><i class="icon-chevron-up"></i></a>
+      <span class="count">{{ comment.votes.count }}</span>
+      <a class="comment-vote-down" title="Vote down" href="{{ votelinkbase }}/{{ comment.url_id }}/votedown"><i class="icon-chevron-down"></i></a> 
     {%- elif not comvote.votedown -%}
-      <a class="comment-vote-cancel votechoice selected" title="Withdraw vote" href="{{ votelinkbase }}/{{ comment.url_id }}/cancelvote">&#x25b2;</a><br/>
-      <span class="count">{{ comment.votes.count }}</span><br/>
-      <a class="comment-vote-down" title="Vote down" href="{{ votelinkbase }}/{{ comment.url_id }}/votedown">&#x25bc;</a><br/>
+      <a class="comment-vote-cancel votechoice selected" title="Withdraw vote" href="{{ votelinkbase }}/{{ comment.url_id }}/cancelvote"><i class="icon-chevron-up"></i></a>
+      <span class="count">{{ comment.votes.count }}</span>
+      <a class="comment-vote-down" title="Vote down" href="{{ votelinkbase }}/{{ comment.url_id }}/votedown"><i class="icon-chevron-down"></i></a> 
     {%- else -%}
-      <a class="comment-vote-up" title="Vote up" href="{{ votelinkbase }}/{{ comment.url_id }}/voteup">&#x25b2;</a><br/>
-      <span class="count">{{ comment.votes.count }}</span><br/>
-      <a class="comment-vote-cancel votechoice selected" title="Withdraw vote" href="{{ votelinkbase }}/{{ comment.url_id }}/cancelvote">&#x25bc;</a><br/>
+      <a class="comment-vote-up" title="Vote up" href="{{ votelinkbase }}/{{ comment.url_id }}/voteup"><i class="icon-chevron-up"></i></a>
+      <span class="count">{{ comment.votes.count }}</span>
+      <a class="comment-vote-cancel votechoice selected" title="Withdraw vote" href="{{ votelinkbase }}/{{ comment.url_id }}/cancelvote"><i class="icon-chevron-down"></i></a> 
     {%- endif %}
   </div>
 {% endmacro %}
@@ -20,41 +20,69 @@
 {%- for comment in comments %}
   <li class="comment">
     <div id="c{{ comment.url_id }}">
-      {{ commentvote(comment, currentuser, documenturl+'/comments') }}
-      <div class="com-header">
-        <a class="collapse" href="#">[-]</a><a class="uncollapse hidden" href="#">[+]</a>
-        {% if comment.is_deleted -%}
-          <span class="commenter">[deleted]</span>
-        {%- else -%}
-          <span class="commenter {%- if comment.user == document.user %} selected{% endif %}">{{ comment.user.fullname }}</span>
-          {{ comment.created_at.strftime("%a, %b %e") }}
-          {%- if comment.edited_at %}
-            (edited {{ comment.edited_at.strftime("%a, %b %e") }})
-          {%- endif %}
-        {%- endif %}
-      </div>
-      <div class="com-body">
-        {% if not comment.is_deleted -%}
-          {{ comment.message_html|safe }}
-        {%- endif %}
-        <div data-id="{{ comment.url_id }}" class="com-footer">
-          {% if not comment.is_deleted %}
-            <a title="Reply" class="comment-reply" href="#c{{ comment.url_id }}">[reply]</a>
-            {% if comment.user == currentuser -%}
-              <a title="Edit" class="comment-edit" href="#c{{ comment.url_id }}">[edit]</a>
-              <a title="Delete" class="comment-delete" href="#c{{ comment.url_id }}">[delete]</a>
+      <div class=""> 
+
+        <div class="left-box">
+          <a href="{{ url_for('profile_view', profile=comment.user.profile.name) }}">
+            <div class="commenter-img">
+              <i class="icon-user icon-3x"></i>
+            </div><!-- /commenter-img -->
+          </a>
+        </div><!-- /left-box -->
+        
+        <div class="comment-text">
+          <div class="com-header">
+            {% if comment.is_deleted -%}
+              <span class="commenter">[deleted]</span>
+            {%- else -%}
+              <span class="commenter {%- if comment.user == document.user %} selected{% endif %}"><a class="commenter-name" href="{{ url_for('profile_view', profile=comment.user.profile.name) }}">{{ comment.user.fullname }}</a></span>
+
+              {% if comment.reply_to %} <i class="icon-share-alt"></i>{{ comment.reply_to.user.fullname }} {% endif %}
+
+              <span class="dot">.</span>
+              <span class="com-date">
+              {{ comment.created_at.strftime("%a, %b %e") }}
+              {%- if comment.edited_at %}
+                <!--(edit {{ comment.edited_at.strftime("%a, %b %e") }})-->
+                <i class="icon-pencil" title="edited {{ comment.edited_at.strftime("%a, %b %e") }}"></i>
+              {%- endif %}
+              </span>
+              <a class="collapse" href="#"><i class="icon-caret-up"></i></a><a class="uncollapse hidden" href="#"><i class="icon-caret-down"></i></a>
             {%- endif %}
-          {%- endif %}
-          <a title="Permalink" class="comment-permalink" href="#c{{ comment.url_id }}">[link]</a>
-          {% if comment.reply_to %}<a title="Parent" class="comment-parent" href="#c{{ comment.reply_to.url_id }}">[parent]</a>{% endif %}
+            <br />
+          </div><!-- /com-header -->
+          <br />
+          <div class="com-body">
+            <div>
+            {% if not comment.is_deleted -%}
+              {{ comment.message_html|safe }}
+            {%- endif %}
+            </div>
+            <div data-id="{{ comment.url_id }}" class="com-footer">
+              <div class="com-vote">{{ commentvote(comment, currentuser, documenturl+'/comments') }}
+              </div>
+
+              {% if not comment.is_deleted %}
+                <span class="dot">.</span><a title="Reply" class="comment-reply" href="#c{{ comment.url_id }}">reply</a>
+                {% if comment.user == currentuser -%}
+                  <span class="dot">.</span><a title="Edit" class="comment-edit" href="#c{{ comment.url_id }}">edit</a>
+                  <span class="dot">.</span><a title="Delete" class="comment-delete" href="#c{{ comment.url_id }}">delete</a>
+                {%- endif %}
+              {%- endif %}
+
+              <span class="dot">.</span><a title="Permalink" class="comment-permalink" href="#c{{ comment.url_id }}">link</a>
+              {% if comment.reply_to %}<span class="dot">.</span><a title="Parent" class="comment-parent" href="#c{{ comment.reply_to.url_id }}">parent</a>{% endif %}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      
     {% if comment.children %}
       <ul class="com-children">
         {{ commenttree(comment.sorted_children(), document, currentuser, documenturl) }}
       </ul>
     {% endif %}
+    </div>
+    </div>
   </li>
 {% endfor -%}
 {% endmacro %}

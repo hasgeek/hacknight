@@ -2,37 +2,61 @@
 {% block title %}{{ event.title }}{% endblock %}
 
 {% macro participant_list(participants) -%}
-  <ol>
+  <div class="row">
     {%- for p in participants -%}
-      <li><b><a href="{{ p.user.profile_url }}">{{ p.user.fullname }}</a></b>
-        {%- if p.project_memberships %}
-          <ul>
-            {%- for membership in p.project_memberships -%}
-              <li class="project-name"><i class="icon-briefcase"></i> <a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=membership.project.url_name) }}">{{ membership.project.title }}</a></li>
-            {% endfor -%}
-          </ul>
-        {%- endif %}
-      </li>
+      <div class="span3 participant">
+        <a href="{{ p.user.profile_url }}"><div class="participant-img"><i class="icon-user icon-4x"></i></div></a>
+        <div class="participant-name">
+          <b><a href="{{ p.user.profile_url }}">{{ p.user.fullname }}</a></b>
+        
+          <div class="participating-projects">
+            {%- if p.project_memberships %}
+              <em class="participating-project-header">
+                {% if p.project_memberships | length ==1 %}
+                  {{ p.project_memberships | length }} Project
+                {% else %}
+                  {{ p.project_memberships | length }} Projects
+                {% endif %}
+                </em>
+              <ul>
+                {%- for membership in p.project_memberships -%}
+                  <a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=membership.project.url_name) }}" title="{{ membership.project.title }}"><li class="project-num{{ membership.project.id}}"></li></a>
+
+                {% endfor -%}
+                
+              </ul>
+            {% else %}
+              <em class="participating-project-header">
+                No Projects</em>
+            {%- endif %}
+          </div>
+        </div>
+
+        <div class="participant-count">{{ loop.index }}</div>
+      </div>
     {%- endfor %}
-  </ol>
+</div>
 {%- endmacro %}
 
 {% block headline %}{% endblock %}
 {% block content %}
   <div class="row section">
-    <div class="span8">
+    <div class="span9">
 
       <div class="page-header">
-        <h3><a href="{{ url_for('profile_view', profile=event.profile.name) }}">{{ event.profile.title }}</a> &raquo;</h3>
+        <h3><a href="{{ url_for('profile_view', profile=event.profile.name) }}">{{ event.profile.title }}</a><i class="icon-caret-right"></i></h3>
         <h1>{{ self.title() }}</h1>
       </div>
       {{ event.description|safe }}
-      <h3 id="h3-title"> Accepted Participants</h3>
+      <h3 class="h3-title"> Accepted Participants</h3>
       {{ participant_list(accepted_participants) }}
-      <h3 id="h3-title">Other Participants</h3>
-      {{ participant_list(rest_participants) }}
+      <br />
+      {% if rest_participants %}
+        <h3 class="h3-title">Other Participants</h3>
+        {{ participant_list(rest_participants) }}
+      {% endif %}
     </div>
-    <div class="span4">
+    <div class="span3">
       <ul class="well nav nav-list">
         <li><span class="icon-calendar">{{ event.start_datetime | fulldate }} &mdash; {{ event.end_datetime | fulldate }}</span></li>
         {% if event.ticket_price -%}
@@ -88,12 +112,13 @@
 
 
   </div>
-
+  <hr />
+  <h3 class="h3-title"> Projects</h3>
   <ul class="cardset light-bg row">
     {% for p in projects %}
       <li class="span4">
-        <a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=p.url_name) }}">
-          <div class="card-title">
+        <a class="project-num{{ p.id }}" href="{{ url_for('project_view', profile=profile.name, event=event.name, project=p.url_name) }}">
+          <div class="card-title"><i class="icon-bookmark icon-1x"></i>
             <h2>{{ p.title }}</h2>
           </div>
           <div class="card-body">
@@ -102,20 +127,23 @@
         </a>
       </li>
     {% endfor %}
-
+    <div class="mob-seperator">
+      <br />
+    </div>
     {% if current_participant.status == 2 %}
-    <li class="span4">
-      <a href="{{ url_for('project_new', profile=profile.name, event=event.name) }}">
-        <div class="card-title">
-          <h2>New project...</h2>
-        </div>
-        <div class="card-body large-plus"><i class="icon-plus"></i></div>
-      </a>
-    </li>
+      <li class="span4">
+        <a href="{{ url_for('project_new', profile=profile.name, event=event.name) }}">
+          <div class="card-title">
+            <h2>New project...</h2>
+          </div>
+          <div class="card-body large-plus"><i class="icon-plus"></i></div>
+        </a>
+      </li>
     {% endif %}
   </ul>
-
-  <div id="map" class="event-map"></div>
+  {% if event.venue.latitude and event.venue.longitude %}
+    <div id="map" class="event-map"></div>
+  {% endif %}
 
 {% endblock %}
 
@@ -138,27 +166,27 @@ if("{{ event.profile.userid }}"=="{{ g.user.userid }}")
 
 <script type="text/javascript">
   $(function() {
-    var map = new L.Map('map');
+    {% if event.venue.latitude and event.venue.longitude %}
+      var map = new L.Map('map');
 
-    //BC9A493B41014CAABB98F0471D759707
-    var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/0cb2761ce981414391f2941dd891892c/999/256/{z}/{x}/{y}.png',
+      //BC9A493B41014CAABB98F0471D759707
+      var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/0cb2761ce981414391f2941dd891892c/999/256/{z}/{x}/{y}.png',
         subDomains = ['a','b','c'],
         cloudmadeAttrib = '<a href="http://maps.cloudmade.com" target="_blank">CloudMade</a>, <a href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> and contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/" target="_blank">CC-BY-SA</a>';
-        var cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18, attribution: cloudmadeAttrib, subdomains: subDomains});
+      var cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18, attribution: cloudmadeAttrib, subdomains: subDomains});
+      var venue = new L.LatLng({{ event.venue.latitude }}, {{ event.venue.longitude }}); // geographical point (longitude and latitude)
+      map.setView(venue, 16).addLayer(cloudmade);
 
-        console.log({{ event.venue.latitude }});
-        var venue = new L.LatLng({{ event.venue.latitude }}, {{ event.venue.longitude }}); // geographical point (longitude and latitude)
-        map.setView(venue, 16).addLayer(cloudmade);
+      var venue_marker = new L.Marker(venue);
+      map.addLayer(venue_marker);
+      venue_marker.bindPopup('{{ event.venue.title }}').openPopup();
+      map.scrollWheelZoom.disable();
 
-          var venue_marker = new L.Marker(venue);
-            map.addLayer(venue_marker);
-            venue_marker.bindPopup('{{ event.venue.title }}').openPopup();
-            map.scrollWheelZoom.disable();
-
-            map.on('zoomend', onZoomend);
-    function onZoomend(){
-        map.setView(venue, map.getZoom());
-    };
+      map.on('zoomend', onZoomend);
+      function onZoomend(){
+          map.setView(venue, map.getZoom());
+      };
+    {% endif %} 
   });
   </script>
 
