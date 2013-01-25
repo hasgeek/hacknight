@@ -293,6 +293,7 @@ def votedowncomment(profile, project, event, comment):
     flash("Your vote has been recorded", "info")
     return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
 
+
 @app.route('/<profile>/<event>/projects/<project>/comments/<int:cid>/json')
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
