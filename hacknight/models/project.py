@@ -46,10 +46,6 @@ class Project(BaseScopedIdNameMixin, db.Model):
         if not self.comments:
             self.comments = CommentSpace()
 
-    #@property
-    #def user(self):
-    #    return self.participant.user
-
     @property
     def participants(self):
         return set([self.user] + [m.user for m in self.members])
