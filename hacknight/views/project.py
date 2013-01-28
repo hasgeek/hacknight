@@ -34,13 +34,13 @@ def project_new(profile, event, form=None):
 
     form = ProjectForm()
     if form.validate_on_submit():
-        project = Project(participant=participant, event=event)
+        project = Project(event=event, user=g.user)
         form.populate_obj(project)
         project.make_name()
         db.session.add(project)
         project.votes.vote(g.user)
 
-        project_member = ProjectMember(project=project, participant=participant)
+        project_member = ProjectMember(project=project, user=g.user)
         db.session.add(project_member)
         db.session.commit()
         flash("Project saved")

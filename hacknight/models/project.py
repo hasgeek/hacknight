@@ -19,7 +19,7 @@ class Project(BaseScopedIdNameMixin, db.Model):
     parent = db.synonym('event')
 
     #: User who created this project
-    user_id = db.Column(None, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship(User)
 
     blurb = db.Column(db.Unicode(250), nullable=False)
@@ -46,17 +46,17 @@ class Project(BaseScopedIdNameMixin, db.Model):
         if not self.comments:
             self.comments = CommentSpace()
 
-    @property
-    def user(self):
-        return self.participant.user
+    #@property
+    #def user(self):
+    #    return self.participant.user
 
     @property
     def participants(self):
-        return set([self.participant] + [m.participant for m in self.members])
+        return set([self.user] + [m.user for m in self.members])
 
     @property
     def users(self):
-        return set([self.user] + [m.participant.user for m in self.members])
+        return set([self.user] + [m.user for m in self.members])
 
     def owner_is(self, user):
         return self.user == user
@@ -77,7 +77,7 @@ class ProjectMember(BaseMixin, db.Model):
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
     #: User who created this project
     user_id = db.Column(None, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship(User)
+    user = db.relationship(User, backref=db.backref('project_memberships', cascade='all, delete-orphan'))
 
     status = db.Column(db.Integer, nullable=False, default=0)
     role = db.Column(db.Unicode(250), nullable=False, default=u'')
