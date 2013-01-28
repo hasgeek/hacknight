@@ -120,7 +120,7 @@ def projects(profile, event):
 def project_view(profile, event, project):
     userIsMember = False
     if g.user:
-        participant = Participant.query.filter_by(user_id=g.user.id, event_id=event.id).first()
+        participant = Participant.query.filter_by(user=g.user, event_id=event.id).first()
         if participant:
             project_member = ProjectMember.query.filter_by(project_id=project.id, user_id=g.user.id).first()
             if project_member:
@@ -370,11 +370,11 @@ def prevsession(profile, project, event):
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
 def project_join(profile, project, event):
-    participant = Participant.query.filter_by(user_id=g.user.id, event_id=event.id, status=PARTICIPANT_STATUS.CONFIRMED).first()
+    participant = Participant.query.filter_by(user=g.user, event_id=event.id, status=PARTICIPANT_STATUS.CONFIRMED).first()
     if participant==None:
         flash("You need to be a confirmed participant to join this team.", "fail")
         return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
-    elif ProjectMember.query.filter_by(project_id=project.id, user_id=g.user.id).first():
+    elif ProjectMember.query.filter_by(project_id=project.id, user=g.user).first():
         flash("You are already part of this team!", "fail")
     else:
         project_member = ProjectMember()
