@@ -3,6 +3,7 @@
 from hacknight.models import BaseMixin, BaseScopedIdNameMixin
 from hacknight.models import db
 from hacknight.models.event import Event
+from hacknight.models.user import User
 from hacknight.models.participant import Participant
 from hacknight.models.vote import VoteSpace
 from hacknight.models.comment import CommentSpace
@@ -17,9 +18,9 @@ class Project(BaseScopedIdNameMixin, db.Model):
         backref=db.backref('projects', cascade='all, delete-orphan'))
     parent = db.synonym('event')
 
-    #: Participant who created this project
-    participant_id = db.Column(None, db.ForeignKey('participant.id'), nullable=False)
-    participant = db.relationship(Participant)
+    #: User who created this project
+    user_id = db.Column(None, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship(User)
 
     blurb = db.Column(db.Unicode(250), nullable=False)
     description = db.Column(db.UnicodeText, nullable=False)
@@ -74,11 +75,11 @@ class Project(BaseScopedIdNameMixin, db.Model):
 class ProjectMember(BaseMixin, db.Model):
     __tablename__ = 'project_member'
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
-    # project = db.relationship(Project, backref=db.backref('members', cascade='all, delete-orphan'))
-    participant_id = db.Column(db.Integer, db.ForeignKey('participant.id'), nullable=False)
-    participant = db.relationship(Participant, backref=db.backref('project_memberships', cascade='all, delete-orphan'))
+    #: User who created this project
+    user_id = db.Column(None, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship(User)
 
     status = db.Column(db.Integer, nullable=False, default=0)
     role = db.Column(db.Unicode(250), nullable=False, default=u'')
 
-    __table_args__ = (db.UniqueConstraint('project_id', 'participant_id'),)
+    __table_args__ = (db.UniqueConstraint('project_id', 'user_id'),)

@@ -118,20 +118,11 @@ def projects(profile, event):
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
 def project_view(profile, event, project):
-    if not profile:
-        abort(404)
-    if not event:
-        abort(404)
-    if not project:
-        abort(404)
-
     userIsMember = False
     if g.user:
-        user = User.query.filter_by(userid=g.user.userid).first()
-        if user:
-            participant = Participant.query.filter_by(user_id=user.id, event_id=event.id).first()
+        participant = Participant.query.filter_by(user_id=g.user.id, event_id=event.id).first()
         if participant:
-            project_member = ProjectMember.query.filter_by(project_id=project.id, participant_id=participant.id).first()
+            project_member = ProjectMember.query.filter_by(project_id=project.id, user_id=g.user.id).first()
             if project_member:
                 userIsMember = True
     # Fix the join query below and replace the cascaded if conditions.
@@ -379,24 +370,16 @@ def prevsession(profile, project, event):
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
 def project_join(profile, project, event):
-    if not profile:
-        abort(404)
-    if not event:
-        abort(404)
-    if not project:
-        abort(404)
-
-    user = User.query.filter_by(userid=g.user.userid).first()
-    participant = Participant.query.filter_by(user_id=user.id, event_id=event.id, status=PARTICIPANT_STATUS.CONFIRMED).first()
+    participant = Participant.query.filter_by(user_id=g.user.id, event_id=event.id, status=PARTICIPANT_STATUS.CONFIRMED).first()
     if participant==None:
         flash("You need to be a confirmed participant to join this team.", "fail")
         return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
-    elif ProjectMember.query.filter_by(project_id=project.id, participant_id=participant.id).first():
+    elif ProjectMember.query.filter_by(project_id=project.id, user_id=g.user.id).first():
         flash("You are already part of this team!", "fail")
     else:
         project_member = ProjectMember()
         project_member.project_id = project.id
-        project_member.participant_id = participant.id
+        project_member.user_id = g.user.id
         db.session.add(project_member)
         db.session.commit()
         flash("You are now part of this team!", "success")
