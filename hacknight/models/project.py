@@ -18,9 +18,9 @@ class Project(BaseScopedIdNameMixin, db.Model):
         backref=db.backref('projects', cascade='all, delete-orphan'))
     parent = db.synonym('event')
 
-    #: User who created this project
+    #: User who is part of this project
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship(User)
+    user = db.relationship(User, backref='projects')
 
     blurb = db.Column(db.Unicode(250), nullable=False)
     description = db.Column(db.UnicodeText, nullable=False)
@@ -47,15 +47,13 @@ class Project(BaseScopedIdNameMixin, db.Model):
             self.comments = CommentSpace()
 
     @property
-    def participants(self):
-        return set([self.user] + [m.user for m in self.members])
-
-    @property
     def users(self):
         return set([self.user] + [m.user for m in self.members])
 
+    participants = users
+
     def owner_is(self, user):
-        return self.user == user
+        return user is not None and self.user == user
 
     def getnext(self):
         return Project.query.filter(Project.event == self.event).filter(

@@ -118,13 +118,11 @@ def projects(profile, event):
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
 def project_view(profile, event, project):
-    userIsMember = False
+    user_is_member = False
     if g.user:
-        participant = Participant.query.filter_by(user=g.user, event_id=event.id).first()
-        if participant:
-            project_member = ProjectMember.query.filter_by(project_id=project.id, user_id=g.user.id).first()
-            if project_member:
-                userIsMember = True
+        project_member = ProjectMember.query.filter_by(project_id=project.id, user_id=g.user.id).first()
+        if project_member:
+            user_is_member = True
     # Fix the join query below and replace the cascaded if conditions.
     # if g.user:
     #   query = (ProjectMember
@@ -188,7 +186,7 @@ def project_view(profile, event, project):
             return redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
     return render_template('project.html', event=event, project=project, profile=profile,
         comments=comments, commentform=commentform, delcommentform=delcommentform,
-        breadcrumbs=[(url_for('index'), "home")], userIsMember=userIsMember)
+        breadcrumbs=[(url_for('index'), "home")], user_is_member=user_is_member)
 
 
 @app.route('/<profile>/<event>/projects/<project>/voteup')
@@ -370,7 +368,7 @@ def prevsession(profile, project, event):
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
 def project_join(profile, project, event):
-    participant = Participant.query.filter_by(user=g.user, event_id=event.id, status=PARTICIPANT_STATUS.CONFIRMED).first()
+    participant = Participant.query.filter_by(user=g.user, event=event, status=PARTICIPANT_STATUS.CONFIRMED).first()
     if participant==None:
         flash("You need to be a confirmed participant to join this team.", "fail")
         return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
