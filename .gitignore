@@ -19,7 +19,6 @@ instance/production.py
 instance/settings.py
 baseframe-packed.css
 baseframe-packed.js
-alembic.ini
 env/
 dev/
 error.log

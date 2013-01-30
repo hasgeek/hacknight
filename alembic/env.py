@@ -1,14 +1,14 @@
 from __future__ import with_statement
 from alembic import context
+from alembic.config import Config
 from sqlalchemy import engine_from_config, pool
 from logging.config import fileConfig
-import os, sys
-sys.path.append(os.getcwd())
-from hacknight.models.project import Project, ProjectMember
+from flask.ext.alembic import FlaskAlembicConfig
+from hacknight.models import db
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
-config = context.config
+config = FlaskAlembicConfig("alembic.ini")
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -16,9 +16,15 @@ fileConfig(config.config_file_name)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-target_metadata = None
+from flask import current_app
+with current_app.app_context():
+    # set the database url
+    config.set_main_option('sqlalchemy.url', current_app.config.get('SQLALCHEMY_DATABASE_URI'))
+    flask_app = __import__('%s' % (current_app.name), fromlist=[current_app.name])
+
+db_obj_name = config.get_main_option("flask_sqlalchemy")
+db_obj = getattr(flask_app.app, db_obj_name)
+target_metadata = db_obj.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -71,3 +77,4 @@ if context.is_offline_mode():
     run_migrations_offline()
 else:
     run_migrations_online()
+
