@@ -27,7 +27,6 @@ class InitedServer(Server):
 
 class InitedMigrations(ManageMigrations):
     def run(self, args):
-        print args[0]
         if len(args) and not args[0].startswith('-'):
             init_for(args[0])
             app.db = db  # So Flask-Alembic can find it
