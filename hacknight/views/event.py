@@ -21,7 +21,7 @@ def event_view(profile, event):
     participants = [r[0] for r in db.session.query(Participant, User).filter(
         Participant.status != PARTICIPANT_STATUS.WITHDRAWN, Participant.event == event).join(
         (User, Participant.user)).options(
-        joinedload(Participant.project_memberships)).order_by(func.lower(User.fullname)).all()]
+            joinedload(User.project_memberships)).order_by(func.lower(User.fullname)).all()]
 
     accepted_participants = [p for p in participants if p.status == PARTICIPANT_STATUS.CONFIRMED]
     rest_participants = [p for p in participants if p.status != PARTICIPANT_STATUS.CONFIRMED]
