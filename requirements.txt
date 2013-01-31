@@ -1,6 +1,6 @@
 Flask
-https://github.com/hasgeek/coaster/zipball/master
-https://github.com/hasgeek/baseframe/zipball/master
+https://github.com/hasgeek/coaster/archive/master.zip
+https://github.com/hasgeek/baseframe/archive/master.zip
 Flask-SQLAlchemy
 https://github.com/hasgeek/flask-lastuser/zipball/master
 nose
@@ -11,3 +11,5 @@ fabric
 markdown
 Flask-WTF
 unicodecsv
+Flask-Script
+https://github.com/jace/flask-alembic/archive/master.zip
