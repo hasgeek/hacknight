@@ -1,4 +1,4 @@
-# manage.py
+#! /usr/bin/env python
 
 from flask.ext.script import Manager, Server, Option, prompt_bool
 from flask.ext.script.commands import Clean, ShowUrls
@@ -29,7 +29,6 @@ class InitedMigrations(ManageMigrations):
     def run(self, args):
         if len(args) and not args[0].startswith('-'):
             init_for(args[0])
-            app.db = db  # So Flask-Alembic can find it
         super(InitedMigrations, self).run(args[1:])
 
 
