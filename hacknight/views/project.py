@@ -401,7 +401,7 @@ def project_leave(profile, project, event):
         participant = Participant.query.filter_by(user=user).first()
         member = ProjectMember.query.filter_by(project_id=project.id).join(Participant).filter(User.id == user.id).first()
         if member:
-            if member.participant_id == project.participant_id:
+            if member.user_id == project.user_id:
                 flash("You are owner of the project, you can't leave the project", "fail")
             else:
                 db.session.delete(member)
