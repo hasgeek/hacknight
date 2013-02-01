@@ -397,9 +397,7 @@ def project_join(profile, project, event):
 def project_leave(profile, project, event):
     form = ConfirmDeleteForm()
     if form.validate_on_submit():
-        user = g.user
-        participant = Participant.query.filter_by(user=user).first()
-        member = ProjectMember.query.filter_by(project_id=project.id).join(Participant).filter(User.id == user.id).first()
+        member = ProjectMember.query.filter_by(project_id=project.id, user=g.user).first()
         if member:
             if member.user_id == project.user_id:
                 flash("You are owner of the project, you can't leave the project", "fail")
