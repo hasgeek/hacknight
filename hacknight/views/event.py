@@ -286,9 +286,13 @@ def event_delete(profile, event):
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'), permission='send-email')
 def event_send_email(profile, event):
     form = SendEmailForm()
-    form.send_to.choices=[(item.value, item.title)for item in ParticipantWorkflow.states()]
+    form.send_to.choices = [(-1, "All participants (confirmed or not)")] + \
+        [(item.value, item.title) for item in ParticipantWorkflow.states()]
     if form.validate_on_submit():
-        participants = Participant.query.filter_by(event=event, status=int(form.send_to.data)).all()
+        if form.send_to.data == -1:
+            participants = Participant.query.filter_by(event=event).all()
+        else:
+            participants = Participant.query.filter_by(event=event, status=form.send_to.data).all()
         subject = form.subject.data
         count = 0
         for participant in participants:

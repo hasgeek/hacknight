@@ -76,11 +76,11 @@ class Event(BaseScopedNameMixin, db.Model):
 
     def permissions(self, user, inherited=None):
         perms = super(Event, self).permissions(user, inherited)
-        if user.userid == self.profile.userid or self.status in [EVENT_STATUS.PUBLISHED,
+        if user is not None and user.userid == self.profile.userid or self.status in [EVENT_STATUS.PUBLISHED,
             EVENT_STATUS.ACTIVE, EVENT_STATUS.COMPLETED, EVENT_STATUS.CANCELLED,
             EVENT_STATUS.CLOSED]:
             perms.add('view')
-        if user and self.profile.userid in user.user_organizations_owned_ids():
+        if user is not None and self.profile.userid in user.user_organizations_owned_ids():
             perms.add('edit')
             perms.add('delete')
             perms.add('send-email')
