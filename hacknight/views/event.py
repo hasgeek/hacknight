@@ -117,7 +117,7 @@ def show_participant_status(status):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_open(profile, event):
-    if  profile.userid not in g.user.user_organizations_owned_ids():
+    if profile.userid not in g.user.user_organizations_owned_ids():
         abort(403)
     participants = Participant.query.filter(
         Participant.status != PARTICIPANT_STATUS.WITHDRAWN,
@@ -132,7 +132,7 @@ def event_open(profile, event):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_update_participant_status(profile, event):
-    if  profile.userid not in g.user.user_organizations_owned_ids():
+    if profile.userid not in g.user.user_organizations_owned_ids():
         return Response("Forbidden", 403)
     participantid = int(request.form['participantid'])
     status = int(request.form['status'])
@@ -173,7 +173,7 @@ def event_apply(profile, event):
         else:
             return render_form(form=form, message=Markup(event.apply_instructions) if event.apply_instructions else "",
                 title="Participant Details", submit=u"Participate",
-                cancel_url=url_for('event_view', event=event.name, 
+                cancel_url=url_for('event_view', event=event.name,
                 profile=profile.name), ajax=False)
     # FIXME: Don't change anything unless this is a POST request
     elif participant.status == PARTICIPANT_STATUS.WITHDRAWN:
