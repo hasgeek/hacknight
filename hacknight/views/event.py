@@ -2,7 +2,6 @@
 
 from sqlalchemy.orm import joinedload
 from sqlalchemy import func
-from markdown import Markdown
 from flask.ext.mail import Message
 from flask import render_template, abort, flash, url_for, g, request, Response, Markup
 from coaster.views import load_model, load_models
@@ -13,13 +12,11 @@ from hacknight.forms.event import EventForm, ConfirmWithdrawForm, SendEmailForm
 from hacknight.forms.participant import ParticipantForm
 from hacknight.views.login import lastuser
 
-markdown = Markdown(safe_mode="escape").convert
 
-
-def send_email(recipients, body, subject):
+def send_email(recipients, body, subject, html):
     msg = Message(subject=subject, recipients=[recipients])
     msg.body = body
-    msg.html = markdown(msg.body)
+    msg.html = html
     mail.send(msg)
 
 
@@ -297,7 +294,7 @@ def event_send_email(profile, event):
                 message = message.replace("username", participant.user.fullname)
                 import html2text
                 text_message = html2text.html2text(message)
-                send_email(recipients=participant.email, body=text_message, subject=subject)
+                send_email(recipients=participant.email, body=text_message, subject=subject, html=message)
                 count += 1
         flash("Notification sent for '%s' participants" % (count))
         return render_redirect(url_for('event_view', profile=profile.name, event=event.name))
