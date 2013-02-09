@@ -12,6 +12,7 @@ from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_
 from hacknight.forms.event import EventForm, ConfirmWithdrawForm, SendEmailForm
 from hacknight.forms.participant import ParticipantForm
 from hacknight.views.login import lastuser
+from hacknight.views.workflow import ParticipantWorkflow
 
 
 def send_email(sender, to, subject, body, html=None):
@@ -285,6 +286,7 @@ def event_delete(profile, event):
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'), permission='send-email')
 def event_send_email(profile, event):
     form = SendEmailForm()
+    form.send_to.choices=[(item.value, item.title)for item in ParticipantWorkflow.states()]
     if form.validate_on_submit():
         participants = Participant.query.filter_by(event=event, status=int(form.send_to.data)).all()
         subject = form.subject.data
