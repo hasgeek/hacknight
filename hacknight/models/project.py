@@ -84,6 +84,4 @@ class ProjectMember(BaseMixin, db.Model):
 
         if user is not None and user == project.user:
             perms.add('delete-member')
-        else:
-            raise
         return perms
