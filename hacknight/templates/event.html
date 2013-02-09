@@ -73,7 +73,7 @@
           <li><a href="{{ url_for('event_export', profile=profile.name, event=event.name) }}"><i class="icon-wrench"></i> Export participants list</a></li>
           <li><a href="{{ url_for('event_edit', event=event.name, profile=profile.name) }}"><i class="icon-pencil"></i> Edit details...</a></li>
           <li><a href="{{ url_for('event_delete', event=event.name, profile=profile.name) }}"><i class="icon-trash"></i> Delete event...</a></li>
-          <li><a href="{{ url_for('event_send_email', event=event.name, profile=profile.name) }}"><i class="icon-envelope"></i> Send Email to participants </a></li>
+          <li><a href="{{ url_for('event_send_email', event=event.name, profile=profile.name) }}"><i class="icon-envelope"></i>Email participants </a></li>
         {% endif -%}
       </ul>
       {% if event.sponsors %}

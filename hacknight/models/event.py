@@ -74,3 +74,13 @@ class Event(BaseScopedNameMixin, db.Model):
         from hacknight.models.participant import Participant, PARTICIPANT_STATUS
         p = Participant.get(user, self)
         return p and p.status == PARTICIPANT_STATUS.CONFIRMED
+
+    def permissions(self, profile, inherited=None):
+        perms = super(Event, self).permissions(profile, inherited)
+        perms.add('view')
+        if profile and self.profile.userid in profile.user_organizations_owned_ids():
+            perms.add('edit')
+            perms.add('delete')
+            perms.add('send-email')
+            perms.add('new-hacknight')
+        return perms
