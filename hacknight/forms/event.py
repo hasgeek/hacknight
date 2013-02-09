@@ -4,6 +4,7 @@ from flask import Markup
 import flask.ext.wtf as wtf
 from baseframe.forms import Form, RichTextField, DateTimeField, ValidName, AvailableName
 from hacknight.models import Venue
+from hacknight.views.workflow import ParticipantWorkflow
 
 __all__ = ['EventForm', 'ConfirmWithdrawForm', 'SendEmailForm']
 
@@ -42,11 +43,7 @@ class ConfirmWithdrawForm(wtf.Form):
 
 
 class SendEmailForm(Form):
-    subject = wtf.TextField("Email Subject", description="Subject for the email", validators=[wtf.Required(), wtf.validators.length(max=250)])
+    subject = wtf.TextField("Subject", description="Subject for the email", validators=[wtf.Required(), wtf.validators.length(max=250)])
     message = RichTextField("Message", description="Email message, only `FULLNAME` will be replaced with participant fullname", validators=[wtf.Required()])
     send_to = wtf.RadioField("Whom to send email for?", default=2, coerce=int, 
-        choices=[(0, u"Pending participants"),
-                 (1, u"Waiting list participants"),
-                 (2, u"Confirmed participants"),
-                 (3, u"Reject participants"),
-                 (4, u"Withdrawn participants")])
+        choices=[(item.value, item.title)for item in ParticipantWorkflow.states()])

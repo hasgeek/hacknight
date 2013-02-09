@@ -14,8 +14,8 @@ from hacknight.forms.participant import ParticipantForm
 from hacknight.views.login import lastuser
 
 
-def send_email(to, subject, body, html=None):
-    msg = Message(subject=subject, recipients=[to])
+def send_email(sender, to, subject, body, html=None):
+    msg = Message(sender=sender, subject=subject, recipients=[to])
     msg.body = body
     if html:
         msg.html = html
@@ -293,7 +293,7 @@ def event_send_email(profile, event):
             if participant.email:
                 message = form.message.data.replace("*|FULLNAME|*", participant.user.fullname)
                 text_message = html2text(message)
-                send_email(to=participant.email, subject=subject, body=text_message, html=message)
+                send_email(sender=(g.user.fullname, g.user.email), to=participant.email, subject=subject, body=text_message, html=message)
                 count += 1
         flash("Your message was sent to %d participant(s)." % count)
         return render_redirect(url_for('event_view', profile=profile.name, event=event.name))

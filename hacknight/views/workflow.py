@@ -13,15 +13,15 @@ class ParticipantWorkflow(DocumentWorkflow):
     """
 
     state_attr = 'status'
-    pending = WorkflowState(PARTICIPANT_STATUS.PENDING, title=u'pending',
+    pending = WorkflowState(PARTICIPANT_STATUS.PENDING, title=u'Pending list',
         description=u'State for participants who are interested, but waiting for event owner approval')
-    waiting_list = WorkflowState(PARTICIPANT_STATUS.WL, title=u'Waiting List',
+    waiting_list = WorkflowState(PARTICIPANT_STATUS.WL, title=u'Waiting list',
         description=u'State for participants who are interested but we dont have seats')
-    confirmed = WorkflowState(PARTICIPANT_STATUS.CONFIRMED, title=u'confirmed',
+    confirmed = WorkflowState(PARTICIPANT_STATUS.CONFIRMED, title=u'Confirmed list',
         description=u'State for participants who will attend hacknight')
-    rejected = WorkflowState(PARTICIPANT_STATUS.REJECTED, title=u'rejected',
+    rejected = WorkflowState(PARTICIPANT_STATUS.REJECTED, title=u'Rejected list',
         description=u'State for participants who are rejected by event owner')
-    withdrawn = WorkflowState(PARTICIPANT_STATUS.WITHDRAWN, title=u'withdrawn',
+    withdrawn = WorkflowState(PARTICIPANT_STATUS.WITHDRAWN, title=u'Withdrawn list',
         description=u'State for participants who are uninterested due to several reason')
     #States how to become hacknight member
     #Yes it is very vague name, I need to comeup with very nice name
