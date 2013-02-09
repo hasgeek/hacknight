@@ -3,14 +3,16 @@
 import unicodecsv
 from cStringIO import StringIO
 from datetime import datetime
+from flask.ext.mail import Message
 from flask import render_template, g, abort, flash, url_for, request, redirect, make_response
 from coaster.views import load_models, jsonp
 from baseframe.forms import render_form, render_redirect, ConfirmDeleteForm
 from hacknight import app
-from hacknight.models import db, Profile, Event, Project, ProjectMember, Participant, PARTICIPANT_STATUS, User
+from hacknight.models import db, Profile, Event, Project, ProjectMember, Participant, PARTICIPANT_STATUS
 from hacknight.forms.project import ProjectForm
 from hacknight.forms.comment import CommentForm, DeleteCommentForm
 from hacknight.views.login import lastuser
+from hacknight.views.event import send_email
 from hacknight.models.vote import Vote
 from hacknight.models.comment import Comment
 from markdown import Markdown
@@ -122,6 +124,9 @@ def project_view(profile, event, project):
     user_is_member = False
     if g.user:
         project_member = ProjectMember.query.filter_by(project_id=project.id, user_id=g.user.id).first()
+        project_members = ProjectMember.query.filter_by(project_id=project.id).all()
+        if project_members:
+            email_ids = [member.user.email for member in project_members]
         if project_member:
             user_is_member = True
     # Fix the join query below and replace the cascaded if conditions.
@@ -157,10 +162,36 @@ def project_view(profile, event, project):
                     flash("No such comment", "error")
             else:
                 comment = Comment(user=g.user, commentspace=project.comments, message=commentform.message.data)
+                send_email_info = []
                 if commentform.reply_to_id.data:
                     reply_to = commentspace.get_comment(int(commentform.reply_to_id.data))
                     if reply_to and reply_to.commentspace == project.comments:
                         comment.reply_to = reply_to
+                        if not reply_to.user == g.user:
+                            send_email_info.append({"to": reply_to.email,
+                                "subject": "Hacknight: %s " % (project.title),
+                                "template": 'project_team_email.md'})
+                        email_ids.remove(project.user.email)
+                        send_email_info.append({"to": project.user.email,
+                                "subject": "Hacknight: %s " % (project.title),
+                                "template": 'project_owner_email.md'})
+                        email_ids.remove(g.user.email)
+                        for email_id in email_ids:
+                            send_email_info.append({"to": email_id,
+                            "subject": "Hacknight: %s " % (project.title),
+                            "template": 'project_team_email.md'})
+                else:
+                    if not g.user == project.user.email:
+                        email_ids.remove(project.user.email)
+                        send_email_info.append({"to": project.user.email,
+                            "subject": "Hacknight: %s " % (project.title),
+                            "template": 'project_owner_email.md'})
+                    email_ids.remove(g.user.email)
+                    for email_id in email_ids:
+                        send_email_info.append({"to": email_id,
+                            "subject": "Hacknight: %s " % (project.title),
+                            "template": 'project_team_email.md'})
+
                 comment.message_html = bleach.linkify(markdown(commentform.message.data))
                 project.comments.count += 1
                 comment.votes.vote(g.user)  # Vote for your own comment
@@ -168,6 +199,11 @@ def project_view(profile, event, project):
                 db.session.add(comment)
                 flash("Your comment has been posted", "info")
             db.session.commit()
+            link = url_for('project_view', profile=profile.name, event=event.name,
+                project=project.url_name, _external=True) + "#c" + str(comment.id)
+            for item in send_email_info:
+                email_body = render_template(item.pop('template'), project=project, comment=comment, link=link)
+                send_email(sender=(g.user.fullname, g.user.email), html=markdown(email_body), body=email_body, **item)
             # Redirect despite this being the same page because HTTP 303 is required to not break
             # the browser Back button
             return redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
