@@ -12,13 +12,13 @@
               <img id="inner-page-logo" src="{{ url_for('static', filename='img/hacknightlogo-small.png') }}" alt="Hacknight">
             </a>
           </div>
-          <div class="span2 pull-right home-buttons" id="start-btn-after-login">
+          <!--<div class="span2 home-buttons" id="start-btn-after-login">
             {% if not g.user %}
               <a href="{{ url_for('login') }}" class="btn btn-primary" id="create" title="Create your event">Start a hacknight</a>
             {% else %}
               <a href="{{ url_for('event_new', profile=g.user.profile.name) }}" class="btn btn-primary" id="create" title="Create your event">Start a hacknight</a>
             {% endif %}
-          </div>
+          </div>-->
         </div>
       </div>
     </div>

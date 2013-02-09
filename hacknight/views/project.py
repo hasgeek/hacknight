@@ -33,13 +33,13 @@ def project_new(profile, event, form=None):
 
     form = ProjectForm()
     if form.validate_on_submit():
-        project = Project(participant=participant, event=event)
+        project = Project(event=event, user=g.user)
         form.populate_obj(project)
         project.make_name()
         db.session.add(project)
         project.votes.vote(g.user)
 
-        project_member = ProjectMember(project=project, participant=participant)
+        project_member = ProjectMember(project=project, user=g.user)
         db.session.add(project_member)
         db.session.commit()
         flash("Project saved")
@@ -117,22 +117,11 @@ def projects(profile, event):
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
 def project_view(profile, event, project):
-    if not profile:
-        abort(404)
-    if not event:
-        abort(404)
-    if not project:
-        abort(404)
-
-    userIsMember = False
+    user_is_member = False
     if g.user:
-        user = User.query.filter_by(userid=g.user.userid).first()
-        if user:
-            participant = Participant.query.filter_by(user_id=user.id, event_id=event.id).first()
-        if participant:
-            project_member = ProjectMember.query.filter_by(project_id=project.id, participant_id=participant.id).first()
-            if project_member:
-                userIsMember = True
+        project_member = ProjectMember.query.filter_by(project_id=project.id, user_id=g.user.id).first()
+        if project_member:
+            user_is_member = True
     # Fix the join query below and replace the cascaded if conditions.
     # if g.user:
     #   query = (ProjectMember
@@ -196,7 +185,7 @@ def project_view(profile, event, project):
             return redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
     return render_template('project.html', event=event, project=project, profile=profile,
         comments=comments, commentform=commentform, delcommentform=delcommentform,
-        breadcrumbs=[(url_for('index'), "home")], userIsMember=userIsMember)
+        breadcrumbs=[(url_for('index'), "home")], user_is_member=user_is_member)
 
 
 @app.route('/<profile>/<event>/projects/<project>/voteup')
@@ -378,24 +367,16 @@ def prevsession(profile, project, event):
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'))
 def project_join(profile, project, event):
-    if not profile:
-        abort(404)
-    if not event:
-        abort(404)
-    if not project:
-        abort(404)
-
-    user = User.query.filter_by(userid=g.user.userid).first()
-    participant = Participant.query.filter_by(user_id=user.id, event_id=event.id, status=PARTICIPANT_STATUS.CONFIRMED).first()
+    participant = Participant.query.filter_by(user=g.user, event=event, status=PARTICIPANT_STATUS.CONFIRMED).first()
     if participant==None:
         flash("You need to be a confirmed participant to join this team.", "fail")
         return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
-    elif ProjectMember.query.filter_by(project_id=project.id, participant_id=participant.id).first():
+    elif ProjectMember.query.filter_by(project_id=project.id, user=g.user).first():
         flash("You are already part of this team!", "fail")
     else:
         project_member = ProjectMember()
         project_member.project_id = project.id
-        project_member.participant_id = participant.id
+        project_member.user_id = g.user.id
         db.session.add(project_member)
         db.session.commit()
         flash("You are now part of this team!", "success")

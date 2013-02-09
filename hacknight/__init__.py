@@ -18,6 +18,7 @@ lastuser = Lastuser()
 # Second, after config, import the models and views
 
 import hacknight.models
+from hacknight.models import db
 import hacknight.views
 
 # Third, setup baseframe and assets
