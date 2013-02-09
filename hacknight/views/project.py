@@ -65,13 +65,14 @@ def project_edit(profile, project, event):
             form.participating.data = str(int(project.participating))
         if form.validate_on_submit():
             form.populate_obj(project)
+            project.make_name()
             db.session.commit()
             flash(u"Your changes have been saved", 'success')
             return render_redirect(url_for('project_view', profile=profile.name, event=event.name,
                 project=project.url_name), code=303)
         return render_form(form=form, title=u"Edit project", submit=u"Save",
             cancel_url=url_for('project_view', profile=profile.name, event=event.name,
-                project=project.url_name), ajax=True)
+                project=project.url_name), ajax=False)
 
 
 @app.route('/<profile>/<event>/projects/<project>/delete', methods=["GET", "POST"])

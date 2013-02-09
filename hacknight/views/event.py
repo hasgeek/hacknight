@@ -87,8 +87,7 @@ def event_edit(profile, event):
     form = EventForm(obj=event)
     if form.validate_on_submit():
         form.populate_obj(event)
-        if not event.name:
-            event.make_name()
+        event.make_name()
         event.profile_id = profile.id
         db.session.commit()
         flash(u"Your edits to %s are saved" % event.title, "success")
