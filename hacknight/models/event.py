@@ -2,7 +2,6 @@
 
 from hacknight.models import db, BaseNameMixin, BaseScopedNameMixin
 
-
 __all__ = ['Profile', 'Event', 'EVENT_STATUS', 'PROFILE_TYPE']
 #need to add EventTurnOut, EventPayment later
 
@@ -74,3 +73,15 @@ class Event(BaseScopedNameMixin, db.Model):
         from hacknight.models.participant import Participant, PARTICIPANT_STATUS
         p = Participant.get(user, self)
         return p and p.status == PARTICIPANT_STATUS.CONFIRMED
+
+    def permissions(self, user, inherited=None):
+        perms = super(Event, self).permissions(user, inherited)
+        if user is not None and user.userid == self.profile.userid or self.status in [EVENT_STATUS.PUBLISHED,
+            EVENT_STATUS.ACTIVE, EVENT_STATUS.COMPLETED, EVENT_STATUS.CANCELLED,
+            EVENT_STATUS.CLOSED]:
+            perms.add('view')
+        if user is not None and self.profile.userid in user.user_organizations_owned_ids():
+            perms.add('edit')
+            perms.add('delete')
+            perms.add('send-email')
+        return perms
