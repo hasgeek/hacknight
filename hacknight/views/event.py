@@ -2,15 +2,25 @@
 
 from sqlalchemy.orm import joinedload
 from sqlalchemy import func
-import flask.ext.wtf as wtf
+from markdown import Markdown
+from flask.ext.mail import Message
 from flask import render_template, abort, flash, url_for, g, request, Response, Markup
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
-from hacknight import app
+from hacknight import app, mail
 from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS
-from hacknight.forms.event import EventForm, ConfirmWithdrawForm
+from hacknight.forms.event import EventForm, ConfirmWithdrawForm, SendEmailForm
 from hacknight.forms.participant import ParticipantForm
 from hacknight.views.login import lastuser
+
+markdown = Markdown(safe_mode="escape").convert
+
+
+def send_email(recipients, body, subject):
+    msg = Message(subject=subject, recipients=[recipients])
+    msg.body = body
+    msg.html = markdown(msg.body)
+    mail.send(msg)
 
 
 @app.route('/<profile>/<event>', methods=["GET"])
@@ -267,3 +277,29 @@ def event_delete(profile, event):
         message=u"Delete Event '%s'? This cannot be undone." % event.title,
         success=u"You have deleted an event '%s'." % event.title,
          next=url_for('profile_view', profile=profile.name))
+
+
+@app.route('/<profile>/<event>/send_email', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
+def event_send_email(profile, event):
+    if not (lastuser.has_permission('siteadmin') or g.user.profile == event.profile):
+        abort(403)
+    form = SendEmailForm()
+    if form.validate_on_submit():
+        participants = Participant.query.filter_by(event=event).all()
+        subject, message = form.subject.data, form.message.data
+        count = 0
+        for participant in participants:
+            if participant.email:
+                message = message.replace("username", participant.user.fullname)
+                import html2text
+                text_message = html2text.html2text(message)
+                send_email(recipients=participant.email, body=text_message, subject=subject)
+                count += 1
+        flash("Notification sent for '%s' participants" % (count))
+        return render_redirect(url_for('event_view', profile=profile.name, event=event.name))
+    return render_form(form=form, title="Send Email to participants",
+            submit=u"Send", cancel_url=url_for('event_view', profile=profile.name, event=event.name), ajax=False)

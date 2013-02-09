@@ -6,6 +6,7 @@ from pytz import timezone
 from flask import Flask
 from flask.ext.lastuser import Lastuser
 from flask.ext.lastuser.sqlalchemy import UserManager
+from flask.ext.mail import Mail
 from flask.ext.assets import Environment, Bundle
 from baseframe import baseframe, baseframe_js, baseframe_css
 import coaster.app
@@ -14,6 +15,7 @@ import coaster.app
 
 app = Flask(__name__, instance_relative_config=True)
 lastuser = Lastuser()
+mail = Mail()
 
 # Second, after config, import the models and views
 
@@ -41,4 +43,5 @@ def init_for(env):
     coaster.app.init_app(app, env)
     lastuser.init_app(app)
     lastuser.init_usermanager(UserManager(hacknight.models.db, hacknight.models.User))
+    mail.init_app(app)
     app.config['tz'] = timezone(app.config['TIMEZONE'])

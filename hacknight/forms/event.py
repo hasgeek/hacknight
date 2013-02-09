@@ -6,7 +6,7 @@ from baseframe.forms import Form, RichTextField, DateTimeField, ValidName, Avail
 from hacknight import app
 from hacknight.models import Venue
 
-__all__ = ['EventForm', 'ConfirmWithdrawForm']
+__all__ = ['EventForm', 'ConfirmWithdrawForm', 'SendEmailForm']
 
 
 class EventForm(Form):
@@ -40,3 +40,8 @@ class ConfirmWithdrawForm(wtf.Form):
     """
     delete = wtf.SubmitField(u"Withdraw")
     cancel = wtf.SubmitField(u"Cancel")
+
+
+class SendEmailForm(Form):
+    subject = wtf.TextField("Email Subject", description="Subject for the email", validators=[wtf.Required(), wtf.validators.length(max=250)])
+    message = RichTextField("Message", description="Email message, only `username` will be replaced with participant fullname", validators=[wtf.Required()])
