@@ -122,6 +122,15 @@
             <div class="card-title">
               <h2>{{ p.title }}</h2>
             </div>
+            <div class="member-count">
+              {% if p.members | length == 1 %}
+                1 member
+              {% elif p.members | length == 0 %}
+                No members yet
+              {% else %}
+                {{ p.members | length }} members
+              {%- endif %}
+            </div>
             <div class="card-body">
               {{ p.blurb }}
             </div>

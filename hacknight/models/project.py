@@ -28,8 +28,7 @@ class Project(BaseScopedIdNameMixin, db.Model):
     #: Is the project owner participating?
     participating = db.Column(db.Boolean, nullable=False, default=True)
 
-    members = db.relationship('ProjectMember', backref='project',
-                      lazy='dynamic')
+    members = db.relationship('ProjectMember', backref='project', uselist=True)
 
     votes_id = db.Column(db.Integer, db.ForeignKey('votespace.id'), nullable=False)
     votes = db.relationship(VoteSpace, uselist=False)

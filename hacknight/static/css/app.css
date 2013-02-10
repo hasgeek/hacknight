@@ -1326,7 +1326,7 @@ input, textarea, select, .uneditable-input {
 }
 .cardset li .card-body.large-plus, .userset li .card-body.large-plus {
   text-align: center;
-  font-size: 60px;
+  font-size: 50px;
   line-height: 1;
 }
 .cardset li h2, .cardset li h3, .userset li h2, .userset li h3 {
@@ -1509,6 +1509,18 @@ input, textarea, select, .uneditable-input {
 }
 .cardset .card-title.new-project, .userset .card-title.new-project {
   height: 30px;
+}
+
+.project-cards .cardset li .card-title, .project-cards .userset li .card-title {
+  height: 10px;
+}
+.project-cards .cardset li .card-title h2, .project-cards .userset li .card-title h2 {
+  font-size: 16px;
+}
+
+.member-count {
+  color: #856a91;
+  font-style: italic;
 }
 
 .mob-seperator {
