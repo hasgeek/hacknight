@@ -173,7 +173,7 @@ def project_view(profile, event, project):
                             email_ids.remove(reply_to.user.email)
                         except ValueError:
                             pass
-                        if project.user != reply_to.user.email:
+                        if project.user != reply_to.user:
                             send_email_info.append({"to": project.user.email,
                                 "subject": "Hacknight: %s " % (project.title),
                                 "template": 'project_owner_email.md'})
