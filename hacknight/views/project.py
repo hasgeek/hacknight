@@ -3,12 +3,11 @@
 import unicodecsv
 from cStringIO import StringIO
 from datetime import datetime
-from flask.ext.mail import Message
 from flask import render_template, g, abort, flash, url_for, request, redirect, make_response
 from coaster.views import load_models, jsonp
 from baseframe.forms import render_form, render_redirect, ConfirmDeleteForm, render_delete_sqla
 from hacknight import app
-from hacknight.models import db, Profile, Event, Project, ProjectMember, Participant, PARTICIPANT_STATUS
+from hacknight.models import db, Profile, Event, Project, ProjectMember, Participant, PARTICIPANT_STATUS, User
 from hacknight.forms.project import ProjectForm
 from hacknight.forms.comment import CommentForm, DeleteCommentForm
 from hacknight.views.login import lastuser
@@ -215,7 +214,7 @@ def project_view(profile, event, project):
                 project=project.url_name, _external=True) + "#c" + str(comment.id)
             for item in send_email_info:
                 email_body = render_template(item.pop('template'), project=project, comment=comment, link=link)
-                send_email(sender=(g.user.fullname, g.user.email), html=markdown(email_body), body=email_body, **item)
+                send_email(sender=None, html=markdown(email_body), body=email_body, **item)
             # Redirect despite this being the same page because HTTP 303 is required to not break
             # the browser Back button
             return redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
