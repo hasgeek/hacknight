@@ -7,22 +7,46 @@
 {%- endblock %}
 
 {% block headerbox %}
+<div class="wallpaper">
   <header>
     {{ networkbar(siteid=config['SITE_ID'], login=true, baseclass='hg-dark') }}
-    <h1 class="masthead"><img src="{{ url_for('static', filename='img/hacknightlogo.png') }}" alt="Hacknight"></h1>
+    <div id="page-header">
+      <div class="container">
+        <div class="row">
+          <div class="span10">
+            <h1 class="masthead"><img src="{{ url_for('static', filename='img/hacknightlogo.png') }}" alt="Hacknight"></h1>
+          </div>
+          <!--<div class="span2 home-buttons">
+            {% if not g.user %}
+              <div class="row">
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-large" id="create" title="You need to be logged in to Join a Hacknight.">Join a hacknight</a><br /><br />
+              </div>
+              <div class="row">
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-large" id="create" title="You need to be logged in to Start a Hacknight.">Start a hacknight</a>
+              </div>
+            {% else %}
+              <div class="row" id="start-btn-home-after-login">
+                <a href="{{ url_for('event_new', profile=g.user.profile.name) }}" class="btn btn-primary btn-large" id="create" title="Create your event">Start a hacknight</a>
+              </div>
+            {% endif %}
+          </div>-->
+        </div>
+      </div>
+    </div>
   </header>
+</div>
 {% endblock %}
 
 {% block headline %}{% endblock %}
 
-{% block content %}
-  <div class="row">
-    <div class="span12 centered">
-      {% if not g.user %}
-        <a href="{{ url_for('login') }}" class="btn btn-primary btn-large" id="create">Login to join a hacknight</a>
-      {% endif %}
-    </div>
-  </div>
-  <div class="centered">{{ cardset(upcoming_events, type = 'upcoming') }}</div>
-  <div class="centered"><hr>{{ cardset(past_events, type = 'past') }}</div>
+{% block main -%}
+  {% block basecontent %}
+    {% block content %}
+      
+      <div class="row">
+        <div class="centered upcoming">{{ cardset(upcoming_events, type = 'upcoming') }}</div><hr/>
+        <div class="centered">{{ cardset(past_events, type = 'past') }}</div>
+      </div>
+    {% endblock %}
+  {% endblock %}
 {% endblock %}

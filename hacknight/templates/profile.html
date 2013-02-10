@@ -5,7 +5,7 @@
 {% block content %}
   {{ profile.description|safe }}
   {% if events -%}
-    {{ cardset(events) }}
+    <div class="light-bg">{{ cardset(events) }}</div>
   {%- else -%}
     <p>
       {%- if is_user -%}
