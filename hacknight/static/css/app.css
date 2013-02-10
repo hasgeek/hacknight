@@ -1511,6 +1511,9 @@ input, textarea, select, .uneditable-input {
   height: 30px;
 }
 
+.project-cards .cardset li, .project-cards .userset li {
+  float: left;
+}
 .project-cards .cardset li .card-title, .project-cards .userset li .card-title {
   height: 10px;
 }
