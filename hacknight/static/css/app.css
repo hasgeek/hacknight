@@ -15,8 +15,26 @@
 
 body {
   background-color: #323a40;
-  background-image: url('../img/bg.png?1360491931');
+  background-image: url('../img/bg.png?1360494213');
   color: #aaaaaa;
+}
+
+.nav-tabs {
+  border-bottom: 1px solid #242c33;
+}
+
+.nav-tabs > li > a, .nav-tabs > li > a:hover {
+  color: #999999;
+}
+
+.nav-tabs > li > a:hover {
+  border: 1px solid #242c33;
+}
+
+.nav-tabs > .active > a, .nav-tabs > .active > a:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #999999;
+  border: 1px solid #242c33;
 }
 
 #hg-bar.hg-dark {
@@ -29,7 +47,7 @@ body {
   width: 100%;
   border-bottom: 1px solid #222426;
   background-color: black;
-  background-image: url('../img/black_bg.png?1360491931');
+  background-image: url('../img/black_bg.png?1360494213');
   opacity: 0.95;
   padding-top: 50px;
   -moz-box-shadow: 0 0 5px #222222;
@@ -45,7 +63,7 @@ body {
   width: 100%;
   border-bottom: 1px solid #222426;
   background-color: black;
-  background-image: url('../img/black_bg.png?1360491931');
+  background-image: url('../img/black_bg.png?1360494213');
   opacity: 0.9;
   padding-top: 18px;
 }
@@ -131,7 +149,7 @@ hr {
 }
 
 .participant {
-  background-image: url('../img/black_bg.png?1360491931');
+  background-image: url('../img/black_bg.png?1360494213');
   background-color: black;
   margin-bottom: 10px;
   display: box;
@@ -1649,7 +1667,7 @@ input, textarea, select, .uneditable-input {
 .source-files {
   width: 100%;
   height: auto;
-  background-image: url('../img/black_bg.png?1360491931');
+  background-image: url('../img/black_bg.png?1360494213');
   margin-top: 30px;
 }
 .source-files .nav > li > a {
@@ -1703,7 +1721,7 @@ input, textarea, select, .uneditable-input {
   height: 100%;
   padding: 0 14px 9px;
   background-color: black;
-  background-image: url('../img/black_bg.png?1360491931');
+  background-image: url('../img/black_bg.png?1360494213');
   color: inherit;
 }
 .cardset li a:hover, .userset li a:hover {
@@ -2177,7 +2195,7 @@ textarea {
 }
 
 .pager-nav {
-  background-image: url('../img/black_bg.png?1360491931');
+  background-image: url('../img/black_bg.png?1360494213');
   border-radius: 30px;
   width: 46px;
   margin-bottom: 10px;
