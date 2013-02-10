@@ -10,17 +10,17 @@
           <b><a href="{{ p.user.profile_url }}">{{ p.user.fullname }}</a></b>
         
           <div class="participating-projects">
-            {%- if p.project_memberships %}
+            {%- if p.user.projects %}
               <em class="participating-project-header">
-                {% if p.project_memberships | length ==1 %}
-                  {{ p.project_memberships | length }} Project
+                {% if p.user.projects | length ==1 %}
+                  {{ p.user.projects | length }} Project
                 {% else %}
-                  {{ p.project_memberships | length }} Projects
+                  {{ p.user.projects | length }} Projects
                 {% endif %}
                 </em>
               <ul>
-                {%- for membership in p.project_memberships -%}
-                  <a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=membership.project.url_name) }}" title="{{ membership.project.title }}"><li class="project-num{{ membership.project.id}}"></li></a>
+                {%- for membership in p.user.projects -%}
+                  <a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=membership.url_name) }}" title="{{ membership.title }}"><li class="project-num{{ membership.id}}"></li></a>
 
                 {% endfor -%}
                 
