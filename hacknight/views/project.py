@@ -430,7 +430,7 @@ def event_export(profile, event):
     (User, {'userid': 'userid'}, 'project_user'),
     (ProjectMember, {'user': 'project_user', 'project_id': 'project.id'}, 'project_member'), permission='remove-member'
     )
-def project_member_delete(profile, project, event, project_user, project_member):
+def project_member_remove(profile, project, event, project_user, project_member):
     return render_delete_sqla(project_member, db, title=u"Confirm remove",
                 message=u"Remove Project Member '%s'? This cannot be undone." % project_user.username,
                 success=u"You have removed Project Member '%s'." % project_user.username,
