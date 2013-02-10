@@ -167,11 +167,12 @@ def project_view(profile, event, project):
                     if reply_to and reply_to.commentspace == project.comments:
                         comment.reply_to = reply_to
                         if not reply_to.user == g.user:
-                            send_email_info.append({"to": reply_to.email,
+                            send_email_info.append({"to": reply_to.user.email,
                                 "subject": "Hacknight: %s " % (project.title),
-                                "template": 'project_team_email.md'})
+                                "template": 'comment_owner_email.md'})
                         try:
                             email_ids.remove(project.user.email)
+                            email_ids.remove(reply_to.user.email)
                         except ValueError:
                             pass
                         send_email_info.append({"to": project.user.email,
@@ -186,7 +187,7 @@ def project_view(profile, event, project):
                             "subject": "Hacknight: %s " % (project.title),
                             "template": 'project_team_email.md'})
                 else:
-                    if not g.user == project.user.email:
+                    if not g.user == project.user:
                         try:
                             email_ids.remove(project.user.email)
                         except ValueError:
