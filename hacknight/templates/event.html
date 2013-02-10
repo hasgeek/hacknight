@@ -21,7 +21,7 @@
                 </em>
                 <ul>
                   {%- for project in projects -%}
-                    <li class="project-num{{ project.id}}"><a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=project.url_name) }}" title="{{ project.title }}"> </a></li>
+                    <li class="project-num{{ project.url_id}}"><a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=project.url_name) }}" title="{{ project.title }}"> </a></li>
                   {% endfor -%}
                 
                 </ul>
