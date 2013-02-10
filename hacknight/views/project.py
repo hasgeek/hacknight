@@ -125,8 +125,7 @@ def project_view(profile, event, project):
     if g.user:
         project_member = ProjectMember.query.filter_by(project_id=project.id, user_id=g.user.id).first()
         project_members = ProjectMember.query.filter_by(project_id=project.id).all()
-        if project_members:
-            email_ids = [member.user.email for member in project_members]
+        email_ids = [member.user.email for member in project_members]
         if project_member:
             user_is_member = True
     # Fix the join query below and replace the cascaded if conditions.
@@ -171,22 +170,34 @@ def project_view(profile, event, project):
                             send_email_info.append({"to": reply_to.email,
                                 "subject": "Hacknight: %s " % (project.title),
                                 "template": 'project_team_email.md'})
-                        email_ids.remove(project.user.email)
+                        try:
+                            email_ids.remove(project.user.email)
+                        except ValueError:
+                            pass
                         send_email_info.append({"to": project.user.email,
                                 "subject": "Hacknight: %s " % (project.title),
                                 "template": 'project_owner_email.md'})
-                        email_ids.remove(g.user.email)
+                        try:
+                            email_ids.remove(g.user.email)
+                        except ValueError:
+                            pass
                         for email_id in email_ids:
                             send_email_info.append({"to": email_id,
                             "subject": "Hacknight: %s " % (project.title),
                             "template": 'project_team_email.md'})
                 else:
                     if not g.user == project.user.email:
-                        email_ids.remove(project.user.email)
+                        try:
+                            email_ids.remove(project.user.email)
+                        except ValueError:
+                            pass
                         send_email_info.append({"to": project.user.email,
                             "subject": "Hacknight: %s " % (project.title),
                             "template": 'project_owner_email.md'})
-                    email_ids.remove(g.user.email)
+                    try:
+                        email_ids.remove(g.user.email)
+                    except ValueError:
+                        pass
                     for email_id in email_ids:
                         send_email_info.append({"to": email_id,
                             "subject": "Hacknight: %s " % (project.title),
