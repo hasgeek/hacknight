@@ -15,7 +15,7 @@
 
 body {
   background-color: #323a40;
-  background-image: url('../img/bg.png?1358827010');
+  background-image: url('../img/bg.png?1360491931');
   color: #aaaaaa;
 }
 
@@ -29,7 +29,7 @@ body {
   width: 100%;
   border-bottom: 1px solid #222426;
   background-color: black;
-  background-image: url('../img/black_bg.png?1358664271');
+  background-image: url('../img/black_bg.png?1360491931');
   opacity: 0.95;
   padding-top: 50px;
   -moz-box-shadow: 0 0 5px #222222;
@@ -45,7 +45,7 @@ body {
   width: 100%;
   border-bottom: 1px solid #222426;
   background-color: black;
-  background-image: url('../img/black_bg.png?1358664271');
+  background-image: url('../img/black_bg.png?1360491931');
   opacity: 0.9;
   padding-top: 18px;
 }
@@ -131,7 +131,7 @@ hr {
 }
 
 .participant {
-  background-image: url('../img/black_bg.png?1358664271');
+  background-image: url('../img/black_bg.png?1360491931');
   background-color: black;
   margin-bottom: 10px;
   display: box;
@@ -1229,7 +1229,7 @@ input, textarea, select, .uneditable-input {
 .source-files {
   width: 100%;
   height: auto;
-  background-image: url('../img/black_bg.png?1358664271');
+  background-image: url('../img/black_bg.png?1360491931');
   margin-top: 30px;
 }
 .source-files .nav > li > a {
@@ -1283,7 +1283,7 @@ input, textarea, select, .uneditable-input {
   height: 100%;
   padding: 0 14px 9px;
   background-color: black;
-  background-image: url('../img/black_bg.png?1358664271');
+  background-image: url('../img/black_bg.png?1360491931');
   color: inherit;
 }
 .cardset li a:hover, .userset li a:hover {
@@ -1690,7 +1690,7 @@ input, textarea, select, .uneditable-input {
 .comment .dot {
   padding-left: 3px;
   padding-right: 6px;
-  color: black;
+  color: #a1a4a9;
   text-shadow: none;
 }
 .comment .commenter-name {
@@ -1741,7 +1741,7 @@ input, textarea, select, .uneditable-input {
 }
 .comment .com-footer a, .comment .com-footer i {
   font-size: 12px;
-  color: black;
+  color: #a1a4a9;
   text-shadow: none;
 }
 .comment .com-footer a:hover {
@@ -1757,7 +1757,7 @@ textarea {
 }
 
 .pager-nav {
-  background-image: url('../img/black_bg.png?1358664271');
+  background-image: url('../img/black_bg.png?1360491931');
   border-radius: 30px;
   width: 46px;
   margin-bottom: 10px;
