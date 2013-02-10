@@ -77,3 +77,10 @@ class ProjectMember(BaseMixin, db.Model):
     role = db.Column(db.Unicode(250), nullable=False, default=u'')
 
     __table_args__ = (db.UniqueConstraint('project_id', 'user_id'),)
+
+    def permissions(self, user, inherited=None):
+        perms = super(ProjectMember, self).permissions(user, inherited)
+
+        if user is not None and user == self.project.user and self.user != user:
+            perms.add('remove-member')
+        return perms
