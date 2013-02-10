@@ -126,6 +126,9 @@
           <li>
             <span class="icon-pencil"><a href="{{ url_for('project_edit', profile=profile.name, event=event.name, project=project.url_name) }}">Edit Details</a></span>
           </li>
+          <li>
+            <span class="icon-delete"><a href="{{ url_for('project_edit', profile=profile.name, event=event.name, project=project.url_name) }}">Edit Details</a></span>
+          </li>
         {% endif %}
         {% if g.user and g.user not in project.users %}
           <li>
