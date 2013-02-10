@@ -124,10 +124,10 @@
         {% if project.owner_is(g.user) %}
           <li class="nav-header">Manage Project</li>
           <li>
-            <a href="{{ url_for('project_edit', profile=profile.name, event=event.name, project=project.url_name) }}"><span class="icon-pencil">Edit Details</span></a>
+            <a href="{{ url_for('project_edit', profile=profile.name, event=event.name, project=project.url_name) }}"><span class="icon-pencil">Edit details...</span></a>
           </li>
           <li>
-            <a href="{{ url_for('project_edit', profile=profile.name, event=event.name, project=project.url_name) }}"><span class="icon-delete">Edit Details</span></a>
+            <a href="{{ url_for('project_delete', profile=profile.name, event=event.name, project=project.url_name) }}"><span class="icon-trash">Delete project...</span></a>
           </li>
         {% endif %}
         {% if g.user and g.user not in project.users %}
