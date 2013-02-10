@@ -124,19 +124,19 @@
         {% if project.owner_is(g.user) %}
           <li class="nav-header">Manage Project</li>
           <li>
-            <span class="icon-pencil"><a href="{{ url_for('project_edit', profile=profile.name, event=event.name, project=project.url_name) }}">Edit Details</a></span>
+            <a href="{{ url_for('project_edit', profile=profile.name, event=event.name, project=project.url_name) }}"><span class="icon-pencil">Edit Details</span></a>
           </li>
           <li>
-            <span class="icon-delete"><a href="{{ url_for('project_edit', profile=profile.name, event=event.name, project=project.url_name) }}">Edit Details</a></span>
+            <a href="{{ url_for('project_edit', profile=profile.name, event=event.name, project=project.url_name) }}"><span class="icon-delete">Edit Details</span></a>
           </li>
         {% endif %}
         {% if g.user and g.user not in project.users %}
           <li>
-            <span class="icon-signin"><a href="{{ url_for('project_join', profile=profile.name, event=event.name, project=project.url_name) }}">Join</a></span>
+            <a href="{{ url_for('project_join', profile=profile.name, event=event.name, project=project.url_name) }}"><span class="icon-signin">Join</span></a>
           </li>
         {% endif %}
         <li class="nav-header">Project Created by</li>
-        <li><span class="icon-user"><a href="{{ url_for('profile_view', profile=project.user.profile.name) }}">{{ project.user.fullname }}</a></span></li>
+        <li><a href="{{ url_for('profile_view', profile=project.user.profile.name) }}"><span class="icon-user">{{ project.user.fullname }}</span></a></li>
 
       </ul>
       <!--<div class="source-files">
