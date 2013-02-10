@@ -10,16 +10,16 @@
           <b><a href="{{ p.user.profile_url }}">{{ p.user.fullname }}</a></b>
         
           <div class="participating-projects">
-            {%- if p.project_memberships %}
+            {%- if p.user.project_memberships %}
               <em class="participating-project-header">
-                {% if p.project_memberships | length ==1 %}
-                  {{ p.project_memberships | length }} Project
+                {% if p.user.project_memberships | length ==1 %}
+                  {{ p.user.project_memberships | length }} Project
                 {% else %}
-                  {{ p.project_memberships | length }} Projects
+                  {{ p.user.project_memberships | length }} Projects
                 {% endif %}
-                </em>
+              </em>
               <ul>
-                {%- for membership in p.project_memberships -%}
+                {%- for membership in p.user.project_memberships -%}
                   <a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=membership.project.url_name) }}" title="{{ membership.project.title }}"><li class="project-num{{ membership.project.id}}"></li></a>
 
                 {% endfor -%}
@@ -114,33 +114,35 @@
   </div>
   <hr />
   <h3 class="h3-title"> Projects</h3>
-  <ul class="cardset light-bg row">
-    {% for p in projects %}
-      <li class="span4">
-        <a class="project-num{{ p.id }}" href="{{ url_for('project_view', profile=profile.name, event=event.name, project=p.url_name) }}">
-          <div class="card-title"><i class="icon-bookmark icon-1x"></i>
-            <h2>{{ p.title }}</h2>
-          </div>
-          <div class="card-body">
-            {{ p.blurb }}
-          </div>
-        </a>
-      </li>
-    {% endfor %}
-    <div class="mob-seperator">
-      <br />
-    </div>
-    {% if current_participant.status == 2 %}
-      <li class="span4">
-        <a href="{{ url_for('project_new', profile=profile.name, event=event.name) }}">
-          <div class="card-title">
-            <h2>New project...</h2>
-          </div>
-          <div class="card-body large-plus"><i class="icon-plus"></i></div>
-        </a>
-      </li>
-    {% endif %}
-  </ul>
+  <div class="project-cards">
+    <ul class="cardset light-bg row">
+      {% for p in projects %}
+        <li class="span3">
+          <a class="project-num{{ p.id }}" href="{{ url_for('project_view', profile=profile.name, event=event.name, project=p.url_name) }}">
+            <div class="card-title">
+              <h2>{{ p.title }}</h2>
+            </div>
+            <div class="card-body">
+              {{ p.blurb }}
+            </div>
+          </a>
+        </li>
+      {% endfor %}
+      <div class="mob-seperator">
+        <br />
+      </div>
+      {% if current_participant.status == 2 %}
+        <li class="span3">
+          <a href="{{ url_for('project_new', profile=profile.name, event=event.name) }}">
+            <div class="card-title new-project">
+              <h2>New project...</h2>
+            </div>
+            <div class="card-body large-plus"><i class="icon-plus"></i></div>
+          </a>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
   {% if event.venue.latitude and event.venue.longitude %}
     <div id="map" class="event-map"></div>
   {% endif %}
