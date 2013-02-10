@@ -5,7 +5,7 @@ from cStringIO import StringIO
 from datetime import datetime
 from flask import render_template, g, abort, flash, url_for, request, redirect, make_response
 from coaster.views import load_models, jsonp
-from baseframe.forms import render_form, render_redirect, ConfirmDeleteForm
+from baseframe.forms import render_form, render_redirect, ConfirmDeleteForm, render_delete_sqla
 from hacknight import app
 from hacknight.models import db, Profile, Event, Project, ProjectMember, Participant, PARTICIPANT_STATUS, User
 from hacknight.forms.project import ProjectForm
@@ -420,3 +420,19 @@ def event_export(profile, event):
     response.headers['Content-Type'] = 'text/csv;charset=utf-8'
     response.headers['Content-Disposition'] = 'attachment; filename=participants.csv'
     return response
+
+
+@app.route('/<profile>/<event>/projects/<project>/<userid>/remove', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
+    (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
+    (User, {'userid': 'userid'}, 'project_user'),
+    (ProjectMember, {'user': 'project_user', 'project_id': 'project.id'}, 'project_member'), permission='remove-member'
+    )
+def project_member_remove(profile, project, event, project_user, project_member):
+    return render_delete_sqla(project_member, db, title=u"Confirm remove",
+                message=u"Remove Project Member '%s'? This cannot be undone." % project_user.username,
+                success=u"You have removed Project Member '%s'." % project_user.username,
+                next=url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
