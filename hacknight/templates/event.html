@@ -120,7 +120,7 @@
     <ul class="cardset light-bg row">
       {% for p in projects %}
         <li class="span3">
-          <a class="project-num{{ p.id }}" href="{{ url_for('project_view', profile=profile.name, event=event.name, project=p.url_name) }}">
+          <a class="project-num{{ p.url_id}}" href="{{ url_for('project_view', profile=profile.name, event=event.name, project=p.url_name) }}">
             <div class="card-title">
               <h2>{{ p.title }}</h2>
             </div>
