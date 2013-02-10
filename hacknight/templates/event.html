@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block title %}{{ event.title }}{% endblock %}
 
-{% macro participant_list(participants) -%}
+{% macro participant_list(event, participants) -%}
   <div class="row">
     {%- for p in participants -%}
       <div class="span3 participant">
@@ -10,24 +10,26 @@
           <b><a href="{{ p.user.profile_url }}">{{ p.user.fullname }}</a></b>
         
           <div class="participating-projects">
-            {%- if p.user.projects %}
-              <em class="participating-project-header">
-                {% if p.user.projects | length ==1 %}
-                  {{ p.user.projects | length }} Project
-                {% else %}
-                  {{ p.user.projects | length }} Projects
-                {% endif %}
-              </em>
-              <ul>
-                {%- for membership in p.user.projects -%}
-                  <a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=membership.url_name) }}" title="{{ membership.title }}"><li class="project-num{{ membership.id}}"></li></a>
-                {% endfor -%}
+            {% with projects = p.user.projects_in(event) %}
+              {%- if projects %}
+                <em class="participating-project-header">
+                  {% if projects | length ==1 %}
+                    {{ projects | length }} Project
+                  {% else %}
+                    {{ projects | length }} Projects
+                  {% endif %}
+                </em>
+                <ul>
+                  {%- for project in projects -%}
+                    <a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=project.url_name) }}" title="{{ project.title }}"><li class="project-num{{ project.id}}"></li></a>
+                  {% endfor -%}
                 
-              </ul>
-            {% else %}
-              <em class="participating-project-header">
-                No Projects</em>
-            {%- endif %}
+                </ul>
+              {% else %}
+                <em class="participating-project-header">
+                  No Projects</em>
+              {%- endif %}
+            {% endwith %}
           </div>
         </div>
 
@@ -48,11 +50,11 @@
       </div>
       {{ event.description|safe }}
       <h3 class="h3-title"> Accepted Participants</h3>
-      {{ participant_list(accepted_participants) }}
+      {{ participant_list(event, accepted_participants) }}
       <br />
       {% if rest_participants %}
         <h3 class="h3-title">Other Participants</h3>
-        {{ participant_list(rest_participants) }}
+        {{ participant_list(event, rest_participants) }}
       {% endif %}
     </div>
     <div class="span3">

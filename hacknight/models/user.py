@@ -27,3 +27,6 @@ class User(UserBase, db.Model):
     def profiles(self):
         return [self.profile] + Profile.query.filter(
             Profile.userid.in_(self.organizations_owned_ids())).order_by('title').all()
+
+    def projects_in(self, event):
+        return [project for project in self.projects if project.event == event]
