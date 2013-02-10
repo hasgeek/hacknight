@@ -165,7 +165,8 @@ $class-slug: project-num !default
 @for $i from 1 through 60
   .#{$class-slug}#{$i}
     list-style-type: none
-    display: box
+    display: block
+    position: relative
     margin: 1px
     height: 8px
     width: 15px
@@ -173,6 +174,12 @@ $class-slug: project-num !default
     //background-color: #B0603D
     a
       color: #BB894D
+      display: block
+      position: absolute
+      top: 0
+      left: 0
+      right: 0
+      bottom: 0
 
 @for $j from 1 through 60
   .#{$class-slug}#{$j}
