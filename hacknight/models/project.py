@@ -80,8 +80,7 @@ class ProjectMember(BaseMixin, db.Model):
 
     def permissions(self, user, inherited=None):
         perms = super(ProjectMember, self).permissions(user, inherited)
-        project = Project.query.filter_by(id=self.project_id).first()
 
-        if user is not None and user == project.user:
-            perms.add('delete-member')
+        if user is not None and user == self.project.user and self.user != user:
+            perms.add('remove-member')
         return perms

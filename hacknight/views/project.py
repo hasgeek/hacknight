@@ -421,20 +421,17 @@ def event_export(profile, event):
     return response
 
 
-@app.route('/<profile>/<event>/projects/<project>/<userid>/delete', methods=['GET', 'POST'])
+@app.route('/<profile>/<event>/projects/<project>/<userid>/remove', methods=['GET', 'POST'])
 @lastuser.requires_login
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
     (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
     (User, {'userid': 'userid'}, 'project_user'),
-    (ProjectMember, {'user': 'project_user', 'project_id': 'project.id'}, 'project_member'), permission='delete-member'
+    (ProjectMember, {'user': 'project_user', 'project_id': 'project.id'}, 'project_member'), permission='remove-member'
     )
 def project_member_delete(profile, project, event, project_user, project_member):
-    if not g.user == project_user:
-        return render_delete_sqla(project_member, db, title=u"Confirm remove",
+    return render_delete_sqla(project_member, db, title=u"Confirm remove",
                 message=u"Remove Project Member '%s'? This cannot be undone." % project_user.username,
                 success=u"You have removed Project Member '%s'." % project_user.username,
                 next=url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
-    else:
-        abort(403)
