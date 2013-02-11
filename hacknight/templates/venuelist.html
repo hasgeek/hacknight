@@ -3,7 +3,7 @@
 
 {% block content %}
   {% for venue in venues %}
-    <h2><a href="{{ url_for('venue_view', venue=venue.name) }}">{{ venue.title }}</a></h2>
+    <h2><a href="{{ venue.url_for() }}">{{ venue.title }}</a></h2>
     {{ venue.description|safe }}
     <h3>Address</h3>
     <p>

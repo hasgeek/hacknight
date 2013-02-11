@@ -7,7 +7,7 @@
     {% endif %}
       {% for e in events -%}
         <li class="span4">
-          <a href="{{ url_for('event_view', profile=e.profile.name, event=e.name) }}">
+          <a href="{{ e.url_for() }}">
             <div class="card-badge">
               {% if g.user and e.participant_is(g.user) -%}
                 <i class="icon-user" title="You are a participant"></i>

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from flask import url_for
 from hacknight.models import BaseNameMixin
 from hacknight.models import db
 from hacknight.models.event import Profile
@@ -20,3 +21,7 @@ class Venue(BaseNameMixin, db.Model):
     country = db.Column(db.Unicode(2), default=u'', nullable=False)
     latitude = db.Column(db.Numeric(8, 5), nullable=True)
     longitude = db.Column(db.Numeric(8, 5), nullable=True)
+
+    def url_for(self, action='view', _external=False):
+        if action == 'view':
+            return url_for('venue_view', venue=self.name, _external=_external)

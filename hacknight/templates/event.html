@@ -21,7 +21,7 @@
                 </em>
                 <ul>
                   {%- for project in projects -%}
-                    <li class="project-num{{ project.url_id}}"><a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=project.url_name) }}" title="{{ project.title }}"> </a></li>
+                    <li class="project-num{{ project.url_id}}"><a href="{{ project.url_for() }}" title="{{ project.title }}"> </a></li>
                   {% endfor -%}
                 
                 </ul>
@@ -45,7 +45,7 @@
     <div class="span9">
 
       <div class="page-header">
-        <h3><a href="{{ url_for('profile_view', profile=event.profile.name) }}">{{ event.profile.title }}</a><i class="icon-caret-right"></i></h3>
+        <h3><a href="{{ profile.url_for() }}">{{ event.profile.title }}</a><i class="icon-caret-right"></i></h3>
         <h1>{{ self.title() }}</h1>
       </div>
       {{ event.description|safe }}
@@ -63,7 +63,7 @@
         {% if event.ticket_price -%}
           <li><span class="icon-money">Entry Fee: {{ event.ticket_price }}</span></li>
         {%- endif %}
-        <li><a href="{{ url_for('venue_view', venue=event.venue.name) }}"><span class="icon-map-marker">{{ event.venue.title }}</span></a></li>
+        <li><a href="{{ event.venue.url_for() }}"><span class="icon-map-marker">{{ event.venue.title }}</span></a></li>
         <li><span class="icon-blank">{{ event.venue.address1 }}</span></li>
         {% if event.venue.address2 -%}
           <li><span class="icon-blank">{{ event.venue.address2 }}</span></li>
@@ -74,7 +74,7 @@
         {%- endif %}
         <li class="nav-header">Your participation</li>
         {% if not current_participant or current_participant.status == 4 -%}
-          <li><a href="{{ url_for('event_apply', profile=profile.name, event=event.name) }}"><span class="icon-signin">Register now {%- if not g.user %} (login required) {%- endif %}...</span></a></li>
+          <li><a href="{{ event.url_for('apply') }}"><span class="icon-signin">Register now {%- if not g.user %} (login required) {%- endif %}...</span></a></li>
         {% else %}
           <li><span class="icon-user">{% if event.owner_is(g.user) -%}
             You are an owner
@@ -91,22 +91,22 @@
               Withdrawn
             {%- endif -%}
           {%- endif %}</span></li>
-          <li><a href="{{ url_for('event_withdraw', profile=profile.name, event=event.name) }}"><span class="icon-signout">Withdraw registration...</span></a></li>
+          <li><a href="{{ event.url_for('withdraw') }}"><span class="icon-signout">Withdraw registration...</span></a></li>
         {% endif %}
         {%- if event.owner_is(g.user) %}
           <li class="nav-header">Manage event</li>
-          <li><a href="{{ url_for('event_open', event=event.name, profile=profile.name) }}"><i class="icon-wrench"></i> Manage event</a></li>
-          <li><a href="{{ url_for('event_export', profile=profile.name, event=event.name) }}"><i class="icon-wrench"></i> Export participants list</a></li>
-          <li><a href="{{ url_for('event_edit', event=event.name, profile=profile.name) }}"><i class="icon-pencil"></i> Edit details...</a></li>
-          <li><a href="{{ url_for('event_delete', event=event.name, profile=profile.name) }}"><i class="icon-trash"></i> Delete event...</a></li>
-          <li><a href="{{ url_for('event_send_email', event=event.name, profile=profile.name) }}"><i class="icon-envelope"></i>Email participants...</a></li>
+          <li><a href="{{ event.url_for('open') }}"><i class="icon-wrench"></i> Manage event</a></li>
+          <li><a href="{{ event.url_for('export') }}"><i class="icon-wrench"></i> Export participants list</a></li>
+          <li><a href="{{ event.url_for('edit') }}"><i class="icon-pencil"></i> Edit details...</a></li>
+          <li><a href="{{ event.url_for('delete') }}"><i class="icon-trash"></i> Delete event...</a></li>
+          <li><a href="{{ event.url_for('send_email') }}"><i class="icon-envelope"></i>Email participants...</a></li>
         {% endif -%}
       </ul>
       {% if event.sponsors %}
         <h3>Sponsors</h3>
         <ul class="sponsor-box">
           {% for sponsor in event.sponsors %}
-            <li><a href="{{ url_for('sponsor_view', profile=profile.name, event=event.name, sponsor=sponsor.name) }}"><img src="{{ sponsor.image_url }}" class="sponsor-logo"></a></li>
+            <li><a href="{{ sponsor.url_for() }}"><img src="{{ sponsor.image_url }}" class="sponsor-logo"></a></li>
           {% endfor %}
         </ul>
       {% endif %}
@@ -120,7 +120,7 @@
     <ul class="cardset light-bg row">
       {% for p in projects %}
         <li class="span3">
-          <a class="project-num{{ p.url_id}}" href="{{ url_for('project_view', profile=profile.name, event=event.name, project=p.url_name) }}">
+          <a class="project-num{{ p.url_id}}" href="{{ p.url_for() }}">
             <div class="card-title">
               <h2>{{ p.title }}</h2>
             </div>
@@ -144,7 +144,7 @@
       </div>
       {% if current_participant.status == 2 %}
         <li class="span3">
-          <a href="{{ url_for('project_new', profile=profile.name, event=event.name) }}">
+          <a href="{{ event.url_for('new') }}">
             <div class="card-title new-project">
               <h2>New project...</h2>
             </div>

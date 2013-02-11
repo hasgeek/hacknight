@@ -4,9 +4,9 @@ from hacknight.models import BaseMixin, BaseScopedIdNameMixin
 from hacknight.models import db
 from hacknight.models.event import Event
 from hacknight.models.user import User
-from hacknight.models.participant import Participant
 from hacknight.models.vote import VoteSpace
 from hacknight.models.comment import CommentSpace
+from flask import url_for
 
 __all__ = ['Project', 'ProjectMember']
 
@@ -63,6 +63,26 @@ class Project(BaseScopedIdNameMixin, db.Model):
         return Project.query.filter(Project.event == self.event).filter(
             Project.id != self.id).filter(
             Project.created_at > self.created_at).order_by('created_at').first()
+
+    def url_for(self, action='view', _external=False):
+        if action == 'view':
+            return url_for('project_view', profile=self.event.profile.name, event=self.event.name, project=self.url_name, _external=_external)
+        elif action == 'edit':
+            return url_for('project_edit', profile=self.event.profile.name, event=self.event.name, project=self.url_name, _external=_external)
+        elif action == 'delete':
+            return url_for('project_delete', profile=self.event.profile.name, event=self.event.name, project=self.url_name, _external=_external)
+        elif action == 'voteup':
+            return url_for('project_voteup', profile=self.event.profile.name, event=self.event.name, project=self.url_name, _external=_external)
+        elif action == 'votedown':
+            return url_for('project_votedown', profile=self.event.profile.name, event=self.event.name, project=self.url_name, _external=_external)
+        elif action == 'cancelvote':
+            return url_for('project_cancelvote', profile=self.event.profile.name, event=self.event.name, project=self.url_name, _external=_external)
+        elif action == 'prev':
+            return url_for('project_view', profile=self.event.profile.name, event=self.event.name, project=self.getprev().url_name, _external=_external)
+        elif action == 'next':
+            return url_for('project_view', profile=self.event.profile.name, event=self.event.name, project=self.getnext().url_name, _external=_external)
+        elif action == 'join':
+            return url_for('project_join', profile=self.event.profile.name, event=self.event.name, project=self.url_name, _external=_external)
 
 
 class ProjectMember(BaseMixin, db.Model):

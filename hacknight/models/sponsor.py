@@ -1,5 +1,6 @@
 # -*- coding: utf-8- *-
 
+from flask import url_for
 from hacknight.models import BaseScopedNameMixin
 from hacknight.models import db
 from hacknight.models.event import Event
@@ -19,3 +20,7 @@ class Sponsor(BaseScopedNameMixin, db.Model):
     description = db.Column(db.UnicodeText, nullable=False)
 
     __table_args__ = (db.UniqueConstraint('name', 'event_id'),)
+
+    def url_for(self, action='view', _external=False):
+        if action == 'view':
+            return url_for('sponsor_view', profile=self.event.profile.name, event=self.event.name, sponsor=self.name)
