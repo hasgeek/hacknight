@@ -2,15 +2,25 @@
 
 from sqlalchemy.orm import joinedload
 from sqlalchemy import func
-import flask.ext.wtf as wtf
+from html2text import html2text
+from flask.ext.mail import Message
 from flask import render_template, abort, flash, url_for, g, request, Response, Markup
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
-from hacknight import app
+from hacknight import app, mail
 from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS
-from hacknight.forms.event import EventForm, ConfirmWithdrawForm
+from hacknight.forms.event import EventForm, ConfirmWithdrawForm, SendEmailForm
 from hacknight.forms.participant import ParticipantForm
 from hacknight.views.login import lastuser
+from hacknight.views.workflow import ParticipantWorkflow
+
+
+def send_email(sender, to, subject, body, html=None):
+    msg = Message(sender=sender, subject=subject, recipients=[to])
+    msg.body = body
+    if html:
+        msg.html = html
+    mail.send(msg)
 
 
 @app.route('/<profile>/<event>', methods=["GET"])
@@ -77,8 +87,7 @@ def event_edit(profile, event):
     form = EventForm(obj=event)
     if form.validate_on_submit():
         form.populate_obj(event)
-        if not event.name:
-            event.make_name()
+        event.make_name()
         event.profile_id = profile.id
         db.session.commit()
         flash(u"Your edits to %s are saved" % event.title, "success")
@@ -107,7 +116,7 @@ def show_participant_status(status):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_open(profile, event):
-    if  profile.userid not in g.user.user_organizations_owned_ids():
+    if profile.userid not in g.user.user_organizations_owned_ids():
         abort(403)
     participants = Participant.query.filter(
         Participant.status != PARTICIPANT_STATUS.WITHDRAWN,
@@ -122,7 +131,7 @@ def event_open(profile, event):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_update_participant_status(profile, event):
-    if  profile.userid not in g.user.user_organizations_owned_ids():
+    if profile.userid not in g.user.user_organizations_owned_ids():
         return Response("Forbidden", 403)
     participantid = int(request.form['participantid'])
     status = int(request.form['status'])
@@ -163,7 +172,7 @@ def event_apply(profile, event):
         else:
             return render_form(form=form, message=Markup(event.apply_instructions) if event.apply_instructions else "",
                 title="Participant Details", submit=u"Participate",
-                cancel_url=url_for('event_view', event=event.name, 
+                cancel_url=url_for('event_view', event=event.name,
                 profile=profile.name), ajax=False)
     # FIXME: Don't change anything unless this is a POST request
     elif participant.status == PARTICIPANT_STATUS.WITHDRAWN:
@@ -267,3 +276,31 @@ def event_delete(profile, event):
         message=u"Delete Event '%s'? This cannot be undone." % event.title,
         success=u"You have deleted an event '%s'." % event.title,
          next=url_for('profile_view', profile=profile.name))
+
+
+@app.route('/<profile>/<event>/send_email', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'), permission='send-email')
+def event_send_email(profile, event):
+    form = SendEmailForm()
+    form.send_to.choices = [(-1, "All participants (confirmed or not)")] + \
+        [(item.value, item.title) for item in ParticipantWorkflow.states()]
+    if form.validate_on_submit():
+        if form.send_to.data == -1:
+            participants = Participant.query.filter_by(event=event).all()
+        else:
+            participants = Participant.query.filter_by(event=event, status=form.send_to.data).all()
+        subject = form.subject.data
+        count = 0
+        for participant in participants:
+            if participant.email:
+                message = form.message.data.replace("*|FULLNAME|*", participant.user.fullname)
+                text_message = html2text(message)
+                send_email(sender=(g.user.fullname, g.user.email), to=participant.email, subject=subject, body=text_message, html=message)
+                count += 1
+        flash("Your message was sent to %d participant(s)." % count)
+        return render_redirect(url_for('event_view', profile=profile.name, event=event.name))
+    return render_form(form=form, title="Send email to participants",
+            submit=u"Send", cancel_url=url_for('event_view', profile=profile.name, event=event.name), ajax=False)

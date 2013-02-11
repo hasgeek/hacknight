@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 
-import unicodecsv
 from cStringIO import StringIO
 from datetime import datetime
 from flask import render_template, g, abort, flash, url_for, request, redirect, make_response
 from coaster.views import load_models, jsonp
-from baseframe.forms import render_form, render_redirect, ConfirmDeleteForm
+from baseframe.forms import render_form, render_redirect, ConfirmDeleteForm, render_delete_sqla
 from hacknight import app
 from hacknight.models import db, Profile, Event, Project, ProjectMember, Participant, PARTICIPANT_STATUS, User
 from hacknight.forms.project import ProjectForm
 from hacknight.forms.comment import CommentForm, DeleteCommentForm
 from hacknight.views.login import lastuser
+from hacknight.views.event import send_email
 from hacknight.models.vote import Vote
 from hacknight.models.comment import Comment
 from markdown import Markdown
@@ -65,13 +65,14 @@ def project_edit(profile, project, event):
             form.participating.data = str(int(project.participating))
         if form.validate_on_submit():
             form.populate_obj(project)
+            project.make_name()
             db.session.commit()
             flash(u"Your changes have been saved", 'success')
             return render_redirect(url_for('project_view', profile=profile.name, event=event.name,
                 project=project.url_name), code=303)
         return render_form(form=form, title=u"Edit project", submit=u"Save",
             cancel_url=url_for('project_view', profile=profile.name, event=event.name,
-                project=project.url_name), ajax=True)
+                project=project.url_name), ajax=False)
 
 
 @app.route('/<profile>/<event>/projects/<project>/delete', methods=["GET", "POST"])
@@ -121,6 +122,8 @@ def project_view(profile, event, project):
     user_is_member = False
     if g.user:
         project_member = ProjectMember.query.filter_by(project_id=project.id, user_id=g.user.id).first()
+        project_members = ProjectMember.query.filter_by(project_id=project.id).all()
+        email_ids = [member.user.email for member in project_members]
         if project_member:
             user_is_member = True
     # Fix the join query below and replace the cascaded if conditions.
@@ -156,10 +159,50 @@ def project_view(profile, event, project):
                     flash("No such comment", "error")
             else:
                 comment = Comment(user=g.user, commentspace=project.comments, message=commentform.message.data)
+                send_email_info = []
                 if commentform.reply_to_id.data:
                     reply_to = commentspace.get_comment(int(commentform.reply_to_id.data))
                     if reply_to and reply_to.commentspace == project.comments:
                         comment.reply_to = reply_to
+                        if not reply_to.user == g.user:
+                            send_email_info.append({"to": reply_to.user.email,
+                                "subject": "Hacknight: %s " % (project.title),
+                                "template": 'comment_owner_email.md'})
+                        try:
+                            email_ids.remove(project.user.email)
+                            email_ids.remove(reply_to.user.email)
+                        except ValueError:
+                            pass
+                        if project.user != reply_to.user:
+                            send_email_info.append({"to": project.user.email,
+                                "subject": "Hacknight: %s " % (project.title),
+                                "template": 'project_owner_email.md'})
+                        try:
+                            email_ids.remove(g.user.email)
+                        except ValueError:
+                            pass
+                        for email_id in email_ids:
+                            send_email_info.append({"to": email_id,
+                            "subject": "Hacknight: %s " % (project.title),
+                            "template": 'project_team_email.md'})
+                else:
+                    if not g.user == project.user:
+                        try:
+                            email_ids.remove(project.user.email)
+                        except ValueError:
+                            pass
+                        send_email_info.append({"to": project.user.email,
+                            "subject": "Hacknight: %s " % (project.title),
+                            "template": 'project_owner_email.md'})
+                    try:
+                        email_ids.remove(g.user.email)
+                    except ValueError:
+                        pass
+                    for email_id in email_ids:
+                        send_email_info.append({"to": email_id,
+                            "subject": "Hacknight: %s " % (project.title),
+                            "template": 'project_team_email.md'})
+
                 comment.message_html = bleach.linkify(markdown(commentform.message.data))
                 project.comments.count += 1
                 comment.votes.vote(g.user)  # Vote for your own comment
@@ -167,6 +210,11 @@ def project_view(profile, event, project):
                 db.session.add(comment)
                 flash("Your comment has been posted", "info")
             db.session.commit()
+            link = url_for('project_view', profile=profile.name, event=event.name,
+                project=project.url_name, _external=True) + "#c" + str(comment.id)
+            for item in send_email_info:
+                email_body = render_template(item.pop('template'), project=project, comment=comment, link=link)
+                send_email(sender=None, html=markdown(email_body), body=email_body, **item)
             # Redirect despite this being the same page because HTTP 303 is required to not break
             # the browser Back button
             return redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
@@ -446,3 +494,19 @@ def event_export(profile, event):
     response.headers['Content-Type'] = 'text/csv;charset=utf-8'
     response.headers['Content-Disposition'] = 'attachment; filename=participants.csv'
     return response
+
+
+@app.route('/<profile>/<event>/projects/<project>/<userid>/remove', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
+    (Project, {'url_name': 'project', 'event': 'event'}, 'project'),
+    (User, {'userid': 'userid'}, 'project_user'),
+    (ProjectMember, {'user': 'project_user', 'project_id': 'project.id'}, 'project_member'), permission='remove-member'
+    )
+def project_member_remove(profile, project, event, project_user, project_member):
+    return render_delete_sqla(project_member, db, title=u"Confirm remove",
+                message=u"Remove Project Member '%s'? This cannot be undone." % project_user.username,
+                success=u"You have removed Project Member '%s'." % project_user.username,
+                next=url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))

@@ -28,8 +28,7 @@ class Project(BaseScopedIdNameMixin, db.Model):
     #: Is the project owner participating?
     participating = db.Column(db.Boolean, nullable=False, default=True)
 
-    members = db.relationship('ProjectMember', backref='project',
-                      lazy='dynamic')
+    members = db.relationship('ProjectMember', backref='project', uselist=True)
 
     votes_id = db.Column(db.Integer, db.ForeignKey('votespace.id'), nullable=False)
     votes = db.relationship(VoteSpace, uselist=False)
@@ -77,3 +76,10 @@ class ProjectMember(BaseMixin, db.Model):
     role = db.Column(db.Unicode(250), nullable=False, default=u'')
 
     __table_args__ = (db.UniqueConstraint('project_id', 'user_id'),)
+
+    def permissions(self, user, inherited=None):
+        perms = super(ProjectMember, self).permissions(user, inherited)
+
+        if user is not None and user == self.project.user and self.user != user:
+            perms.add('remove-member')
+        return perms

@@ -6,37 +6,102 @@
 {% block headline %}{% endblock %}
 {% block content %}
   <div class="row">
-    <div class="span1 centered voting">
-      {%- with vote = project.votes.getvote(g.user) %}
-      {%- if not vote -%}
-        <a class="votechoice" title="Vote up" href="{{ url_for('project_voteup', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-up"></i></a>
-
-        <div class="votecount">{% if project.votes.count > 0 %}+{% endif %}{{ project.votes.count }}</div>
-
-        <a class="votechoice" title="Vote down" href="{{ url_for('project_votedown', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-down"></i></a>
-      {%- elif vote.votedown -%}
-        <a class="votechoice" title="Vote up" href="{{ url_for('project_voteup', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-up"></i></a>
-
-        <div class="votecount">{% if project.votes.count > 0 %}+{% endif %}{{ project.votes.count }}</div>
-
-        <a class="votechoice selected" title="Vote down" href="{{ url_for('project_cancelvote', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-down"></i></a>
-      {%- else -%}
-        <a class="votechoice selected" title="Vote up" href="{{ url_for('project_cancelvote', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-up"></i></a>
-
-        <div class="votecount">{% if project.votes.count > 0 %}+{% endif %}{{ project.votes.count }}</div>
-        
-        <a class="votechoice" title="Vote down" href="{{ url_for('project_votedown', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-down"></i></a>
-      {%- endif -%}
-      {% endwith %}
-    </div>
     <div class="span9">
-      <div class="page-header">
-        <h3><a href="{{ url_for('profile_view', profile=profile.name) }}">{{ profile.title }}</a> &raquo; <a href="{{ url_for('event_view', profile=profile.name, event=event.name) }}">{{ event.title }}</a> &raquo;</h3>
-        <h1>{{ project.title }} <small><em>by</em> {{ project.user.fullname }}</small></h1>
+      <div class="row">
+        <div class="span1 centered voting">
+          {%- with vote = project.votes.getvote(g.user) %}
+          {%- if not vote -%}
+            <a class="votechoice" title="Vote up" href="{{ url_for('project_voteup', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-up"></i></a>
+
+            <div class="votecount">{% if project.votes.count > 0 %}+{% endif %}{{ project.votes.count }}</div>
+
+            <a class="votechoice" title="Vote down" href="{{ url_for('project_votedown', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-down"></i></a>
+          {%- elif vote.votedown -%}
+            <a class="votechoice" title="Vote up" href="{{ url_for('project_voteup', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-up"></i></a>
+
+            <div class="votecount">{% if project.votes.count > 0 %}+{% endif %}{{ project.votes.count }}</div>
+
+            <a class="votechoice selected" title="Vote down" href="{{ url_for('project_cancelvote', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-down"></i></a>
+          {%- else -%}
+            <a class="votechoice selected" title="Vote up" href="{{ url_for('project_cancelvote', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-up"></i></a>
+
+            <div class="votecount">{% if project.votes.count > 0 %}+{% endif %}{{ project.votes.count }}</div>
+            
+            <a class="votechoice" title="Vote down" href="{{ url_for('project_votedown', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-down"></i></a>
+          {%- endif -%}
+          {% endwith %}
+        </div>
+        <div class="span8">
+          <div class="page-header">
+            <h3><a href="{{ url_for('profile_view', profile=profile.name) }}">{{ profile.title }}</a><i class="icon-caret-right"></i><a href="{{ url_for('event_view', profile=profile.name, event=event.name) }}">{{ event.title }}</a><i class="icon-caret-right"></i></h3>
+            <h1>{{ project.title }}</h1>
+          </div>
+          <div class="text">{{ project.description|safe }}</div>
+        </div>
+        <hr />
       </div>
-      {{ project.description|safe }}
+      <div class="row">
+        <div class="span9">
+          <h3 class="h3-title">Project Members</h2>
+          <ul class="userset row">
+            {% for user in project.users %}
+              <li class="span2">
+                <a href="{{ url_for('profile_view', profile=user.profile.name) }}"><i class="icon-user"></i><br>{{ user.fullname }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="span9">
+          <div class="section">
+            <h3 class="h3-title" id="comments">Comments</h3>
+            {% if comments %}
+              <ul class="comments">
+                {{ commenttree(comments, project, g.user, request.base_url) }}
+              </ul>
+            {% endif %}
+            {% if not g.user -%}
+              <p>
+                <a href="{{ url_for('login') }}">Login with Twitter or Google to leave a comment &rarr;</a>
+              </p>
+            {% else -%}
+              <p id="toplevel-comment" class="hidden">
+                <a href="#">Post a comment &rarr;</a>
+              </p>
+              <form method="POST" id="newcomment">
+                <div class="hidden">
+                  <input type="hidden" name="form.id" value="newcomment"/>
+                  {{ commentform.hidden_tag() }}
+                  {{ commentform.reply_to_id() }}
+                  {{ commentform.edit_id() }}
+                </div>
+                <p>
+                  {{ commentform.message() }}
+                </p>
+                <p>
+                  <input id="comment-submit" type="submit" value="Post comment"/>
+                </p>
+              </form>
+              <form method="POST" id="delcomment" class="hidden">
+                <div class="hidden">
+                  <input type="hidden" name="form.id" value="delcomment"/>
+                  {{ delcommentform.hidden_tag() }}
+                  {{ delcommentform.comment_id() }}
+                </div>
+                <p>
+                  Really delete this comment?
+                  <input id="comment-delete-submit" type="submit" value="Delete"/>
+                  or <a id="comment-delete-cancel" href="#">cancel</a>
+                </p>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="span2">
+    <div class="span3">
       <div class="row">
         <div class="span1 pager-nav">
           {%- if project.getprev() -%}
@@ -45,7 +110,7 @@
             <span class="disabled"><i class="icon-chevron-left"></i></span>
           {%- endif -%}
         </div>
-        <div class="span1 pager-nav">
+        <div class="span1 pager-nav pull-right">
           {%- if project.getnext() -%}
             <a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=project.getnext().url_name) }}" title="Next"><i class="icon-chevron-right"></i></a>
           {%- else -%}
@@ -53,72 +118,43 @@
           {%- endif -%}
         </div>
       </div>
-      {% if project.owner_is(g.user) %}
-        <div class="row">
-          <div class="span2 centered"><a class="btn" href="{{ url_for('project_edit', profile=profile.name, event=event.name, project=project.url_name) }}">Edit</a></div>
-        </div>
-      {% endif %}
-      {% if g.user and g.user not in project.users %}
-        <div class="row">
-          <div class="span2 centered"><a class="btn" href="{{ url_for('project_join', profile=profile.name, event=event.name, project=project.url_name) }}">Join</a></div>
-        </div>
-      {% endif %}
-    </div>
-  </div>
-  <ul class="userset row">
-    {% for user in project.users %}
-      <li class="span2">
-        <a href="{{ url_for('profile_view', profile=user.profile.name) }}"><i class="icon-user"></i><br>{{ user.fullname }}</a>
-      </li>
-    {% endfor %}
-  </ul>
+      
+      <ul class="well nav nav-list">
 
+        {% if project.owner_is(g.user) %}
+          <li class="nav-header">Manage Project</li>
+          <li>
+            <span class="icon-pencil"><a href="{{ url_for('project_edit', profile=profile.name, event=event.name, project=project.url_name) }}">Edit Details</a></span>
+          </li>
+          <li>
+            <span class="icon-delete"><a href="{{ url_for('project_edit', profile=profile.name, event=event.name, project=project.url_name) }}">Edit Details</a></span>
+          </li>
+        {% endif %}
+        {% if g.user and g.user not in project.users %}
+          <li>
+            <span class="icon-signin"><a href="{{ url_for('project_join', profile=profile.name, event=event.name, project=project.url_name) }}">Join</a></span>
+          </li>
+        {% endif %}
+        <li class="nav-header">Project Created by</li>
+        <li><span class="icon-user"><a href="{{ url_for('profile_view', profile=project.user.profile.name) }}">{{ project.user.fullname }}</a></span></li>
 
-  <div class="section">
-    <h2 id="comments">Comments</h2>
-    {% if comments %}
-      <ul class="comments">
-        {{ commenttree(comments, project, g.user, request.base_url) }}
       </ul>
-    {% endif %}
-    {% if not g.user -%}
-      <p>
-        <a href="{{ url_for('login') }}">Login with Twitter or Google to leave a comment &rarr;</a>
-      </p>
-    {% else -%}
-      <p id="toplevel-comment" class="hidden">
-        <a href="#">Post a comment &rarr;</a>
-      </p>
-      <form method="POST" id="newcomment">
-        <div class="hidden">
-          <input type="hidden" name="form.id" value="newcomment"/>
-          {{ commentform.hidden_tag() }}
-          {{ commentform.reply_to_id() }}
-          {{ commentform.edit_id() }}
+      <!--<div class="source-files">
+        <div class="row">
+          <div class="span1">
+            <i class="icon-github icon-4x"></i>
+          </div>
+          <div class="span2 source-details">
+            <ul class="nav nav-list">
+              <li class="nav-header">Find Source Files Here..</li>
+              <li><a href="#">{{ event.title }}</a></li>
+            </ul>
+          </div>
         </div>
-        <p>
-          {{ commentform.message() }}
-        </p>
-        <p>
-          <input id="comment-submit" type="submit" value="Post comment"/>
-        </p>
-      </form>
-      <form method="POST" id="delcomment" class="hidden">
-        <div class="hidden">
-          <input type="hidden" name="form.id" value="delcomment"/>
-          {{ delcommentform.hidden_tag() }}
-          {{ delcommentform.comment_id() }}
-        </div>
-        <p>
-          Really delete this comment?
-          <input id="comment-delete-submit" type="submit" value="Delete"/>
-          or <a id="comment-delete-cancel" href="#">cancel</a>
-        </p>
-      </form>
-    {% endif %}
+      </div>-->
+    </div>
+    
   </div>
-</div>
-
 
 {% endblock %}
 

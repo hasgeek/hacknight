@@ -50,6 +50,7 @@ def sponsor_edit(profile, event, sponsor):
         form = SponsorForm(obj=sponsor)
         if form.validate_on_submit():
             form.populate_obj(sponsor)
+            sponsor.make_name()
             db.session.commit()
             flash(u"Your changes have been saved", 'success')
             return render_redirect(url_for('sponsor_view',
