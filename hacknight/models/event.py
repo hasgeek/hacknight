@@ -112,4 +112,3 @@ class Event(BaseScopedNameMixin, db.Model):
             return url_for('event_export', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'send_email':
             return url_for('event_send_email', profile=self.profile.name, event=self.name, _external=_external)
-
