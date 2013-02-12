@@ -21,7 +21,7 @@
                 </em>
                 <ul>
                   {%- for project in projects -%}
-                    <li class="project-num{{ project.url_id}}"><a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=project.url_name) }}" title="{{ project.title }}"> </a></li>
+                    <li class="project-color-tab project-num{{ project.url_id}}"><a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=project.url_name) }}" title="{{ project.title }}"> </a></li>
                   {% endfor -%}
                 
                 </ul>
@@ -49,13 +49,6 @@
         <h1>{{ self.title() }}</h1>
       </div>
       {{ event.description|safe }}
-      <h3 class="h3-title"> Accepted Participants</h3>
-      {{ participant_list(event, accepted_participants) }}
-      <br />
-      {% if rest_participants %}
-        <h3 class="h3-title">Other Participants</h3>
-        {{ participant_list(event, rest_participants) }}
-      {% endif %}
     </div>
     <div class="span3">
       <ul class="well nav nav-list">
@@ -114,45 +107,59 @@
 
 
   </div>
-  <hr />
-  <h3 class="h3-title"> Projects</h3>
-  <div class="project-cards">
-    <ul class="cardset light-bg row">
-      {% for p in projects %}
-        <li class="span3">
-          <a class="project-num{{ p.url_id}}" href="{{ url_for('project_view', profile=profile.name, event=event.name, project=p.url_name) }}">
-            <div class="card-title">
-              <h2>{{ p.title }}</h2>
-            </div>
-            <div class="member-count">
-              {% if p.members | length == 1 %}
-                1 member
-              {% elif p.members | length == 0 %}
-                No members yet
-              {% else %}
-                {{ p.members | length }} members
-              {%- endif %}
-            </div>
-            <div class="card-body">
-              {{ p.blurb }}
-            </div>
-          </a>
-        </li>
-      {% endfor %}
-      <div class="mob-seperator">
-        <br />
-      </div>
-      {% if current_participant.status == 2 %}
-        <li class="span3">
-          <a href="{{ url_for('project_new', profile=profile.name, event=event.name) }}">
-            <div class="card-title new-project">
-              <h2>New project...</h2>
-            </div>
-            <div class="card-body large-plus"><i class="icon-plus"></i></div>
-          </a>
-        </li>
+  <ul class="nav nav-tabs nav-tabs-auto">
+    <li><a href="#participants" data-toggle="tab">Participants</a></li>
+    <li><a href="#projects" data-toggle="tab">Projects</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane" id="participants">
+      {{ participant_list(event, accepted_participants) }}
+      <br />
+      {% if rest_participants %}
+        <h3 class="h3-title">Other Participants</h3>
+        {{ participant_list(event, rest_participants) }}
       {% endif %}
-    </ul>
+    </div>
+    <div class="tab-pane" id="projects">
+      <div class="project-cards">
+        <ul class="cardset light-bg row">
+          {% for p in projects %}
+            <li class="span3">
+              <a class="project-num{{ p.url_id}}" href="{{ url_for('project_view', profile=profile.name, event=event.name, project=p.url_name) }}">
+                <div class="card-title">
+                  <h2>{{ p.title }}</h2>
+                </div>
+                <div class="member-count">
+                  {% if p.members | length == 1 %}
+                    1 member
+                  {% elif p.members | length == 0 %}
+                    No members yet
+                  {% else %}
+                    {{ p.members | length }} members
+                  {%- endif %}
+                </div>
+                <div class="card-body">
+                  {{ p.blurb }}
+                </div>
+              </a>
+            </li>
+          {% endfor %}
+          <div class="mob-seperator">
+            <br />
+          </div>
+          {% if current_participant.status == 2 %}
+            <li class="span3">
+              <a href="{{ url_for('project_new', profile=profile.name, event=event.name) }}">
+                <div class="card-title new-project">
+                  <h2>New project...</h2>
+                </div>
+                <div class="card-body large-plus"><i class="icon-plus"></i></div>
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
   </div>
   {% if event.venue.latitude and event.venue.longitude %}
     <div id="map" class="event-map"></div>

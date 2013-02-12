@@ -27,6 +27,19 @@ body
   //background-image: image-url('efingo_footer_bg.jpg')
   color: $font-color
 
+.nav-tabs
+  border-bottom: 1px solid #242c33
+
+.nav-tabs > li > a, .nav-tabs > li > a:hover
+  color: rgb(153, 153, 153)
+
+.nav-tabs > li > a:hover
+  border: 1px solid #242c33
+
+.nav-tabs > .active > a, .nav-tabs > .active > a:hover
+  background-color: rgba(0, 0, 0, 0.1)
+  color: rgb(153, 153, 153)
+  border: 1px solid #242c33
 
 #hg-bar.hg-dark
   background-color: #000
@@ -165,7 +178,8 @@ $class-slug: project-num !default
 @for $i from 1 through 60
   .#{$class-slug}#{$i}
     list-style-type: none
-    display: box
+    display: block
+    position: relative
     margin: 1px
     height: 8px
     width: 15px
@@ -173,6 +187,12 @@ $class-slug: project-num !default
     //background-color: #B0603D
     a
       color: #BB894D
+      display: block
+      position: absolute
+      top: 0
+      left: 0
+      right: 0
+      bottom: 0
 
 @for $j from 1 through 60
   .#{$class-slug}#{$j}
@@ -571,7 +591,7 @@ input, textarea, select, .uneditable-input
   .dot
     padding-left: 3px
     padding-right: 6px
-    color: #000
+    color: #a1a4a9
     text-shadow: none
   .commenter-name
     text-shadow: 1px 1px #282828
@@ -617,7 +637,7 @@ input, textarea, select, .uneditable-input
   .com-footer
     a,i
       font-size: 12px
-      color: #000
+      color: #a1a4a9
       text-shadow: none
 
     a:hover

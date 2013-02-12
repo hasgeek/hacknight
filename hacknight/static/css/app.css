@@ -15,8 +15,26 @@
 
 body {
   background-color: #323a40;
-  background-image: url('../img/bg.png?1358827010');
+  background-image: url('../img/bg.png?1360494213');
   color: #aaaaaa;
+}
+
+.nav-tabs {
+  border-bottom: 1px solid #242c33;
+}
+
+.nav-tabs > li > a, .nav-tabs > li > a:hover {
+  color: #999999;
+}
+
+.nav-tabs > li > a:hover {
+  border: 1px solid #242c33;
+}
+
+.nav-tabs > .active > a, .nav-tabs > .active > a:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #999999;
+  border: 1px solid #242c33;
 }
 
 #hg-bar.hg-dark {
@@ -29,7 +47,7 @@ body {
   width: 100%;
   border-bottom: 1px solid #222426;
   background-color: black;
-  background-image: url('../img/black_bg.png?1358664271');
+  background-image: url('../img/black_bg.png?1360494213');
   opacity: 0.95;
   padding-top: 50px;
   -moz-box-shadow: 0 0 5px #222222;
@@ -45,7 +63,7 @@ body {
   width: 100%;
   border-bottom: 1px solid #222426;
   background-color: black;
-  background-image: url('../img/black_bg.png?1358664271');
+  background-image: url('../img/black_bg.png?1360494213');
   opacity: 0.9;
   padding-top: 18px;
 }
@@ -131,7 +149,7 @@ hr {
 }
 
 .participant {
-  background-image: url('../img/black_bg.png?1358664271');
+  background-image: url('../img/black_bg.png?1360494213');
   background-color: black;
   margin-bottom: 10px;
   display: box;
@@ -177,7 +195,8 @@ hr {
 
 .project-num1 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -185,11 +204,18 @@ hr {
 }
 .project-num1 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num2 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -197,11 +223,18 @@ hr {
 }
 .project-num2 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num3 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -209,11 +242,18 @@ hr {
 }
 .project-num3 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num4 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -221,11 +261,18 @@ hr {
 }
 .project-num4 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num5 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -233,11 +280,18 @@ hr {
 }
 .project-num5 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num6 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -245,11 +299,18 @@ hr {
 }
 .project-num6 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num7 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -257,11 +318,18 @@ hr {
 }
 .project-num7 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num8 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -269,11 +337,18 @@ hr {
 }
 .project-num8 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num9 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -281,11 +356,18 @@ hr {
 }
 .project-num9 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num10 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -293,11 +375,18 @@ hr {
 }
 .project-num10 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num11 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -305,11 +394,18 @@ hr {
 }
 .project-num11 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num12 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -317,11 +413,18 @@ hr {
 }
 .project-num12 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num13 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -329,11 +432,18 @@ hr {
 }
 .project-num13 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num14 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -341,11 +451,18 @@ hr {
 }
 .project-num14 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num15 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -353,11 +470,18 @@ hr {
 }
 .project-num15 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num16 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -365,11 +489,18 @@ hr {
 }
 .project-num16 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num17 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -377,11 +508,18 @@ hr {
 }
 .project-num17 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num18 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -389,11 +527,18 @@ hr {
 }
 .project-num18 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num19 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -401,11 +546,18 @@ hr {
 }
 .project-num19 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num20 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -413,11 +565,18 @@ hr {
 }
 .project-num20 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num21 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -425,11 +584,18 @@ hr {
 }
 .project-num21 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num22 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -437,11 +603,18 @@ hr {
 }
 .project-num22 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num23 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -449,11 +622,18 @@ hr {
 }
 .project-num23 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num24 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -461,11 +641,18 @@ hr {
 }
 .project-num24 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num25 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -473,11 +660,18 @@ hr {
 }
 .project-num25 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num26 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -485,11 +679,18 @@ hr {
 }
 .project-num26 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num27 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -497,11 +698,18 @@ hr {
 }
 .project-num27 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num28 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -509,11 +717,18 @@ hr {
 }
 .project-num28 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num29 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -521,11 +736,18 @@ hr {
 }
 .project-num29 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num30 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -533,11 +755,18 @@ hr {
 }
 .project-num30 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num31 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -545,11 +774,18 @@ hr {
 }
 .project-num31 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num32 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -557,11 +793,18 @@ hr {
 }
 .project-num32 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num33 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -569,11 +812,18 @@ hr {
 }
 .project-num33 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num34 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -581,11 +831,18 @@ hr {
 }
 .project-num34 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num35 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -593,11 +850,18 @@ hr {
 }
 .project-num35 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num36 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -605,11 +869,18 @@ hr {
 }
 .project-num36 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num37 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -617,11 +888,18 @@ hr {
 }
 .project-num37 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num38 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -629,11 +907,18 @@ hr {
 }
 .project-num38 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num39 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -641,11 +926,18 @@ hr {
 }
 .project-num39 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num40 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -653,11 +945,18 @@ hr {
 }
 .project-num40 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num41 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -665,11 +964,18 @@ hr {
 }
 .project-num41 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num42 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -677,11 +983,18 @@ hr {
 }
 .project-num42 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num43 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -689,11 +1002,18 @@ hr {
 }
 .project-num43 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num44 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -701,11 +1021,18 @@ hr {
 }
 .project-num44 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num45 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -713,11 +1040,18 @@ hr {
 }
 .project-num45 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num46 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -725,11 +1059,18 @@ hr {
 }
 .project-num46 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num47 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -737,11 +1078,18 @@ hr {
 }
 .project-num47 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num48 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -749,11 +1097,18 @@ hr {
 }
 .project-num48 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num49 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -761,11 +1116,18 @@ hr {
 }
 .project-num49 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num50 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -773,11 +1135,18 @@ hr {
 }
 .project-num50 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num51 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -785,11 +1154,18 @@ hr {
 }
 .project-num51 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num52 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -797,11 +1173,18 @@ hr {
 }
 .project-num52 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num53 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -809,11 +1192,18 @@ hr {
 }
 .project-num53 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num54 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -821,11 +1211,18 @@ hr {
 }
 .project-num54 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num55 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -833,11 +1230,18 @@ hr {
 }
 .project-num55 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num56 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -845,11 +1249,18 @@ hr {
 }
 .project-num56 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num57 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -857,11 +1268,18 @@ hr {
 }
 .project-num57 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num58 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -869,11 +1287,18 @@ hr {
 }
 .project-num58 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num59 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -881,11 +1306,18 @@ hr {
 }
 .project-num59 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num60 {
   list-style-type: none;
-  display: box;
+  display: block;
+  position: relative;
   margin: 1px;
   height: 8px;
   width: 15px;
@@ -893,6 +1325,12 @@ hr {
 }
 .project-num60 a {
   color: #bb894d;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .project-num1 {
@@ -1229,7 +1667,7 @@ input, textarea, select, .uneditable-input {
 .source-files {
   width: 100%;
   height: auto;
-  background-image: url('../img/black_bg.png?1358664271');
+  background-image: url('../img/black_bg.png?1360494213');
   margin-top: 30px;
 }
 .source-files .nav > li > a {
@@ -1283,7 +1721,7 @@ input, textarea, select, .uneditable-input {
   height: 100%;
   padding: 0 14px 9px;
   background-color: black;
-  background-image: url('../img/black_bg.png?1358664271');
+  background-image: url('../img/black_bg.png?1360494213');
   color: inherit;
 }
 .cardset li a:hover, .userset li a:hover {
@@ -1690,7 +2128,7 @@ input, textarea, select, .uneditable-input {
 .comment .dot {
   padding-left: 3px;
   padding-right: 6px;
-  color: black;
+  color: #a1a4a9;
   text-shadow: none;
 }
 .comment .commenter-name {
@@ -1741,7 +2179,7 @@ input, textarea, select, .uneditable-input {
 }
 .comment .com-footer a, .comment .com-footer i {
   font-size: 12px;
-  color: black;
+  color: #a1a4a9;
   text-shadow: none;
 }
 .comment .com-footer a:hover {
@@ -1757,7 +2195,7 @@ textarea {
 }
 
 .pager-nav {
-  background-image: url('../img/black_bg.png?1358664271');
+  background-image: url('../img/black_bg.png?1360494213');
   border-radius: 30px;
   width: 46px;
   margin-bottom: 10px;
