@@ -66,4 +66,3 @@ def lastuser_error(error, error_description=None, error_uri=None):
                     u"Description: %s\n"
                     u"URI: %s" % (error, error_description, error_uri),
                     mimetype="text/plain")
-

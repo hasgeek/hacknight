@@ -44,9 +44,9 @@ def project_new(profile, event, form=None):
         db.session.add(project_member)
         db.session.commit()
         flash("Project saved")
-        return render_redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
+        return render_redirect(project.url_for())
     return render_form(form=form, title=u"New Project", submit=u"Save",
-        cancel_url=url_for('event_view', profile=profile.name, event=event.name), ajax=False)
+        cancel_url=event.url_for(), ajax=False)
 
 
 @app.route('/<profile>/<event>/projects/<project>/edit', methods=['GET', 'POST'])
@@ -68,11 +68,9 @@ def project_edit(profile, project, event):
             project.make_name()
             db.session.commit()
             flash(u"Your changes have been saved", 'success')
-            return render_redirect(url_for('project_view', profile=profile.name, event=event.name,
-                project=project.url_name), code=303)
+            return render_redirect(project.url_for(), code=303)
         return render_form(form=form, title=u"Edit project", submit=u"Save",
-            cancel_url=url_for('project_view', profile=profile.name, event=event.name,
-                project=project.url_name), ajax=False)
+            cancel_url=project.url_for(), ajax=False)
 
 
 @app.route('/<profile>/<event>/projects/<project>/delete', methods=["GET", "POST"])
@@ -103,14 +101,16 @@ def project_delete(profile, project, event):
             db.session.delete(project)
             db.session.commit()
             flash("Project removed", "success")
-            return render_redirect(url_for('event_view', profile=profile.name, event=event.name), code=303)
+            return render_redirect(event.url_for(), code=303)
+        elif 'cancel' in request.form:
+            return render_redirect(project.url_for(), code=303)
     return render_template('baseframe/delete.html', form=form, title=u"Confirm delete",
         message=u"Delete '%s' ? It will remove comments, votes and all information related to the project. This operation cannot be undone." % (project.title))
 
 
 @app.route('/<profile>/<event>/projects', methods=["GET", "POST"])
 def projects(profile, event):
-    return redirect(url_for('event_view', profile=profile, event=event))
+    return redirect(event.url_for())
 
 
 @app.route('/<profile>/<event>/projects/<project>', methods=["GET", "POST"])
@@ -210,14 +210,13 @@ def project_view(profile, event, project):
                 db.session.add(comment)
                 flash("Your comment has been posted", "info")
             db.session.commit()
-            link = url_for('project_view', profile=profile.name, event=event.name,
-                project=project.url_name, _external=True) + "#c" + str(comment.id)
+            link = project.url_for("view", _external=True) + "#c" + str(comment.id)
             for item in send_email_info:
                 email_body = render_template(item.pop('template'), project=project, comment=comment, link=link)
                 send_email(sender=None, html=markdown(email_body), body=email_body, **item)
             # Redirect despite this being the same page because HTTP 303 is required to not break
             # the browser Back button
-            return redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
+            return redirect(project.url_for())
 
         elif request.form.get('form.id') == 'delcomment' and delcommentform.validate():
             comment = commentspace.get_comment(int(delcommentform.comment_id.data))
@@ -231,7 +230,7 @@ def project_view(profile, event, project):
                     flash("You did not post that comment.", "error")
             else:
                 flash("No such comment.", "error")
-            return redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
+            return redirect(project.url_for())
     return render_template('project.html', event=event, project=project, profile=profile,
         comments=comments, commentform=commentform, delcommentform=delcommentform,
         breadcrumbs=[(url_for('index'), "home")], user_is_member=user_is_member)
@@ -251,7 +250,7 @@ def project_voteup(profile, project, event):
     project.votes.vote(g.user, votedown=False)
     db.session.commit()
     flash("Your vote has been recorded", "info")
-    return redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
+    return redirect(project.url_for())
 
 
 # FIXME: This voting method uses GET but makes db changes. Not correct. Should be POST
@@ -269,7 +268,7 @@ def project_votedown(profile, event, project):
     project.votes.vote(g.user, votedown=True)
     db.session.commit()
     flash("Your vote has been recorded", "info")
-    return redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
+    return redirect(project.url_for())
 
 
 # FIXME: This voting method uses GET but makes db changes. Not correct. Should be POST
@@ -287,7 +286,7 @@ def project_cancelvote(profile, project, event):
     project.votes.cancelvote(g.user)
     db.session.commit()
     flash("Your vote has been withdrawn", "info")
-    return redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
+    return redirect(project.url_for(), code=302)
 
 
 @app.route('/<profile>/<event>/projects/<project>/comments/<int:cid>/voteup')
@@ -307,7 +306,7 @@ def voteupcomment(profile, project, event, comment):
     comment.votes.vote(g.user, votedown=False)
     db.session.commit()
     flash("Your vote has been recorded", "info")
-    return redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
+    return redirect(project.url_for(), code=302)
 
 
 # FIXME: This voting method uses GET but makes db changes. Not correct. Should be POST
@@ -328,7 +327,7 @@ def votedowncomment(profile, project, event, comment):
     comment.votes.vote(g.user, votedown=True)
     db.session.commit()
     flash("Your vote has been recorded", "info")
-    return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
+    return redirect(project.url_for(), code=302)
 
 
 @app.route('/<profile>/<event>/projects/<project>/comments/<int:cid>/json')
@@ -370,7 +369,7 @@ def votecancelcomment(profile, project, event, comment):
     comment.votes.cancelvote(g.user)
     db.session.commit()
     flash("Your vote has been withdrawn", "info")
-    return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
+    return redirect(project.url_for(), code=302)
 
 
 @app.route('/<profile>/<event>/projects/<project>/next')
@@ -386,10 +385,10 @@ def nextsession(profile, project, event):
 
     next = project.getnext()
     if next:
-        return redirect(url_for('project_view',profile=profile.name, project=next.url_name, event=event.name))
+        return redirect(project.url_for(), code=302)
     else:
         flash("You were at the last project", "info")
-        return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
+        return redirect(project.url_for(), code=302)
 
 
 @app.route('/<profile>/<event>/projects/<project>/prev')
@@ -405,10 +404,10 @@ def prevsession(profile, project, event):
 
     prev = project.getprev()
     if prev:
-        return redirect(url_for('project_view',profile=profile.name, project=prev.url_name, event=event.name))
+        return redirect(project.url_for(), code=302)
     else:
         flash("You were at the first project", "info")
-        return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
+        return redirect(project.url_for(), code=302)
 
 
 @app.route('/<profile>/<event>/projects/<project>/join')
@@ -421,7 +420,7 @@ def project_join(profile, project, event):
     participant = Participant.query.filter_by(user=g.user, event=event, status=PARTICIPANT_STATUS.CONFIRMED).first()
     if participant==None:
         flash("You need to be a confirmed participant to join this team.", "fail")
-        return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
+        return redirect(project.url_for(), code=302)
     elif ProjectMember.query.filter_by(project_id=project.id, user=g.user).first():
         flash("You are already part of this team!", "fail")
     else:
@@ -449,14 +448,14 @@ def project_leave(profile, project, event):
         if member:
             if member.user_id == project.user_id:
                 flash("You are owner of the project, you can't leave the project", "fail")
-            else:
+            elif 'delete' in request.form:
                 db.session.delete(member)
                 db.session.commit()
                 flash("You are no more part of this team!", "success")
         else:
             flash("You need to be a participant to leave this team.", "fail")
-        return redirect(url_for('project_view',profile=profile.name, project=project.url_name, event=event.name))
-    return render_template('baseframe/delete.html', form=form, title=u"Confirm delete",
+        return redirect(project.url_for(), code=303)
+    return render_template('baseframe/delete.html', form=form, title=u"Confirm remove",
         message=u"Leave project '%s'? It will remove your participation from this project. This operation cannot be undone." % (project.title))
 
 
@@ -509,4 +508,4 @@ def project_member_remove(profile, project, event, project_user, project_member)
     return render_delete_sqla(project_member, db, title=u"Confirm remove",
                 message=u"Remove Project Member '%s'? This cannot be undone." % project_user.username,
                 success=u"You have removed Project Member '%s'." % project_user.username,
-                next=url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
+                next=project.url_for())
