@@ -23,7 +23,7 @@
       <div class=""> 
 
         <div class="left-box">
-          <a href="{{ url_for('profile_view', profile=comment.user.profile.name) }}">
+          <a href="{{ comment.user.profile.url_for() }}">
             <div class="commenter-img">
               <i class="icon-user icon-3x"></i>
             </div><!-- /commenter-img -->
@@ -35,7 +35,7 @@
             {% if comment.is_deleted -%}
               <span class="commenter">[deleted]</span>
             {%- else -%}
-              <span class="commenter {%- if comment.user == document.user %} selected{% endif %}"><a class="commenter-name" href="{{ url_for('profile_view', profile=comment.user.profile.name) }}">{{ comment.user.fullname }}</a></span>
+              <span class="commenter {%- if comment.user == document.user %} selected{% endif %}"><a class="commenter-name" href="{{ comment.user.profile.url_for() }}">{{ comment.user.fullname }}</a></span>
 
               {% if comment.reply_to %} <i class="icon-share-alt"></i>{{ comment.reply_to.user.fullname }} {% endif %}
 

@@ -27,11 +27,9 @@ def sponsor_new(profile, event, form=None):
         db.session.add(sponsor)
         db.session.commit()
         flash("Sponsor added")
-        return render_redirect(url_for('event_view', profile=profile.name,
-        event=event.name), code=303)
+        return render_redirect(event.url_for(), code=303)
     return render_form(form=form, title=u"New Sponsor", submit=u"Save",
-        cancel_url=url_for('event_view', profile=profile.name,
-            event=event.name), ajax=False)
+        cancel_url=event.url_for(), ajax=False)
 
 
 @app.route('/<profile>/<event>/sponsors/<sponsor>/edit',
@@ -53,11 +51,9 @@ def sponsor_edit(profile, event, sponsor):
             sponsor.make_name()
             db.session.commit()
             flash(u"Your changes have been saved", 'success')
-            return render_redirect(url_for('sponsor_view',
-                profile=profile.name, event=event.name, sponsor=sponsor.name), code=303)
+            return render_redirect(sponsor.url_for(), code=303)
         return render_form(form=form, title=u"Edit sponsor", submit=u"Save",
-            cancel_url=url_for('sponsor_view', profile=profile.name, event=event.name,
-                sponsor=sponsor.name), ajax=True)
+            cancel_url=sponsor.url_for(), ajax=True)
 
 
 @app.route('/<profile>/<event>/sponsors/<sponsor>/delete', methods=["GET", "POST"])
@@ -74,7 +70,7 @@ def sponsor_delete(profile, event, sponsor):
     return render_delete_sqla(sponsor, db, title=u"Confirm delete",
         message=u"Delete Sponsor '%s'? This cannot be undone." % sponsor.title,
         success=u"You have deleted the sponsor '%s'." % sponsor.title,
-         next=url_for('event_view', profile=profile.name, event=event.name))
+         next=event.url_for())
 
 
 @app.route('/<profile>/<event>/sponsors/<sponsor>', methods=['GET', 'POST'])

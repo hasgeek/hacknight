@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from flask import url_for
 from hacknight.models import db, BaseNameMixin, BaseScopedNameMixin
 
 __all__ = ['Profile', 'Event', 'EVENT_STATUS', 'PROFILE_TYPE']
@@ -40,6 +41,12 @@ class Profile(BaseNameMixin, db.Model):
 
     def type_label(self):
         return profile_types.get(self.type, profile_types[0])
+
+    def url_for(self, action='view', _external=True):
+        if action == 'view':
+            return url_for('profile_view', profile=self.name, _external=_external)
+        elif action == 'new-event':
+            return url_for('event_new', profile=self.name, _external=_external)
 
 
 class Event(BaseScopedNameMixin, db.Model):
@@ -85,3 +92,23 @@ class Event(BaseScopedNameMixin, db.Model):
             perms.add('delete')
             perms.add('send-email')
         return perms
+
+    def url_for(self, action='view', _external=False):
+        if action == 'view':
+            return url_for('event_view', profile=self.profile.name, event=self.name, _external=_external)
+        elif action == 'edit':
+            return url_for('event_edit', profile=self.profile.name, event=self.name, _external=_external)
+        elif action == 'delete':
+            return url_for('event_delete', profile=self.profile.name, event=self.name, _external=_external)
+        elif action == 'new-project':
+            return url_for('project_new', profile=self.profile.name, event=self.name, _external=_external)
+        elif action == 'apply':
+            return url_for('event_apply', profile=self.profile.name, event=self.name, _external=_external)
+        elif action == 'withdraw':
+            return url_for('event_withdraw', profile=self.profile.name, event=self.name, _external=_external)
+        elif action == 'open':
+            return url_for('event_open', profile=self.profile.name, event=self.name, _external=_external)
+        elif action == 'export':
+            return url_for('event_export', profile=self.profile.name, event=self.name, _external=_external)
+        elif action == 'send_email':
+            return url_for('event_send_email', profile=self.profile.name, event=self.name, _external=_external)

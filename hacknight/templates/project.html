@@ -11,29 +11,29 @@
         <div class="span1 centered voting">
           {%- with vote = project.votes.getvote(g.user) %}
           {%- if not vote -%}
-            <a class="votechoice" title="Vote up" href="{{ url_for('project_voteup', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-up"></i></a>
+            <a class="votechoice" title="Vote up" href="{{ project.url_for('voteup') }}"><i class="icon-caret-up"></i></a>
 
             <div class="votecount">{% if project.votes.count > 0 %}+{% endif %}{{ project.votes.count }}</div>
 
-            <a class="votechoice" title="Vote down" href="{{ url_for('project_votedown', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-down"></i></a>
+            <a class="votechoice" title="Vote down" href="{{ project.url_for('votedown') }}"><i class="icon-caret-down"></i></a>
           {%- elif vote.votedown -%}
-            <a class="votechoice" title="Vote up" href="{{ url_for('project_voteup', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-up"></i></a>
+            <a class="votechoice" title="Vote up" href="{{ project.url_for('voteup') }}"><i class="icon-caret-up"></i></a>
 
             <div class="votecount">{% if project.votes.count > 0 %}+{% endif %}{{ project.votes.count }}</div>
 
-            <a class="votechoice selected" title="Vote down" href="{{ url_for('project_cancelvote', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-down"></i></a>
+            <a class="votechoice selected" title="Vote down" href="{{ project.url_for('cancelvote') }}"><i class="icon-caret-down"></i></a>
           {%- else -%}
-            <a class="votechoice selected" title="Vote up" href="{{ url_for('project_cancelvote', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-up"></i></a>
+            <a class="votechoice selected" title="Vote up" href="{{ project.url_for('cancelvote') }}"><i class="icon-caret-up"></i></a>
 
             <div class="votecount">{% if project.votes.count > 0 %}+{% endif %}{{ project.votes.count }}</div>
             
-            <a class="votechoice" title="Vote down" href="{{ url_for('project_votedown', profile=profile.name, event=event.name, project=project.url_name) }}"><i class="icon-caret-down"></i></a>
+            <a class="votechoice" title="Vote down" href="{{ project.url_for('votedown') }}"><i class="icon-caret-down"></i></a>
           {%- endif -%}
           {% endwith %}
         </div>
         <div class="span8">
           <div class="page-header">
-            <h3><a href="{{ url_for('profile_view', profile=profile.name) }}">{{ profile.title }}</a><i class="icon-caret-right"></i><a href="{{ url_for('event_view', profile=profile.name, event=event.name) }}">{{ event.title }}</a><i class="icon-caret-right"></i></h3>
+            <h3><a href="{{ profile.url_for() }}">{{ profile.title }}</a><i class="icon-caret-right"></i><a href="{{ event.url_for('view') }}">{{ event.title }}</a><i class="icon-caret-right"></i></h3>
             <h1>{{ project.title }}</h1>
           </div>
           <div class="text">{{ project.description|safe }}</div>
@@ -46,7 +46,7 @@
           <ul class="userset row">
             {% for user in project.users %}
               <li class="span2">
-                <a href="{{ url_for('profile_view', profile=user.profile.name) }}"><i class="icon-user"></i><br>{{ user.fullname }}</a>
+                <a href="{{ profile.url_for() }}"><i class="icon-user"></i><br>{{ user.fullname }}</a>
               </li>
             {% endfor %}
           </ul>
@@ -105,14 +105,14 @@
       <div class="row">
         <div class="span1 pager-nav">
           {%- if project.getprev() -%}
-            <a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=project.getprev().url_name) }}" title="Previous"><i class="icon-chevron-left"></i></a>
+            <a href="{{ project.url_for('prev') }}" title="Previous"><i class="icon-chevron-left"></i></a>
           {%- else -%}
             <span class="disabled"><i class="icon-chevron-left"></i></span>
           {%- endif -%}
         </div>
         <div class="span1 pager-nav pull-right">
           {%- if project.getnext() -%}
-            <a href="{{ url_for('project_view', profile=profile.name, event=event.name, project=project.getnext().url_name) }}" title="Next"><i class="icon-chevron-right"></i></a>
+            <a href="{{ project.url_for('next') }}" title="Next"><i class="icon-chevron-right"></i></a>
           {%- else -%}
             <span class="disabled"><i class="icon-chevron-right"></i></span>
           {%- endif -%}
