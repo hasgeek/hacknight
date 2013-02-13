@@ -39,7 +39,7 @@
 
               {% if comment.reply_to %} <i class="icon-share-alt"></i>{{ comment.reply_to.user.fullname }} {% endif %}
 
-              <span class="dot">.</span>
+              <span class="dot">&middot;</span>
               <span class="com-date">
               {{ comment.created_at.strftime("%a, %b %e") }}
               {%- if comment.edited_at %}
@@ -63,15 +63,15 @@
               </div>
 
               {% if not comment.is_deleted %}
-                <span class="dot">.</span><a title="Reply" class="comment-reply" href="#c{{ comment.url_id }}">reply</a>
+                <span class="dot">&middot;</span><a title="Reply" class="comment-reply" href="#c{{ comment.url_id }}">reply</a>
                 {% if comment.user == currentuser -%}
-                  <span class="dot">.</span><a title="Edit" class="comment-edit" href="#c{{ comment.url_id }}">edit</a>
-                  <span class="dot">.</span><a title="Delete" class="comment-delete" href="#c{{ comment.url_id }}">delete</a>
+                  <span class="dot">&middot;</span><a title="Edit" class="comment-edit" href="#c{{ comment.url_id }}">edit</a>
+                  <span class="dot">&middot;</span><a title="Delete" class="comment-delete" href="#c{{ comment.url_id }}">delete</a>
                 {%- endif %}
               {%- endif %}
 
-              <span class="dot">.</span><a title="Permalink" class="comment-permalink" href="#c{{ comment.url_id }}">link</a>
-              {% if comment.reply_to %}<span class="dot">.</span><a title="Parent" class="comment-parent" href="#c{{ comment.reply_to.url_id }}">parent</a>{% endif %}
+              <span class="dot">&middot;</span><a title="Permalink" class="comment-permalink" href="#c{{ comment.url_id }}">link</a>
+              {% if comment.reply_to %}<span class="dot">&middot;</span><a title="Parent" class="comment-parent" href="#c{{ comment.reply_to.url_id }}">parent</a>{% endif %}
             </div>
           </div>
         </div>

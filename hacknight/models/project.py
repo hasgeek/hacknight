@@ -15,7 +15,7 @@ class Project(BaseScopedIdNameMixin, db.Model):
     __tablename__ = 'project'
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
     event = db.relation(Event,
-        backref=db.backref('projects', cascade='all, delete-orphan'))
+        backref=db.backref('projects', order_by=db.desc('url_id'), cascade='all, delete-orphan'))
     parent = db.synonym('event')
 
     #: User who is part of this project

@@ -211,13 +211,12 @@ def event_withdraw(profile, event):
                 except KeyError:
                     pass
 
-            db.session.commit()
-            flash(u"Your request to withdraw from {0} is recorded".format(event.title), "success")
+                db.session.commit()
+                flash(u"Your request to withdraw from {0} is recorded".format(event.title), "success")
             values = {'profile': profile.name, 'event': event.name}
             return render_redirect(event.url_for(), code=303)
         return render_template('withdraw.html', form=form, title=u"Confirm withdraw",
-            message=u"Withdraw from '%s' ? You can come back anytime." % (event.title),
-            cancel_url=event.url_for())
+            message=u"Withdraw from '%s' ? You can come back anytime." % (event.title))
     else:
         abort(404)
 

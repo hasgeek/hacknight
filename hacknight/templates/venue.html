@@ -28,7 +28,7 @@
 
       var venue_marker = new L.Marker(venue);
       map.addLayer(venue_marker);
-      venue_marker.bindPopup('{{ event.venue.title }}').openPopup();
+      venue_marker.bindPopup('{{ venue.title }}').openPopup();
       map.scrollWheelZoom.disable();
 
       map.on('zoomend', onZoomend);

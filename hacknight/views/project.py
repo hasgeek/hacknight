@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import unicodecsv
 from cStringIO import StringIO
 from datetime import datetime
 from flask import render_template, g, abort, flash, url_for, request, redirect, make_response
@@ -477,13 +478,13 @@ def event_export(profile, event):
         if p.status == PARTICIPANT_STATUS.CONFIRMED:
             writer.writerow({"Ticket Number": p.id,
             "Name": p.user.fullname,
-            "Email": p.email,
+            "Email": p.email or p.user.email,
             "Ticket Type": "Regular",
             "Company": p.company,
             "Job": p.job_title,
             "City": "",
             "Twitter": "",
-            "Tshirt": "",
+            "Tshirt": 0, #tshirt size is integer in peopleflow 
             "Date": p.created_at,
             "Order ID": "",
             "Skill Level": p.skill_level,
