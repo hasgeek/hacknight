@@ -215,7 +215,8 @@ def project_view(profile, event, project):
                 project=project.url_name, _external=True) + "#c" + str(comment.id)
             for item in send_email_info:
                 email_body = render_template(item.pop('template'), project=project, comment=comment, link=link)
-                send_email(sender=None, html=markdown(email_body), body=email_body, **item)
+                if item['to']:
+                    send_email(sender=None, html=markdown(email_body), body=email_body, **item)
             # Redirect despite this being the same page because HTTP 303 is required to not break
             # the browser Back button
             return redirect(url_for('project_view', profile=profile.name, event=event.name, project=project.url_name))
