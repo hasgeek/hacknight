@@ -43,6 +43,6 @@ def profile_edit(profile):
         form.populate_obj(profile)
         db.session.commit()
         flash(u"Edited description for profile", 'success')
-        return render_redirect(profile.url_for(), code=303)
+        return render_redirect(url_for('profile_view', profile=profile.name), code=303)
     return render_form(form=form, title=u"Edit profile", submit=u"Save",
-        cancel_url=profile.url_for(), ajax=True)
+        cancel_url=url_for('profile_view', profile=profile.name), ajax=True)
