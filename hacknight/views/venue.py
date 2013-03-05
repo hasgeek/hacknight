@@ -34,8 +34,8 @@ def venue_new():
         db.session.add(venue)
         db.session.commit()
         flash(u"You have created a new venue", "success")
-        return render_redirect(url_for('venue_view', venue=venue.name), code=303)
-    return render_form(form=form, title="New Venue", submit=u"Create", cancel_url=url_for('venue_list'), ajax=False)
+        return render_redirect(venue.url_for(), code=303)
+    return render_form(form=form, title="New Venue", submit=u"Create", cancel_url=venue.url_for(), ajax=False)
 
 
 @app.route('/venue/<venue>/edit', methods=['GET', 'POST'])
