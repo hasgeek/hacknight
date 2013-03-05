@@ -72,7 +72,7 @@ def event_new(profile):
         flash(u"New event created", "success")
         return render_redirect(url_for('event_view', profile=profile.name, event=event.name), code=303)
     return render_form(form=form, title="New Event", submit=u"Create",
-        cancel_url=profile.url_for(), ajax=False)
+        cancel_url=url_for('profile_view', profile=profile.name), ajax=False)
 
 
 @app.route('/<profile>/<event>/edit', methods=['GET', 'POST'])
@@ -91,9 +91,9 @@ def event_edit(profile, event):
         event.profile_id = profile.id
         db.session.commit()
         flash(u"Your edits to %s are saved" % event.title, "success")
-        return render_redirect(event.url_for(), code=303)
+        return render_redirect(url_for('event_view', event=event.name, profile=profile.name), code=303)
     return render_form(form=form, title="Edit Event", submit=u"Save",
-        cancel_url=event.url_for(), ajax=False)
+        cancel_url=url_for('event_view', event=event.name, profile=profile.name), ajax=False)
 
 
 participant_status_labels = {
@@ -172,7 +172,8 @@ def event_apply(profile, event):
         else:
             return render_form(form=form, message=Markup(event.apply_instructions) if event.apply_instructions else "",
                 title="Participant Details", submit=u"Participate",
-                cancel_url=event.url_for(), ajax=False)
+                cancel_url=url_for('event_view', event=event.name,
+                profile=profile.name), ajax=False)
     # FIXME: Don't change anything unless this is a POST request
     elif participant.status == PARTICIPANT_STATUS.WITHDRAWN:
         participant.status = PARTICIPANT_STATUS.PENDING
@@ -180,7 +181,7 @@ def event_apply(profile, event):
         flash(u"Your request to participate has been recorded; you will be notified by the event manager", "success")
     else:
         flash(u"Your request is pending", "error")
-    return render_redirect(event.url_for(), code=303)
+    return render_redirect(url_for('event_view', **values), code=303)
 
 
 @app.route('/<profile>/<event>/withdraw', methods=['GET', 'POST'])
@@ -214,7 +215,7 @@ def event_withdraw(profile, event):
                 db.session.commit()
                 flash(u"Your request to withdraw from {0} is recorded".format(event.title), "success")
             values = {'profile': profile.name, 'event': event.name}
-            return render_redirect(event.url_for(), code=303)
+            return render_redirect(url_for('event_view', **values), code=303)
         return render_template('withdraw.html', form=form, title=u"Confirm withdraw",
             message=u"Withdraw from '%s' ? You can come back anytime." % (event.title))
     else:
@@ -234,7 +235,7 @@ def event_publish(profile, event):
     db.session.add(event)
     db.session.commit()
     flash(u"You have published the event %s" % event.title, "success")
-    return render_redirect(event.url_for(), code=303)
+    return render_redirect(url_for('event_view', event=event.name, profile=profile.name), code=303)
 
 
 @app.route('/<profile>/<event>/cancel', methods=['GET', 'POST'])
@@ -259,7 +260,7 @@ def event_cancel(profile, event):
     db.session.add(event)
     db.session.commit()
     flash(u"You have cancelled event %s" % event.title, "success")
-    return render_redirect(profile.url_for(), code=303)
+    return render_redirect(url_for('profile_view', profile=profile.name), code=303)
 
 
 @app.route('/<profile>/<event>/delete', methods=['GET', 'POST'])
@@ -274,7 +275,7 @@ def event_delete(profile, event):
     return render_delete_sqla(event, db, title=u"Confirm delete",
         message=u"Delete Event '%s'? This cannot be undone." % event.title,
         success=u"You have deleted an event '%s'." % event.title,
-         next=profile.url_for())
+         next=url_for('profile_view', profile=profile.name))
 
 
 @app.route('/<profile>/<event>/send_email', methods=['GET', 'POST'])
@@ -300,6 +301,6 @@ def event_send_email(profile, event):
                 send_email(sender=(g.user.fullname, g.user.email), to=participant.email, subject=subject, body=text_message, html=message)
                 count += 1
         flash("Your message was sent to %d participant(s)." % count)
-        return render_redirect(event.url_for())
+        return render_redirect(url_for('event_view', profile=profile.name, event=event.name))
     return render_form(form=form, title="Send email to participants",
-            submit=u"Send", cancel_url=event.url_for(), ajax=False)
+            submit=u"Send", cancel_url=url_for('event_view', profile=profile.name, event=event.name), ajax=False)
