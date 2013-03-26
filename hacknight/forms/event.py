@@ -3,7 +3,7 @@
 from flask import Markup
 import flask.ext.wtf as wtf
 from baseframe.forms import Form, RichTextField, DateTimeField, ValidName, AvailableName
-from hacknight.models import Venue
+from hacknight.models import Venue, EVENT_STATUS
 
 __all__ = ['EventForm', 'ConfirmWithdrawForm', 'SendEmailForm']
 
@@ -27,6 +27,9 @@ class EventForm(Form):
     ticket_price = wtf.TextField("Ticket price", description="Entry fee, if any, to be paid at the venue", validators=[wtf.validators.length(max=250)])
     total_participants = wtf.IntegerField("Venue capacity", description="The number of people this venue can accommodate. Registrations will be closed after that. Use 0 to indicate unlimited capacity", default=50, validators=[wtf.Required()])
     website = wtf.TextField("Website", description="Related Website (Optional)", validators=[wtf.Optional(), wtf.validators.length(max=250)])
+    status = wtf.SelectField("Event status", description="Current status of this hacknight", coerce=int,
+        choices=sorted([(EVENT_STATUS.__dict__[key], key) for key in EVENT_STATUS.__dict__ if not key.startswith('__')], key=lambda x: x[0])
+)
 
     def validate_end_datetime(self, field):
         if field.data < self.start_datetime.data:

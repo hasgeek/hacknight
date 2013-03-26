@@ -2,7 +2,7 @@
 
 from flask import render_template
 from hacknight import app
-from hacknight.models.event import Event
+from hacknight.models.event import Event, EVENT_STATUS
 from datetime import datetime
 from pytz import utc
 
@@ -10,8 +10,8 @@ from pytz import utc
 @app.route('/')
 def index():
     # TODO: Filter events by status
-    upcoming_events = Event.query.filter(Event.end_datetime > datetime.utcnow()).order_by(Event.start_datetime.asc()).all()
-    past_events = Event.query.filter(Event.end_datetime < datetime.utcnow()).order_by(Event.end_datetime.desc()).all()
+    upcoming_events = Event.query.filter(Event.end_datetime > datetime.utcnow(), Event.status != EVENT_STATUS.DRAFT, Event.status != EVENT_STATUS.CANCELLED).order_by(Event.start_datetime.asc()).all()
+    past_events = Event.query.filter(Event.end_datetime < datetime.utcnow(), Event.status != EVENT_STATUS.DRAFT, Event.status != EVENT_STATUS.CANCELLED).order_by(Event.end_datetime.desc()).all()
     return render_template('index.html', upcoming_events=upcoming_events, past_events=past_events)
 
 
