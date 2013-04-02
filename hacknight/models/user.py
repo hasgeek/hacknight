@@ -29,4 +29,4 @@ class User(UserBase, db.Model):
             Profile.userid.in_(self.organizations_owned_ids())).order_by('title').all()
 
     def projects_in(self, event):
-        return [project for project in self.projects if project.event == event]
+        return [member.project for member in self.project_memberships if member.project.event == event]
