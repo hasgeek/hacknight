@@ -20,3 +20,12 @@ class VenueForm(Form):
     latitude = wtf.DecimalField("Latitude", places=None, validators=[wtf.Optional(), wtf.NumberRange(-90, 90)])
     longitude = wtf.DecimalField("Longitude", places=None, validators=[wtf.Optional(), wtf.NumberRange(-180, 180)])
     profile_id = wtf.SelectField("Owner", description="The owner of this listing", coerce=int, validators=[wtf.Required()])
+
+
+class FourSquareVenueSearchForm(Form):
+    name = wtf.TextField("Name", validators=[wtf.Required(), wtf.validators.length(max=100)], description="Name of the venue like HasGeek")
+    city =wtf.TextField("City", validators=[wtf.Required(), wtf.validators.length(max=80)], description="Name of the city like Bangalore")
+
+
+class FourSquareVenueAddForm(FourSquareVenueSearchForm):
+    venues = wtf.SelectMultipleField("Select Venue to Add", coerce=int, description="You can select more than one venue from drop down list")

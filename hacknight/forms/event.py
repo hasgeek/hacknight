@@ -19,7 +19,7 @@ class EventForm(Form):
     apply_instructions = RichTextField("Instructions for participants", description="This will be shown to participants on the hacknight joining form",
         content_css="/static/css/editor.css")
     venue = wtf.QuerySelectField("Venue",
-        description=Markup('Venue for this event (<a href="/venue/new">make new</a>)'),
+        description=Markup('Venue for this event (<a href="/venue/foursquare/add" target="_blank" >Add from FourSquare</a> or <a href="/venue/new">make new</a>)'),
         query_factory=lambda: Venue.query, get_label='title',
         )
     start_datetime = DateTimeField("Start date/time", description="The date and time at which this event begins", validators=[wtf.Required()])
