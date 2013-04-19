@@ -66,7 +66,7 @@ def event_new(profile):
         if not event.name:
             event.make_name()
         db.session.add(event)
-        participant = Participant(user=g.user, event=event, status=PARTICIPANT_STATUS.CONFIRMED)
+        participant = Participant(user=g.user, event=event)
         db.session.add(participant)
         db.session.commit()
         flash(u"New event created", "success")
