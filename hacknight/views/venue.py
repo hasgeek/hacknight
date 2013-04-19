@@ -49,13 +49,11 @@ def foursquare_search():
     if form.validate_on_submit():
         name, city = form.name.data, form.city.data
         result = foursquare_client.venues.search(params={'query': name, 'near': city})
-        #places = foursquare_client.venues.search(params={'query': name, 'near': city})
         if len(result['venues']) == 0:
             flash('Venue %s is not found in %s' % (name, city), 'error')
         else:
             venues.extend(venue for venue in result['venues'])
-            add_form.venues.choices = [(index, venue['name']) for index, venue in enumerate(venues)]
-            #raise
+            add_form.venues.choices = [(index, venue['name'] + (' - ' + venues[index]['location']['address']) if 'address' in venues[index]['location'] else '') for index, venue in enumerate(venues)]
             if add_form.validate_on_submit() and add_form.venues.data:
                 for index in add_form.venues.data:
                     venue = Venue()
