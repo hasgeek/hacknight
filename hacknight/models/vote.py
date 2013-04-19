@@ -1,12 +1,12 @@
 # -*- coding: utf-8- *-
 
-from hacknight.models import BaseMixin, BaseScopedIdNameMixin
+from hacknight.models import BaseMixin
 from hacknight.models import db
-from hacknight.models.event import Event
-from hacknight.models.participant import Participant
 from hacknight.models.user import User
 
+
 __all__ = ['VoteSpace', 'Vote']
+
 
 class VoteSpace(BaseMixin, db.Model):
     __tablename__ = 'votespace'

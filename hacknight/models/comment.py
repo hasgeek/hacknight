@@ -1,11 +1,9 @@
 # -*- coding: utf-8- *-
 
-from hacknight.models import BaseMixin, BaseScopedIdNameMixin, BaseScopedIdMixin
+from hacknight.models import BaseMixin, BaseScopedIdMixin
 from hacknight.models import db
-from hacknight.models.event import Event
-from hacknight.models.participant import Participant
 from hacknight.models.user import User
-from hacknight.models.vote import Vote, VoteSpace
+from hacknight.models.vote import VoteSpace
 
 __all__ = ['CommentSpace', 'Comment']
 
