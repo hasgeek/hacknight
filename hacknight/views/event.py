@@ -125,6 +125,28 @@ def event_view(profile, event):
                 db.session.add(comment)
                 flash("Your comment has been posted", "info")
             db.session.commit()
+            link = event.url_for("view", _external=True) + "#c" + str(comment.id)
+            for item in send_email_info:
+                email_body = render_template(item.pop('template'), project=event, comment=comment, wall=True, link=link)
+                if item['to']:
+                    send_email(sender=None, html=markdown(email_body), body=email_body, **item)
+            # Redirect despite this being the same page because HTTP 303 is required to not break
+            # the browser Back button
+            return redirect(event.url_for() + "#wall")
+
+        elif request.form.get('form.id') == 'delcomment' and delcommentform.validate():
+            comment = commentspace.get_comment(int(delcommentform.comment_id.data))
+            if comment:
+                if comment.user == g.user:
+                    comment.delete()
+                    event.comments.count -= 1
+                    db.session.commit()
+                    flash("Your comment was deleted.", "info")
+                else:
+                    flash("You did not post that comment.", "error")
+            else:
+                flash("No such comment.", "error")
+            return redirect(event.url_for() + "#wall")
     return render_template('event.html', profile=profile, event=event,
         projects=event.projects,
         accepted_participants=accepted_participants,

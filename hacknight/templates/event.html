@@ -166,7 +166,7 @@
     <div class="tab-pane" id="wall">
       <div class="row">
         <div class="span9">
-          <div class="section">
+          <div class="section"> <b> Discussion space for Hacknight </b>
             <h3 class="h3-title" id="comments">Comments</h3>
             {% if comments %}
               <ul class="comments">
@@ -258,7 +258,8 @@ if("{{ event.profile.userid }}"=="{{ g.user.userid }}")
       function onZoomend(){
           map.setView(venue, map.getZoom());
       };
-    {% endif %} 
+    {% endif %}
+    commentsInit("{{ request.base_url }}"); 
   });
   </script>
 

@@ -1,4 +1,4 @@
-**{{ g.user.username }}** left a comment in the project  **{{ project.title }}** 
+**{{ g.user.username }}** left a comment in the {% if wall %} event wall {% else %} project  {% endif %}   **{{ project.title }}** 
 
 {{ comment.message }} 
 

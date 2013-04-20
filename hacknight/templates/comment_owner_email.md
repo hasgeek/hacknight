@@ -1,4 +1,4 @@
-**{{ g.user.username }}** replied to you in the project  **{{ project.title }}** 
+**{{ g.user.username }}** replied to you in the {% if wall %} event wall {% else %} project  {% endif %} **{{ project.title }}** 
 
 {{ comment.message }}
 
