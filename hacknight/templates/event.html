@@ -1,4 +1,7 @@
 {% extends "layout.html" %}
+{% from "comments.html" import commenttree %}
+{% from "forms.html" import renderform, ajaxform %}
+
 {% block title %}{{ event.title }}{% endblock %}
 
 {% macro participant_list(event, participants) -%}
@@ -109,6 +112,7 @@
   <ul class="nav nav-tabs nav-tabs-auto">
     <li><a href="#participants" data-toggle="tab">Participants</a></li>
     <li><a href="#projects" data-toggle="tab">Projects</a></li>
+    <li><a href="#wall" data-toggle="tab">Event Wall</a></li>
   </ul>
   <div class="tab-content">
     <div class="tab-pane" id="participants">
@@ -157,6 +161,55 @@
             </li>
           {% endif %}
         </ul>
+      </div>
+    </div>
+    <div class="tab-pane" id="wall">
+      <div class="row">
+        <div class="span9">
+          <div class="section">
+            <h3 class="h3-title" id="comments">Comments</h3>
+            {% if comments %}
+              <ul class="comments">
+                {{ commenttree(comments, event, g.user, request.base_url) }}
+              </ul>
+            {% endif %}
+            {% if not g.user -%}
+              <p>
+                <a href="{{ url_for('login') }}">Login with Twitter or Google to leave a comment &rarr;</a>
+              </p>
+            {% else -%}
+              <p id="toplevel-comment" class="hidden">
+                <a href="#">Post a comment &rarr;</a>
+              </p>
+              <form method="POST" id="newcomment">
+                <div class="hidden">
+                  <input type="hidden" name="form.id" value="newcomment"/>
+                  {{ commentform.hidden_tag() }}
+                  {{ commentform.reply_to_id() }}
+                  {{ commentform.edit_id() }}
+                </div>
+                <p>
+                  {{ commentform.message() }}
+                </p>
+                <p>
+                  <input id="comment-submit" type="submit" value="Post comment"/>
+                </p>
+              </form>
+              <form method="POST" id="delcomment" class="hidden">
+                <div class="hidden">
+                  <input type="hidden" name="form.id" value="delcomment"/>
+                  {{ delcommentform.hidden_tag() }}
+                  {{ delcommentform.comment_id() }}
+                </div>
+                <p>
+                  Really delete this comment?
+                  <input id="comment-delete-submit" type="submit" value="Delete"/>
+                  or <a id="comment-delete-cancel" href="#">cancel</a>
+                </p>
+              </form>
+            {% endif %}
+          </div>
+        </div>
       </div>
     </div>
   </div>
