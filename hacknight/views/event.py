@@ -8,7 +8,7 @@ from flask import render_template, abort, flash, url_for, g, request, Response, 
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app, mail
-from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS
+from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS, EVENT_STATUS
 from hacknight.forms.event import EventForm, ConfirmWithdrawForm, SendEmailForm
 from hacknight.forms.participant import ParticipantForm
 from hacknight.views.login import lastuser
@@ -21,6 +21,15 @@ def send_email(sender, to, subject, body, html=None):
     if html:
         msg.html = html
     mail.send(msg)
+
+
+# EDIT form choices
+# https://github.com/hasgeek/hacknight/issues/168
+EDIT_FORM_CHOICES = [
+    (EVENT_STATUS.DRAFT, 'Draft'),
+    (EVENT_STATUS.PUBLISHED, 'Public'),
+    (EVENT_STATUS.CLOSED, 'Closed')
+]
 
 
 @app.route('/<profile>/<event>', methods=["GET"])
@@ -85,6 +94,8 @@ def event_edit(profile, event):
     if not workflow.can_edit():
         abort(403)
     form = EventForm(obj=event)
+    form.status.choices = EDIT_FORM_CHOICES
+    form.status.default = event.status
     if form.validate_on_submit():
         form.populate_obj(event)
         event.make_name()

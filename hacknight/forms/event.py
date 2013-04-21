@@ -10,7 +10,7 @@ __all__ = ['EventForm', 'ConfirmWithdrawForm', 'SendEmailForm']
 
 STATUS_CHOICES = [
     (EVENT_STATUS.DRAFT, 'Draft'),
-    (EVENT_STATUS.PUBLISHED, 'Published'),
+    (EVENT_STATUS.PUBLISHED, 'Public'),
     (EVENT_STATUS.ACTIVE, 'Active'),
     (EVENT_STATUS.COMPLETED, 'Completed'),
     (EVENT_STATUS.CANCELLED, 'Cancelled'),
