@@ -51,7 +51,6 @@ def event_view(profile, event):
     owner = User.query.filter_by(userid=event.profile.userid).first()
     if owner and owner.email:
         email_ids.append(owner.email)
-    email_ids.extend([participant.email for participant in accepted_participants if participant.email])
     current_participant = Participant.get(user=g.user, event=event) if g.user else None
     comments = sorted(Comment.query.filter_by(commentspace=event.comments, reply_to=None).order_by('created_at').all(),
         key=lambda c: c.votes.count, reverse=True)
