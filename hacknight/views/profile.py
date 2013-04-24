@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, g, abort, flash, url_for
+from flask import render_template, g, abort, flash
 from coaster.views import load_model
 from baseframe.forms import render_redirect, render_form
 from hacknight import app
