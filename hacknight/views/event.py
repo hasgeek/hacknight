@@ -25,11 +25,11 @@ def send_email(sender, to, subject, body, html=None):
 
 # EDIT form choices
 # https://github.com/hasgeek/hacknight/issues/168
-EDIT_FORM_CHOICES = [
-    (EVENT_STATUS.DRAFT, 'Draft'),
-    (EVENT_STATUS.PUBLISHED, 'Public'),
-    (EVENT_STATUS.CLOSED, 'Closed')
-]
+EDIT_FORM_CHOICES = {
+    EVENT_STATUS.DRAFT: [(EVENT_STATUS.DRAFT, 'Draft'), (EVENT_STATUS.PUBLISHED, 'Public')],
+    EVENT_STATUS.PUBLISHED: [(EVENT_STATUS.PUBLISHED, 'Public'), (EVENT_STATUS.CLOSED, 'Closed')],
+    EVENT_STATUS.CLOSED: [(EVENT_STATUS.CLOSED, 'Closed'), (EVENT_STATUS.PUBLISHED, 'Public')]
+}
 
 
 @app.route('/<profile>/<event>', methods=["GET"])
@@ -94,6 +94,10 @@ def event_edit(profile, event):
     if not workflow.can_edit():
         abort(403)
     form = EventForm(obj=event)
+    try:
+        form.status.choices = EDIT_FORM_CHOICES[event.status]
+    except KeyError:
+        form.status.choices = EDIT_FORM_CHOICES[EVENT_STATUS.DRAFT]
     form.status.choices = EDIT_FORM_CHOICES
     form.status.default = event.status
     if form.validate_on_submit():

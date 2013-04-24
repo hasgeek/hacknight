@@ -96,13 +96,14 @@ class EventWorkflow(DocumentWorkflow):
     cancelled = WorkflowState(EVENT_STATUS.CANCELLED, title=u"Cancelled")
     rejected = WorkflowState(EVENT_STATUS.REJECTED, title=u"Rejected")
     withdrawn = WorkflowState(EVENT_STATUS.WITHDRAWN, title=u"Withdrawn")
+    published = WorkflowState(EVENT_STATUS.PUBLISHED, title="Published")
 
      #: States in which an owner can edit
-    editable = WorkflowStateGroup([draft, active, closed, completed, cancelled, rejected, withdrawn], title=u"Editable")
-    public = WorkflowStateGroup([active, closed], title=u"Public")
+    editable = WorkflowStateGroup([draft, published, closed], title=u"Editable")
+    public = WorkflowStateGroup([published, closed], title=u"Public")
     openit = WorkflowStateGroup([draft], title=u"Open it")
     #: States in which a reviewer can view
-    reviewable = WorkflowStateGroup([draft, active, closed, rejected, completed],
+    reviewable = WorkflowStateGroup([draft, published],
                                     title=u"Reviewable")
 
     def permissions(self):
@@ -116,7 +117,7 @@ class EventWorkflow(DocumentWorkflow):
         base_permissions.extend(lastuser.permissions())
         return base_permissions
 
-    @draft.transition(active, 'owner', title=u"Open", category="primary",
+    @draft.transition(published, 'owner', title=u"Open", category="primary",
         description=u"Open the hacknight for registrations.", view="event_open")
     def openit(self):
         """
