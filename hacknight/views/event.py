@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 from sqlalchemy.orm import joinedload
 from sqlalchemy import func
 from html2text import html2text
@@ -303,3 +304,28 @@ def event_send_email(profile, event):
         return render_redirect(event.url_for())
     return render_form(form=form, title="Send email to participants",
             submit=u"Send", cancel_url=event.url_for(), ajax=False)
+
+
+@app.route('/feed')
+def feed(basequery=None, title=None):
+    if not title:
+        title = "Hacknight"
+    if basequery:
+        events = basequery
+    else:
+        events = Event.query.all()
+    if events:
+        updated = events[0].updated_at.isoformat() + 'Z'
+    else:
+        updated = datetime.utcnow().isoformat() + 'Z'
+    return render_template('feed.xml', events=events, updated=updated, title=title)
+
+
+@app.route('/<profile>/<event>/feed')
+@lastuser.requires_login
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
+def event_feed(profile, event):
+    title = "Hacknight - " + event.title
+    return feed(basequery=event, title=title)

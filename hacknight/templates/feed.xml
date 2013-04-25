@@ -1,0 +1,55 @@
+{% from "macros/comment.html" import commentfeed %}
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>{{ title|e }} – {{ config['SITE_TITLE']|e }}</title>
+  <link href="{{ url_for('index', _external=True) }}"/>
+  <link rel="self" href="{{ request.base_url }}"/>
+  <updated>{{ updated }}</updated>
+  <id>{{ url_for('index', _external=True) }}</id>
+  <icon>{{ url_for('static', filename='img/hacknightlogo.png', _external=True) }}</icon>
+  <author><name>{{ config['SITE_TITLE']|e }}</name></author>
+
+  {% for event in events -%}
+  <entry>
+    <title type="text">{{ event.title|e }}</title>
+    <id>{{ event.url_for('view', _external=True) }}</id>
+    <link href="{{ event.url_for('view', _external=True) }}"/>
+    <updated>{{ event.updated_at.isoformat() }}Z</updated>
+    <published>{{ event.updated_at.isoformat() }}Z</published>
+    <content type="html">
+      &lt;p&gt;
+        {{ event.description|e }}
+      {%- if event.start_datetime %}
+        &lt;startdate&gt;{{ event.start_datetime | fulldate}}&lt;/startdate&gt;
+        &lt;enddate&gt;{{ event.end_datetime | fulldate}}&lt;/enddate&gt;
+      {% endif -%}
+      {% if event.ticket_price -%}
+          &lt;ticketprice&gt;{{ event.ticket_price }}&lt;/ticketprice&gt;
+      {%- endif %}
+      {% if event.venue -%}
+        &lt;venue&gt;
+          &lt;title&gt;&lt;a href="{{ event.venue.url_for(_external=True) }}"&gt;{{ event.venue.title }}&lt;/title&gt;
+          &lt;address&gt;{{ event.venue.address1 }}
+          {% if event.venue.address2 -%}
+            {{ event.venue.address2 }}
+          {%- endif %}
+          {{ event.venue.city }}, {{ event.venue.state }}{%- if event.venue.postcode %} &ndash; {{ event.venue.postcode }}{% endif %}, {{ event.venue.country }}
+          &lt;/address&gt;
+          {% if event.website -%}
+            &lt;website&gt;&lt;a href="{{ event.website }}" target="_blank"&gt;{{ event.website|cleanurl }}&lt;/a&gt;
+          {%- endif %}
+        &lt;/venue&gt;
+      {% endif -%}
+      {% for project in event.projects %}
+        &lt;project&gt;
+          &lt;title&gt; &lt;a href="{{project.url_for(_external=True)}}" &gt; {{project.title}} &lt;/a&gt;
+            {{ project.description }}
+          &lt;totalparticipants&gt; {{ project.users.lnegth }} &lt;/totalparticipants&gt;
+            {{ commentfeed(project.get_comments()) }}
+        &lt;/project&gt;
+      {% endfor %}
+      &lt;p&gt;
+    </content>
+  </entry>
+  {% endfor %}
+</feed>
