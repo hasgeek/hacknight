@@ -1,9 +1,10 @@
-# -*- coding: utf-8- *-
+# -*- coding: utf-8 -*-
 
 from flask import g
 from coaster.docflow import DocumentWorkflow, WorkflowState, WorkflowStateGroup
 from hacknight.models.participant import Participant, PARTICIPANT_STATUS
 from hacknight.models.event import Event, EVENT_STATUS
+from hacknight.models.project import Project
 from hacknight.views.login import lastuser
 
 
@@ -99,9 +100,10 @@ class EventWorkflow(DocumentWorkflow):
     published = WorkflowState(EVENT_STATUS.PUBLISHED, title="Published")
 
      #: States in which an owner can edit
-    editable = WorkflowStateGroup([draft, published, closed], title=u"Editable")
+    editable = WorkflowStateGroup([draft, active, published, closed], title=u"Editable")
     public = WorkflowStateGroup([published, closed], title=u"Public")
     openit = WorkflowStateGroup([draft], title=u"Open it")
+    create_projects = WorkflowStateGroup([draft, active, published], title="States in which projects can be created")
     #: States in which a reviewer can view
     reviewable = WorkflowStateGroup([draft, published],
                                     title=u"Reviewable")
@@ -203,5 +205,8 @@ class EventWorkflow(DocumentWorkflow):
         Can the current user edit this?
         """
         return 'owner' in self.permissions() and self.editable()
+
+    def is_active(self):
+        return self.create_projects()
 
 EventWorkflow.apply_on(Event)
