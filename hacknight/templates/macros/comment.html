@@ -1,16 +1,13 @@
 {% macro commentfeed(comments) %}
 	{% for comment in comments -%}
-        &lt;comment&gt;
-            &lt;user&gt; {{ comment.user.fullname }} &lt;/user&gt;
-            &lt;message&gt;{{ comment.message_html }} &lt;/message&gt;
+        &lt;a href="{{comment.user.profile.url_for()}}" &gt;{{ comment.user.fullname }} &lt;/a&gt; commented {{ comment.message_html }}.
             {% if comment.reply_to -%}
-        	   &lt;repliedto&gt;{{ comment.reply_to.user.fullname }}&lt;/repliedto&gt;
+        	   Replied to: &lt;a href="{{comment.user.profile.url_for()}}" &gt; {{ comment.reply_to.user.fullname }} &lt;/a&gt;
             {%- endif %}
-            &lt;votes&gt;{{ comment.votes.count }} &lt;/votes&gt;
-            &lt;createdat;&gt; {{ comment.created_at.strftime("%a, %b %e") }}&lt;/createdat&gt;
+            Votes: {{ comment.votes.count }}
+            Date: {{ comment.created_at.strftime("%a, %b %e") }}
             {% if comment.children -%}
         	   {{ commentfeed(comment.sorted_children()) }}
             {%- endif %}
-        &lt;/comment&gt;
     {% endfor -%}
 {% endmacro %}
