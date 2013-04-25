@@ -311,14 +311,15 @@ def feed(basequery=None, title=None):
     if not title:
         title = "Hacknight"
     if basequery:
-        events = basequery
+        events = basequery.query.filter_by(name=basequery.name).all()
     else:
         events = Event.query.all()
     if events:
         updated = events[0].updated_at.isoformat() + 'Z'
     else:
         updated = datetime.utcnow().isoformat() + 'Z'
-    return render_template('feed.xml', events=events, updated=updated, title=title)
+    return Response(render_template('feed.xml', events=events, updated=updated, title=title),
+        content_type='application/atom+xml; charset=utf-8')
 
 
 @app.route('/<profile>/<event>/feed')
@@ -327,5 +328,5 @@ def feed(basequery=None, title=None):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_feed(profile, event):
-    title = "Hacknight - " + event.title
+    title = event.title
     return feed(basequery=event, title=title)
