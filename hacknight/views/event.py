@@ -323,7 +323,6 @@ def feed(basequery=None, title=None):
 
 
 @app.route('/<profile>/<event>/feed')
-@lastuser.requires_login
 @load_models(
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
