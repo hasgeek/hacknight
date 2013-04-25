@@ -3,7 +3,14 @@
 {% block title %}{{ profile.title }}{% endblock %}
 
 {% block content %}
-  {{ profile.description|safe }}
+  <div class="row">
+    <div class="span6">
+      {{ profile.description|safe }} 
+    </div>
+    <div class="span6">
+      <a href="{{ profile.url_for('new-event') }}"><i class="icon-pencil icon-white"></i> New Hacknight</a>
+    </div>
+  </div>
   {% if events -%}
     <div class="light-bg">{{ cardset(events) }}</div>
   {%- else -%}
