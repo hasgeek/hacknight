@@ -47,10 +47,6 @@ def event_view(profile, event):
         if p.user == g.user:
             applied = True
             break
-    email_ids = []
-    owner = User.query.filter_by(userid=event.profile.userid).first()
-    if owner and owner.email:
-        email_ids.append(owner.email)
     current_participant = Participant.get(user=g.user, event=event) if g.user else None
     comments = sorted(Comment.query.filter_by(commentspace=event.comments, reply_to=None).order_by('created_at').all(),
         key=lambda c: c.votes.count, reverse=True)
@@ -73,50 +69,6 @@ def event_view(profile, event):
                     flash("No such comment", "error")
             else:
                 comment = Comment(user=g.user, commentspace=event.comments, message=commentform.message.data)
-                send_email_info = []
-                if commentform.reply_to_id.data:
-                    reply_to = commentspace.get_comment(int(commentform.reply_to_id.data))
-                    if reply_to and reply_to.commentspace == event.comments:
-                        comment.reply_to = reply_to
-                        if not reply_to.user == g.user:
-                            send_email_info.append({"to": reply_to.user.email,
-                                "subject": "Hacknight: %s " % (event.title),
-                                "template": 'comment_owner_email.md'})
-                        try:
-                            email_ids.remove(owner.email)
-                            email_ids.remove(reply_to.user.email)
-                        except ValueError:
-                            pass
-                        if owner != reply_to.user:
-                            send_email_info.append({"to": owner.email,
-                                "subject": "Hacknight: %s " % (event.title),
-                                "template": 'project_owner_email.md'})
-                        try:
-                            email_ids.remove(g.user.email)
-                        except ValueError:
-                            pass
-                        for email_id in email_ids:
-                            send_email_info.append({"to": email_id,
-                            "subject": "Hacknight: %s " % (event.title),
-                            "template": 'project_team_email.md'})
-                else:
-                    if not g.user == owner:
-                        try:
-                            email_ids.remove(owner.email)
-                        except ValueError:
-                            pass
-                        send_email_info.append({"to": owner.email,
-                            "subject": "Hacknight: %s " % (event.title),
-                            "template": 'project_owner_email.md'})
-                    try:
-                        email_ids.remove(g.user.email)
-                    except ValueError:
-                        pass
-                    for email_id in email_ids:
-                        send_email_info.append({"to": email_id,
-                            "subject": "Hacknight: %s " % (event.title),
-                            "template": 'project_team_email.md'})
-
                 comment.message_html = bleach.linkify(markdown(commentform.message.data))
                 event.comments.count += 1
                 comment.votes.vote(g.user)  # Vote for your own comment
@@ -124,11 +76,6 @@ def event_view(profile, event):
                 db.session.add(comment)
                 flash("Your comment has been posted", "info")
             db.session.commit()
-            link = event.url_for("view", _external=True) + "#c" + str(comment.id)
-            for item in send_email_info:
-                email_body = render_template(item.pop('template'), project=event, comment=comment, wall=True, link=link)
-                if item['to']:
-                    send_email(sender=None, html=markdown(email_body), body=email_body, **item)
             # Redirect despite this being the same page because HTTP 303 is required to not break
             # the browser Back button
             return redirect(event.url_for() + "#wall")
