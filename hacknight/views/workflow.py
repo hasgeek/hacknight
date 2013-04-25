@@ -4,7 +4,6 @@ from flask import g
 from coaster.docflow import DocumentWorkflow, WorkflowState, WorkflowStateGroup
 from hacknight.models.participant import Participant, PARTICIPANT_STATUS
 from hacknight.models.event import Event, EVENT_STATUS
-from hacknight.models.project import Project
 from hacknight.views.login import lastuser
 
 
