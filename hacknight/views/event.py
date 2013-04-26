@@ -8,7 +8,7 @@ from flask import render_template, abort, flash, url_for, g, request, Response, 
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app, mail
-from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS, EVENT_STATUS
+from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS
 from hacknight.forms.event import EventForm, ConfirmWithdrawForm, SendEmailForm
 from hacknight.forms.participant import ParticipantForm
 from hacknight.views.login import lastuser
@@ -23,21 +23,12 @@ def send_email(sender, to, subject, body, html=None):
     mail.send(msg)
 
 
-# EDIT form choices
-# https://github.com/hasgeek/hacknight/issues/168
-EDIT_FORM_CHOICES = {
-    EVENT_STATUS.DRAFT: [(EVENT_STATUS.DRAFT, 'Draft'), (EVENT_STATUS.PUBLISHED, 'Public')],
-    EVENT_STATUS.PUBLISHED: [(EVENT_STATUS.PUBLISHED, 'Public'), (EVENT_STATUS.CLOSED, 'Closed')],
-    EVENT_STATUS.CLOSED: [(EVENT_STATUS.CLOSED, 'Closed'), (EVENT_STATUS.PUBLISHED, 'Public')],
-    EVENT_STATUS.ACTIVE: [(EVENT_STATUS.PUBLISHED, 'Public'), (EVENT_STATUS.CLOSED, 'Closed')]
-}
-
-
 @app.route('/<profile>/<event>', methods=["GET"])
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_view(profile, event):
+    workflow = event.workflow()
     participants = [r[0] for r in db.session.query(Participant, User).filter(
         Participant.status != PARTICIPANT_STATUS.WITHDRAWN, Participant.event == event).join(
         (User, Participant.user)).options(
@@ -58,7 +49,8 @@ def event_view(profile, event):
         rest_participants=rest_participants,
         applied=applied,
         current_participant=current_participant,
-        sponsors=event.sponsors)
+        sponsors=event.sponsors,
+        workflow=workflow)
 
 
 @app.route('/<profile>/new', methods=['GET', 'POST'])
@@ -95,11 +87,7 @@ def event_edit(profile, event):
     if not workflow.can_edit():
         abort(403)
     form = EventForm(obj=event)
-    try:
-        form.status.choices = EDIT_FORM_CHOICES[event.status]
-    except KeyError:
-        form.status.choices = EDIT_FORM_CHOICES[EVENT_STATUS.DRAFT]
-    form.status.default = event.status
+    del form.status
     if form.validate_on_submit():
         form.populate_obj(event)
         event.make_name()
@@ -318,3 +306,21 @@ def event_send_email(profile, event):
         return render_redirect(event.url_for())
     return render_form(form=form, title="Send email to participants",
             submit=u"Send", cancel_url=event.url_for(), ajax=False)
+
+
+@app.route('/<profile>/<event>/change/<method_name>', methods=['POST'])
+@lastuser.requires_login
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'), permission='edit')
+def event_change(profile, event):
+    if request.is_xhr:
+        workflow = event.workflow()
+        method_name = request.view_args['method_name']
+        try:
+            getattr(workflow, method_name)()
+            flash("Event state changed", "success")
+        except AttributeError:
+            flash("Unable to change event state", "error")
+        db.session.commit()
+    return render_redirect(event.url_for())

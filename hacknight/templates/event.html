@@ -92,6 +92,11 @@
           <li><a href="{{ event.url_for('edit') }}"><i class="icon-pencil"></i> Edit details...</a></li>
           <li><a href="{{ event.url_for('delete') }}"><i class="icon-trash"></i> Delete event...</a></li>
           <li><a href="{{ event.url_for('send_email') }}"><i class="icon-envelope"></i>Email participants...</a></li>
+          {% with transitions = workflow.transitions() %}
+            {% for key in transitions %}
+              <li><a href="{{ event.url_for('event_change',method_name=key) }}" data-name="{{ key }}" class="event_change" data-method="POST"><i class="icon-pencil"></i>{{ transitions[key]['description'] }}</a></li>
+            {% endfor %}
+          {% endwith %}
         {% endif -%}
       </ul>
       {% if event.sponsors %}
@@ -206,6 +211,17 @@ if("{{ event.profile.userid }}"=="{{ g.user.userid }}")
           map.setView(venue, map.getZoom());
       };
     {% endif %} 
+    // Add event handler for hacknight event state change
+    $(".event_change").on('click', function(event){
+      event.preventDefault();
+      $.ajax({
+        url: this.getAttribute('href'),
+        type: this.getAttribute('data-method'),
+        success: function(msg) { //reload same page
+          window.location.reload(true);
+        }
+      });
+    });
   });
   </script>
 

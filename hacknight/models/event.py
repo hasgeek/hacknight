@@ -93,7 +93,7 @@ class Event(BaseScopedNameMixin, db.Model):
             perms.add('send-email')
         return perms
 
-    def url_for(self, action='view', _external=False):
+    def url_for(self, action='view', _external=False, **kwargs):
         if action == 'view':
             return url_for('event_view', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'edit':
@@ -112,3 +112,5 @@ class Event(BaseScopedNameMixin, db.Model):
             return url_for('event_export', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'send_email':
             return url_for('event_send_email', profile=self.profile.name, event=self.name, _external=_external)
+        elif action == 'event_change':
+            return url_for('event_change', profile=self.profile.name, event=self.name, method_name=kwargs['method_name'], _external=_external)

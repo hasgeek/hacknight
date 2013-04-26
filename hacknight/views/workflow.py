@@ -119,7 +119,7 @@ class EventWorkflow(DocumentWorkflow):
         return base_permissions
 
     @draft.transition(published, 'owner', title=u"Open", category="primary",
-        description=u"Open the hacknight for registrations.", view="event_open")
+        description=u"Make hacknight public", view="event_change")
     def openit(self):
         """
         Open the hacknight.
@@ -128,7 +128,7 @@ class EventWorkflow(DocumentWorkflow):
             self.document.status = EVENT_STATUS.PUBLISHED
 
     @draft.transition(cancelled, 'owner', title=u"Cancel", category="warning",
-        description=u"Cancel the hacknight, before opening.", view="event_cancel")
+        description=u"Cancel hacknight", view="event_change")
     def cancel_draft(self):
         """
         Cancel the hacknight
@@ -136,44 +136,53 @@ class EventWorkflow(DocumentWorkflow):
         self.document.status = EVENT_STATUS.CANCELLED
 
     @active.transition(cancelled, 'owner', title=u"Cancel", category="warning",
-        description=u"Cancel the hacknight, before opening.", view="event_cancel")
+        description=u"Cancel hacknight", view="event_change")
     def cancel_active(self):
         """
         Cancel the hacknight
         """
         self.document.status = EVENT_STATUS.CANCELLED
 
-    @draft.transition(rejected, 'owner', title=u"Rejected", category="danger",
-        description=u"Reject the hacknight proposed by someone else", view="event_reject")
-    def reject(self):
-        """
-        Reject the hacknight
-        """
-        pass
-
-    @draft.transition(withdrawn, 'owner', title=u"Withdraw", category="danger",
-        description=u"Withdraw the hacknight", view="event_withdraw")
-    def withdraw(self):
-        """
-        Withdraw the hacknight
-        """
-        pass
-
     @active.transition(closed, 'owner', title=u"Close", category="primary",
-        description=u"Close registrations for the hacknight", view="event_close")
+        description=u"Close registrations", view="event_change")
     def close(self):
         """
         Close the hacknight
         """
-        pass
+        self.document.status = EVENT_STATUS.CLOSED
 
-    @closed.transition(completed, 'owner', title=u"Complete", category="success",
-        description=u"hacknight completed", view="event_completed")
-    def complete(self):
+
+    @published.transition(cancelled, 'owner', title=u"Cancel", category="warning",
+        description=u"Cancel hacknight", view="event_change")
+    def deactive(self):
+        """
+        Cancel the hacknight
+        """
+        self.document.status = EVENT_STATUS.CANCELLED
+
+    @published.transition(closed, 'owner', title=u"Close", category="primary",
+        description=u"Close registration", view="event_change")
+    def published_close(self):
+        """
+        Close the hacknight
+        """
+        self.document.status = EVENT_STATUS.CLOSED
+
+    @closed.transition(active, 'owner', title=u"Complete", category="success",
+        description=u"Reopen hacknight", view="event_change")
+    def reopen(self):
         """
         Hacknight is now completed.
         """
-        pass
+        self.document.status = EVENT_STATUS.ACTIVE
+
+    @cancelled.transition(active, 'owner', title=u"Complete", category="success",
+        description=u"Reopen hacknight", view="event_change")
+    def cancel_reopen(self):
+        """
+        Hacknight is now completed.
+        """
+        self.document.status = EVENT_STATUS.ACTIVE
 
     def is_public(self):
         """
