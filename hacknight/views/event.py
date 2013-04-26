@@ -28,6 +28,7 @@ def send_email(sender, to, subject, body, html=None):
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_view(profile, event):
+    workflow = event.workflow()
     participants = [r[0] for r in db.session.query(Participant, User).filter(
         Participant.status != PARTICIPANT_STATUS.WITHDRAWN, Participant.event == event).join(
         (User, Participant.user)).options(
@@ -48,7 +49,8 @@ def event_view(profile, event):
         rest_participants=rest_participants,
         applied=applied,
         current_participant=current_participant,
-        sponsors=event.sponsors)
+        sponsors=event.sponsors,
+        workflow=workflow)
 
 
 @app.route('/<profile>/new', methods=['GET', 'POST'])
@@ -153,6 +155,10 @@ def event_update_participant_status(profile, event):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_apply(profile, event):
+    workflow = event.workflow()
+    if not workflow.can_apply():
+        flash("Hacknight is not accepting participants now, please try after sometime.")
+        return render_redirect(event.url_for())
     values = {'profile': profile.name, 'event': event.name}
     participant = Participant.get(g.user, event)
     if not participant:
