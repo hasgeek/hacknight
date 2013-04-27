@@ -5,7 +5,7 @@
         	   Replied to: &lt;a href="{{comment.user.profile.url_for()}}" &gt; {{ comment.reply_to.user.fullname }} &lt;/a&gt;
             {%- endif %}
             Votes: {{ comment.votes.count }}
-            Date: {{ comment.created_at.strftime("%a, %b %e") }}
+            Date: {{ comment.created_at.strftime("%a, %b %e") }}&lt;br&gt;
             {% if comment.children -%}
         	   {{ commentfeed(comment.sorted_children()) }}
             {%- endif %}
