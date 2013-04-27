@@ -9,7 +9,7 @@ from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app, mail
 from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS
-from hacknight.forms.event import EventForm, ConfirmWithdrawForm, SendEmailForm
+from hacknight.forms.event import EventForm, ConfirmWithdrawForm, SendEmailForm, EmailEventParticipantsForm
 from hacknight.forms.participant import ParticipantForm
 from hacknight.views.login import lastuser
 from hacknight.views.workflow import ParticipantWorkflow
@@ -303,3 +303,27 @@ def event_send_email(profile, event):
         return render_redirect(event.url_for())
     return render_form(form=form, title="Send email to participants",
             submit=u"Send", cancel_url=event.url_for(), ajax=False)
+
+
+@app.route('/<profile>/<event>/email_participants_form', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'), permission='send-email')
+def event_email_participants_form(profile, event):
+    form = EmailEventParticipantsForm()
+    form.confirmation_message.data = render_template('confirmed_participants_email.md', event=event)
+    form.waitlisted_message.data = render_template('waitlisted_participants_email.md', event=event)
+    form.rejected_message.data = render_template('rejected_participants_email.md', event=event)
+    form.pending_message.data = render_template('pending_participants_email.md', event=event)
+    if form.validate_on_submit():
+        form.populate_obj(event)
+        event.confirmation_message_text = html2text(form.confirmation_message.data)
+        event.pending_message_text = html2text(form.pending_message.data)
+        event.waitlisted_message_text = html2text(form.waitlisted_message.data)
+        event.rejected_message_text = html2text(form.rejected_message.data)
+        db.session.commit()
+        flash(u"Participants Email form info for %s is saved" % event.title, "success")
+        return render_redirect(event.url_for(), code=303)
+    return render_form(form=form, title="Email Participants form", submit=u"Save",
+        cancel_url=event.url_for(), ajax=False)

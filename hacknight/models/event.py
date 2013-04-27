@@ -65,6 +65,12 @@ class Event(BaseScopedNameMixin, db.Model):
     website = db.Column(db.Unicode(250), default=u'', nullable=False)
     status = db.Column(db.Integer, nullable=False, default=EVENT_STATUS.DRAFT)
     ticket_price = db.Column(db.Unicode(250), nullable=False, default=u'')
+    confirmation_message = db.Column(db.UnicodeText, nullable=False, default=u'')
+    confirmation_message_text = db.Column(db.UnicodeText, nullable=False, default=u'')
+    waitlisted_message = db.Column(db.UnicodeText, nullable=False, default=u'')
+    waitlisted_message_text = db.Column(db.UnicodeText, nullable=False, default=u'')
+    rejected_message = db.Column(db.UnicodeText, nullable=False, default=u'')
+    rejected_message_text = db.Column(db.UnicodeText, nullable=False, default=u'')
 
     __table_args__ = (db.UniqueConstraint('name', 'profile_id'),)
 
