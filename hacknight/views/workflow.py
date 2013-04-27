@@ -96,10 +96,12 @@ class EventWorkflow(DocumentWorkflow):
     cancelled = WorkflowState(EVENT_STATUS.CANCELLED, title=u"Cancelled")
     rejected = WorkflowState(EVENT_STATUS.REJECTED, title=u"Rejected")
     withdrawn = WorkflowState(EVENT_STATUS.WITHDRAWN, title=u"Withdrawn")
+    published = WorkflowState(EVENT_STATUS.PUBLISHED, title=u"Public")
 
      #: States in which an owner can edit
     editable = WorkflowStateGroup([draft, active, closed, completed, cancelled, rejected, withdrawn], title=u"Editable")
     public = WorkflowStateGroup([active, closed], title=u"Public")
+    appliable = WorkflowStateGroup([active, published], title="User can apply for an event")
     openit = WorkflowStateGroup([draft], title=u"Open it")
     #: States in which a reviewer can view
     reviewable = WorkflowStateGroup([draft, active, closed, rejected, completed],
@@ -202,5 +204,8 @@ class EventWorkflow(DocumentWorkflow):
         Can the current user edit this?
         """
         return 'owner' in self.permissions() and self.editable()
+
+    def can_apply(self):
+        return self.appliable()
 
 EventWorkflow.apply_on(Event)

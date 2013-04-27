@@ -30,3 +30,7 @@ class User(UserBase, db.Model):
 
     def projects_in(self, event):
         return [member.project for member in self.project_memberships if member.project.event == event]
+
+    def organization_links(self):
+        return [{'link': url_for('profile_view', profile=org['name']),
+                 'title': org['title']} for org in self.organizations_memberof()]

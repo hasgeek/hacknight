@@ -67,26 +67,30 @@
         {% if event.website -%}
           <li><a href="{{ event.website }}" target="_blank"><span class="icon-link">{{ event.website|cleanurl }}</span></a></li>
         {%- endif %}
-        <li class="nav-header">Your participation</li>
-        {% if not current_participant or current_participant.status == 4 -%}
+        {% if workflow.can_apply() %}
+          <li class="nav-header">Your participation</li>
+        {%- endif %}
+        {% if workflow.can_apply() and (not current_participant or current_participant.status == 4) -%}
           <li><a href="{{ event.url_for('apply') }}"><span class="icon-signin">Register now {%- if not g.user %} (login required) {%- endif %}...</span></a></li>
         {% else %}
-          <li><span class="icon-user">{% if event.owner_is(g.user) -%}
-            You are an owner
+          {% if event.owner_is(g.user) -%}
+            <li><span class="icon-user">You are an owner</span></li>
           {%- else -%}
             {% if current_participant.status == 0 -%}
-              Pending approval
+              <li><span class="icon-user">Pending approval</span></li>
             {%- elif current_participant.status == 2 -%}
-              Confirmed
+              <li><span class="icon-user">Confirmed</span></li>
             {%- elif current_participant.status == 1 -%}
-              Wait listed
+              <li><span class="icon-user">Wait listed</span></li>
             {%- elif current_participant.status == 3 -%}
-              Rejected
+              <li><span class="icon-user">Rejected</span></li>
             {%- elif current_participant.status == 4 -%}
-              Withdrawn
+              <li><span class="icon-user">Withdrawn</span></li>
             {%- endif -%}
-          {%- endif %}</span></li>
-          <li><a href="{{ event.url_for('withdraw') }}"><span class="icon-signout">Withdraw registration...</span></a></li>
+          {%- endif %}
+          {% if workflow.can_apply() -%}
+            <li><a href="{{ event.url_for('withdraw') }}"><span class="icon-signout">Withdraw registration...</span></a></li>
+          {%- endif %}
         {% endif %}
         {%- if event.owner_is(g.user) %}
           <li class="nav-header">Manage event</li>
