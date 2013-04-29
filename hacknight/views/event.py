@@ -311,7 +311,7 @@ def feed(event=None, title=None):
     if not title:
         title = "Hacknight"
     if event:
-        events = [event]
+        events = [event
     else:
         events = Event.query.filter(Event.status.in_((EVENT_STATUS.ACTIVE, EVENT_STATUS.PUBLISHED))).all()
     if events:
