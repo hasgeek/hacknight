@@ -92,6 +92,7 @@
           <li><a href="{{ event.url_for('edit') }}"><i class="icon-pencil"></i> Edit details...</a></li>
           <li><a href="{{ event.url_for('delete') }}"><i class="icon-trash"></i> Delete event...</a></li>
           <li><a href="{{ event.url_for('send_email') }}"><i class="icon-envelope"></i>Email participants...</a></li>
+          <li><a href="{{ event.url_for('email_template') }}"><i class="icon-envelope"></i>Email template...</a></li>
         {% endif -%}
       </ul>
       {% if event.sponsors %}

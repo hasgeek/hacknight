@@ -71,6 +71,8 @@ class Event(BaseScopedNameMixin, db.Model):
     waitlisted_message_text = db.Column(db.UnicodeText, nullable=False, default=u'')
     rejected_message = db.Column(db.UnicodeText, nullable=False, default=u'')
     rejected_message_text = db.Column(db.UnicodeText, nullable=False, default=u'')
+    pending_message = db.Column(db.UnicodeText, nullable=False, default=u'')
+    pending_message_text = db.Column(db.UnicodeText, nullable=False, default=u'')
 
     __table_args__ = (db.UniqueConstraint('name', 'profile_id'),)
 
@@ -118,3 +120,5 @@ class Event(BaseScopedNameMixin, db.Model):
             return url_for('event_export', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'send_email':
             return url_for('event_send_email', profile=self.profile.name, event=self.name, _external=_external)
+        elif action == 'email_template':
+            return url_for('email_template_form', profile=self.profile.name, event=self.name, _external=_external)

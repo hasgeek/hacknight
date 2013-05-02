@@ -15,6 +15,15 @@ from hacknight.views.login import lastuser
 from hacknight.views.workflow import ParticipantWorkflow
 
 
+#map participant status event template
+participants_email_attrs = {
+    PARTICIPANT_STATUS.PENDING: 'pending_message',
+    PARTICIPANT_STATUS.WL: 'waitlisted_message',
+    PARTICIPANT_STATUS.CONFIRMED: 'confirmation_message',
+    PARTICIPANT_STATUS.REJECTED: 'rejected_message',
+}
+
+
 def send_email(sender, to, subject, body, html=None):
     msg = Message(sender=sender, subject=subject, recipients=[to])
     msg.body = body
@@ -131,20 +140,31 @@ def event_open(profile, event):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_update_participant_status(profile, event):
-    if profile.userid not in g.user.user_organizations_owned_ids():
-        return Response("Forbidden", 403)
-    participantid = int(request.form['participantid'])
-    status = int(request.form['status'])
-    participant = Participant.query.get(participantid)
+    if request.is_xhr:
+        if profile.userid not in g.user.user_organizations_owned_ids():
+            return Response("Forbidden", 403)
+        participantid = int(request.form['participantid'])
+        status = int(request.form['status'])
+        participant = Participant.query.get(participantid)
 
-    if(participant.event != event):
-        return Response("Forbidden", 403)
-    if(participant.status == PARTICIPANT_STATUS.WITHDRAWN):
-        return Response("Forbidden", 403)
-
-    participant.status = status
-    db.session.commit()
-    return "Done"
+        if participant.event != event:
+            return Response("Forbidden", 403)
+        if participant.status == PARTICIPANT_STATUS.WITHDRAWN:
+            return Response("Forbidden", 403)
+        if participant.status != status:
+            participant.status = status
+            try:
+                text_message = getattr(event, (participants_email_attrs[status] + '_text'))
+                print text_message.replace("*|FULLNAME|*", participant.user.fullname)
+                text_message = text_message.replace("*|FULLNAME|*", participant.user.fullname)
+                message = getattr(event, participants_email_attrs[status])
+                message = message.replace("*|FULLNAME|*", participant.user.fullname)
+                send_email(sender=(g.user.fullname, g.user.email), to=participant.email,
+                    subject="%s - Hacknight participation status" % event.title , body=text_message, html=message)
+            except KeyError:
+                pass
+            db.session.commit()
+        return "Done"
 
 
 @app.route('/<profile>/<event>/apply', methods=['GET', 'POST'])
@@ -305,17 +325,21 @@ def event_send_email(profile, event):
             submit=u"Send", cancel_url=event.url_for(), ajax=False)
 
 
-@app.route('/<profile>/<event>/email_participants_form', methods=['GET', 'POST'])
+@app.route('/<profile>/<event>/email_template', methods=['GET', 'POST'])
 @lastuser.requires_login
 @load_models(
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'), permission='send-email')
-def event_email_participants_form(profile, event):
-    form = EmailEventParticipantsForm()
-    form.confirmation_message.data = render_template('confirmed_participants_email.md', event=event)
-    form.waitlisted_message.data = render_template('waitlisted_participants_email.md', event=event)
-    form.rejected_message.data = render_template('rejected_participants_email.md', event=event)
-    form.pending_message.data = render_template('pending_participants_email.md', event=event)
+def email_template_form(profile, event):
+    form = EmailEventParticipantsForm(obj=event)
+    if not form.confirmation_message.data:
+        form.confirmation_message.data = render_template('confirmed_participants_email.md', event=event)
+    if not form.waitlisted_message.data:
+        form.waitlisted_message.data = render_template('waitlisted_participants_email.md', event=event)
+    if not form.rejected_message.data:
+        form.rejected_message.data = render_template('rejected_participants_email.md', event=event)
+    if not form.pending_message.data:
+        form.pending_message.data = render_template('pending_participants_email.md', event=event)
     if form.validate_on_submit():
         form.populate_obj(event)
         event.confirmation_message_text = html2text(form.confirmation_message.data)
@@ -323,7 +347,7 @@ def event_email_participants_form(profile, event):
         event.waitlisted_message_text = html2text(form.waitlisted_message.data)
         event.rejected_message_text = html2text(form.rejected_message.data)
         db.session.commit()
-        flash(u"Participants Email form info for %s is saved" % event.title, "success")
+        flash(u"Participants Email template for %s is saved" % event.title, "success")
         return render_redirect(event.url_for(), code=303)
     return render_form(form=form, title="Email Participants form", submit=u"Save",
         cancel_url=event.url_for(), ajax=False)
