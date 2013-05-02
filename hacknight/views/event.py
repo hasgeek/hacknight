@@ -4,8 +4,7 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy import func
 from html2text import html2text
 from flask.ext.mail import Message
-from flask import render_template, abort, flash, url_for, g, request, Response, Markup
-from coaster import LabeledEnum
+from flask import render_template, abort, flash, url_for, g, request, Markup
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app, mail
@@ -17,11 +16,12 @@ from hacknight.views.workflow import ParticipantWorkflow
 
 
 #map participant status event template
-class PARTICIPANTS_STATUS_ENUM(LabeledEnum):
-    PENDING = (PARTICIPANT_STATUS.PENDING, 'pending_message')
-    WAITING_LIST = (PARTICIPANT_STATUS.WL, 'waitlisted_message')
-    CONFIRMED = (PARTICIPANT_STATUS.CONFIRMED, 'confirmation_message')
-    REJECTED = (PARTICIPANT_STATUS.REJECTED, 'rejected_message')
+participants_email_attrs = {
+    PARTICIPANT_STATUS.PENDING: 'pending_message',
+    PARTICIPANT_STATUS.WL: 'waitlisted_message',
+    PARTICIPANT_STATUS.CONFIRMED: 'confirmation_message',
+    PARTICIPANT_STATUS.REJECTED: 'rejected_message',
+}
 
 
 def send_email(sender, to, subject, body, html=None):
@@ -154,10 +154,10 @@ def event_update_participant_status(profile, event):
         if participant.status != status:
             participant.status = status
             try:
-                text_message = getattr(event, (PARTICIPANTS_STATUS_ENUM[status] + '_text'))
+                text_message = getattr(event, (participants_email_attrs[status] + '_text'))
                 print text_message.replace("*|FULLNAME|*", participant.user.fullname)
                 text_message = text_message.replace("*|FULLNAME|*", participant.user.fullname)
-                message = getattr(event, PARTICIPANTS_STATUS_ENUM[status])
+                message = getattr(event, participants_email_attrs[status])
                 message = message.replace("*|FULLNAME|*", participant.user.fullname)
                 if message:
                     send_email(sender=(g.user.fullname, g.user.email), to=participant.email,

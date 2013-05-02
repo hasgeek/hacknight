@@ -15,12 +15,12 @@ import sqlalchemy as sa
 
 
 def upgrade():
-    op.add_column('event', sa.Column('confirmation_message', sa.UnicodeText, nullable=False, server_default=sa.text(u'')))
-    op.add_column('event', sa.Column('confirmation_message_text', sa.UnicodeText, nullable=False, server_default=sa.text(u'')))
-    op.add_column('event', sa.Column('waitlisted_message', sa.UnicodeText, nullable=False, server_default=sa.text(u'')))
-    op.add_column('event', sa.Column('waitlisted_message_text', sa.UnicodeText, nullable=False, server_default=sa.text(u'')))
-    op.add_column('event', sa.Column('rejected_message', sa.UnicodeText, nullable=False, server_default=sa.text(u'')))
-    op.add_column('event', sa.Column('rejected_message_text', sa.UnicodeText, nullable=False, server_default=sa.text(u'')))
+    op.add_column('event', sa.Column('confirmation_message', sa.UnicodeText, nullable=False, server_default=sa.text(u"''")))
+    op.add_column('event', sa.Column('confirmation_message_text', sa.UnicodeText, nullable=False, server_default=sa.text(u"''")))
+    op.add_column('event', sa.Column('waitlisted_message', sa.UnicodeText, nullable=False, server_default=sa.text(u"''")))
+    op.add_column('event', sa.Column('waitlisted_message_text', sa.UnicodeText, nullable=False, server_default=sa.text(u"''")))
+    op.add_column('event', sa.Column('rejected_message', sa.UnicodeText, nullable=False, server_default=sa.text(u"''")))
+    op.add_column('event', sa.Column('rejected_message_text', sa.UnicodeText, nullable=False, server_default=sa.text(u"''")))
 
 
 def downgrade():

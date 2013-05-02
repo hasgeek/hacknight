@@ -15,8 +15,8 @@ import sqlalchemy as sa
 
 
 def upgrade():
-    op.add_column('event', sa.Column('pending_message', sa.UnicodeText, nullable=False, server_default=sa.text(u'')))
-    op.add_column('event', sa.Column('pending_message_text', sa.UnicodeText, nullable=False, server_default=sa.text(u'')))
+    op.add_column('event', sa.Column('pending_message', sa.UnicodeText, nullable=False, server_default=sa.text(u"''")))
+    op.add_column('event', sa.Column('pending_message_text', sa.UnicodeText, nullable=False, server_default=sa.text(u"''")))
 
 
 def downgrade():
