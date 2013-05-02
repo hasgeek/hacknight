@@ -1,0 +1,3 @@
+<p> Hello *|FULLNAME|* 
+	Your registration for <a href="{{ event.url_for(_external=True)}}" target="_blank" data-mce-href="{{ event.url_for(_external=True)}}">{{ event.name }} - Hacknight </a> is confirmed. You can <a data-mce-href="{{ event.url_for('new-project', _external=True) }}" href="{{ event.url_for('new-project', _external=True) }}" target="_blank"> create project</a>, <a data-mce-href="{{ event.url_for(_external=True) +'#/projects' }}" href="{{ event.url_for(_external=True) +'#/projects' }}" target="_blank"> join </a> any of the existing projects.<br/>
+</p>
