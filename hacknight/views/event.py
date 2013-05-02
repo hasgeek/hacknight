@@ -159,7 +159,8 @@ def event_update_participant_status(profile, event):
                 text_message = text_message.replace("*|FULLNAME|*", participant.user.fullname)
                 message = getattr(event, participants_email_attrs[status])
                 message = message.replace("*|FULLNAME|*", participant.user.fullname)
-                send_email(sender=(g.user.fullname, g.user.email), to=participant.email,
+                if message:
+                    send_email(sender=(g.user.fullname, g.user.email), to=participant.email,
                     subject="%s - Hacknight participation status" % event.title , body=text_message, html=message)
             except KeyError:
                 pass
