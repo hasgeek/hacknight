@@ -5,15 +5,24 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy import func
 from html2text import html2text
 from flask.ext.mail import Message
-from flask import render_template, abort, flash, url_for, g, request, Response, Markup
+from flask import render_template, abort, flash, url_for, g, request, Markup
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app, mail
-from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS, EVENT_STATUS
-from hacknight.forms.event import EventForm, ConfirmWithdrawForm, SendEmailForm
+from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS
+from hacknight.forms.event import EventForm, ConfirmWithdrawForm, SendEmailForm, EmailEventParticipantsForm
 from hacknight.forms.participant import ParticipantForm
 from hacknight.views.login import lastuser
 from hacknight.views.workflow import ParticipantWorkflow
+
+
+#map participant status event template
+participants_email_attrs = {
+    PARTICIPANT_STATUS.PENDING: 'pending_message',
+    PARTICIPANT_STATUS.WL: 'waitlisted_message',
+    PARTICIPANT_STATUS.CONFIRMED: 'confirmation_message',
+    PARTICIPANT_STATUS.REJECTED: 'rejected_message',
+}
 
 
 def send_email(sender, to, subject, body, html=None):
@@ -29,6 +38,7 @@ def send_email(sender, to, subject, body, html=None):
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_view(profile, event):
+    workflow = event.workflow()
     participants = [r[0] for r in db.session.query(Participant, User).filter(
         Participant.status != PARTICIPANT_STATUS.WITHDRAWN, Participant.event == event).join(
         (User, Participant.user)).options(
@@ -49,7 +59,8 @@ def event_view(profile, event):
         rest_participants=rest_participants,
         applied=applied,
         current_participant=current_participant,
-        sponsors=event.sponsors)
+        sponsors=event.sponsors,
+        workflow=workflow)
 
 
 @app.route('/<profile>/new', methods=['GET', 'POST'])
@@ -68,6 +79,7 @@ def event_new(profile):
             event.make_name()
         db.session.add(event)
         participant = Participant(user=g.user, event=event)
+        participant.status = PARTICIPANT_STATUS.CONFIRMED
         db.session.add(participant)
         db.session.commit()
         flash(u"New event created", "success")
@@ -132,20 +144,33 @@ def event_open(profile, event):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_update_participant_status(profile, event):
-    if profile.userid not in g.user.user_organizations_owned_ids():
-        return Response("Forbidden", 403)
-    participantid = int(request.form['participantid'])
-    status = int(request.form['status'])
-    participant = Participant.query.get(participantid)
+    if request.is_xhr:
+        if profile.userid not in g.user.user_organizations_owned_ids():
+            abort(403)
+        participantid = int(request.form['participantid'])
+        status = int(request.form['status'])
+        participant = Participant.query.get(participantid)
 
-    if(participant.event != event):
-        return Response("Forbidden", 403)
-    if(participant.status == PARTICIPANT_STATUS.WITHDRAWN):
-        return Response("Forbidden", 403)
-
-    participant.status = status
-    db.session.commit()
-    return "Done"
+        if participant.event != event:
+            abort(403)
+        if participant.status == PARTICIPANT_STATUS.WITHDRAWN:
+            abort(403)
+        if participant.status != status:
+            participant.status = status
+            try:
+                text_message = getattr(event, (participants_email_attrs[status] + '_text'))
+                print text_message.replace("*|FULLNAME|*", participant.user.fullname)
+                text_message = text_message.replace("*|FULLNAME|*", participant.user.fullname)
+                message = getattr(event, participants_email_attrs[status])
+                message = message.replace("*|FULLNAME|*", participant.user.fullname)
+                if message:
+                    send_email(sender=(g.user.fullname, g.user.email), to=participant.email,
+                    subject="%s - Hacknight participation status" % event.title , body=text_message, html=message)
+            except KeyError:
+                pass
+            db.session.commit()
+        return "Done"
+    abort(403)
 
 
 @app.route('/<profile>/<event>/apply', methods=['GET', 'POST'])
@@ -154,6 +179,10 @@ def event_update_participant_status(profile, event):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_apply(profile, event):
+    workflow = event.workflow()
+    if not workflow.can_apply():
+        flash("Hacknight is not accepting participants now, please try after sometime.")
+        return render_redirect(event.url_for())
     values = {'profile': profile.name, 'event': event.name}
     participant = Participant.get(g.user, event)
     if not participant:
@@ -329,3 +358,31 @@ def feed(event=None, title=None):
 def event_feed(profile, event):
     title = event.title
     return feed(event=event, title=title)
+
+
+@app.route('/<profile>/<event>/email_template', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'), permission='send-email')
+def email_template_form(profile, event):
+    form = EmailEventParticipantsForm(obj=event)
+    if not form.confirmation_message.data:
+        form.confirmation_message.data = render_template('confirmed_participants_email.md', event=event)
+    if not form.waitlisted_message.data:
+        form.waitlisted_message.data = render_template('waitlisted_participants_email.md', event=event)
+    if not form.rejected_message.data:
+        form.rejected_message.data = render_template('rejected_participants_email.md', event=event)
+    if not form.pending_message.data:
+        form.pending_message.data = render_template('pending_participants_email.md', event=event)
+    if form.validate_on_submit():
+        form.populate_obj(event)
+        event.confirmation_message_text = html2text(form.confirmation_message.data)
+        event.pending_message_text = html2text(form.pending_message.data)
+        event.waitlisted_message_text = html2text(form.waitlisted_message.data)
+        event.rejected_message_text = html2text(form.rejected_message.data)
+        db.session.commit()
+        flash(u"Participants Email template for %s is saved" % event.title, "success")
+        return render_redirect(event.url_for(), code=303)
+    return render_form(form=form, title="Email Participants form", submit=u"Save",
+        cancel_url=event.url_for(), ajax=False)

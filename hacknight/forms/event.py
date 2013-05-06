@@ -46,6 +46,13 @@ class EventForm(Form):
             raise wtf.ValidationError(u"Your event can’t end before it starts.")
 
 
+class EmailEventParticipantsForm(Form):
+    pending_message = RichTextField("Pending Message", description="Message to be sent for pending participants. '*|FULLNAME|*' will be replaced with user's fullname.", validators=[wtf.Optional()])
+    confirmation_message = RichTextField("Confirmation Message", description="Message to be sent for confirmed participants. '*|FULLNAME|*' will be replaced with user's fullname.", validators=[wtf.Optional()])
+    rejected_message = RichTextField("Rejected Message", description="Message to be sent for rejected participants. '*|FULLNAME|*' will be replaced with user's fullname.", validators=[wtf.Optional()])
+    waitlisted_message = RichTextField("Waitlisted Message", description="Message to be sent for waitlisted participants. '*|FULLNAME|*' will be replaced with user's fullname.", validators=[wtf.Optional()])
+
+
 class ConfirmWithdrawForm(wtf.Form):
     """
     Confirm a delete operation
