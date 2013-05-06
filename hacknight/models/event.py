@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from flask import url_for
+from sqlalchemy.orm import deferred
 from hacknight.models import db, BaseScopedNameMixin
 from hacknight.models.profile import Profile
 from hacknight.models.comment import CommentSpace
+
 
 __all__ = ['Event', 'EVENT_STATUS']
 #need to add EventTurnOut, EventPayment later
@@ -51,6 +53,14 @@ class Event(BaseScopedNameMixin, db.Model):
     website = db.Column(db.Unicode(250), default=u'', nullable=False)
     status = db.Column(db.Integer, nullable=False, default=EVENT_STATUS.DRAFT)
     ticket_price = db.Column(db.Unicode(250), nullable=False, default=u'')
+    confirmation_message = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
+    confirmation_message_text = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
+    waitlisted_message = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
+    waitlisted_message_text = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
+    rejected_message = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
+    rejected_message_text = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
+    pending_message = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
+    pending_message_text = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
 
     #event wall
     comments_id = db.Column(db.Integer, db.ForeignKey('commentspace.id'), nullable=False)
@@ -107,3 +117,5 @@ class Event(BaseScopedNameMixin, db.Model):
             return url_for('event_export', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'send_email':
             return url_for('event_send_email', profile=self.profile.name, event=self.name, _external=_external)
+        elif action == 'email_template':
+            return url_for('email_template_form', profile=self.profile.name, event=self.name, _external=_external)
