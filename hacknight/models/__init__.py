@@ -6,9 +6,11 @@ from coaster.sqlalchemy import BaseMixin, BaseNameMixin, BaseScopedNameMixin, Ba
 
 db = SQLAlchemy(app)
 
-from hacknight.models.user import *
 from hacknight.models.event import *
+from hacknight.models.user import *
+from hacknight.models.profile import *
 from hacknight.models.venue import *
 from hacknight.models.project import *
 from hacknight.models.participant import *
 from hacknight.models.sponsor import *
+from hacknight.models.comment import *

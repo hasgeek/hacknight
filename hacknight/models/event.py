@@ -2,9 +2,12 @@
 
 from flask import url_for
 from sqlalchemy.orm import deferred
-from hacknight.models import db, BaseNameMixin, BaseScopedNameMixin
+from hacknight.models import db, BaseScopedNameMixin
+from hacknight.models.profile import Profile
+from hacknight.models.comment import CommentSpace
 
-__all__ = ['Profile', 'Event', 'EVENT_STATUS', 'PROFILE_TYPE']
+
+__all__ = ['Event', 'EVENT_STATUS']
 #need to add EventTurnOut, EventPayment later
 
 
@@ -33,25 +36,9 @@ class EVENT_STATUS:
     WITHDRAWN = 7
 
 
-class Profile(BaseNameMixin, db.Model):
-    __tablename__ = 'profile'
-
-    userid = db.Column(db.Unicode(22), nullable=False, unique=True)
-    description = db.Column(db.UnicodeText, default=u'', nullable=False)
-    type = db.Column(db.Integer, default=PROFILE_TYPE.UNDEFINED, nullable=False)
-
-    def type_label(self):
-        return profile_types.get(self.type, profile_types[0])
-
-    def url_for(self, action='view', _external=True):
-        if action == 'view':
-            return url_for('profile_view', profile=self.name, _external=_external)
-        elif action == 'new-event':
-            return url_for('event_new', profile=self.name, _external=_external)
-
-
 class Event(BaseScopedNameMixin, db.Model):
     __tablename__ = 'event'
+
     profile_id = db.Column(db.Integer, db.ForeignKey('profile.id'), nullable=False)
     profile = db.relationship(Profile)
     parent = db.synonym('profile')
@@ -75,7 +62,16 @@ class Event(BaseScopedNameMixin, db.Model):
     pending_message = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
     pending_message_text = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
 
+    #event wall
+    comments_id = db.Column(db.Integer, db.ForeignKey('commentspace.id'), nullable=False)
+    comments = db.relationship(CommentSpace, uselist=False)
+
     __table_args__ = (db.UniqueConstraint('name', 'profile_id'),)
+
+    def __init__(self, **kwargs):
+        super(Event, self).__init__(**kwargs)
+        if not self.comments:
+            self.comments = CommentSpace()
 
     def owner_is(self, user):
         """Check if a user is an owner of this event"""

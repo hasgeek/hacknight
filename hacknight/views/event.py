@@ -1,18 +1,24 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 from sqlalchemy.orm import joinedload
 from sqlalchemy import func
 from html2text import html2text
 from flask.ext.mail import Message
-from flask import render_template, abort, flash, url_for, g, request, Markup
-from coaster.views import load_model, load_models
+from flask import render_template, abort, flash, url_for, g, request, Markup, redirect
+from coaster.views import load_model, load_models, jsonp
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app, mail
-from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS
+from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS, Comment
 from hacknight.forms.event import EventForm, ConfirmWithdrawForm, SendEmailForm, EmailEventParticipantsForm
 from hacknight.forms.participant import ParticipantForm
+from hacknight.forms.comment import CommentForm, DeleteCommentForm
 from hacknight.views.login import lastuser
 from hacknight.views.workflow import ParticipantWorkflow
+from markdown import Markdown
+import bleach
+
+markdown = Markdown(safe_mode="escape").convert
 
 
 #map participant status event template
@@ -32,7 +38,7 @@ def send_email(sender, to, subject, body, html=None):
     mail.send(msg)
 
 
-@app.route('/<profile>/<event>', methods=["GET"])
+@app.route('/<profile>/<event>', methods=["GET", "POST"])
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
@@ -52,6 +58,51 @@ def event_view(profile, event):
             applied = True
             break
     current_participant = Participant.get(user=g.user, event=event) if g.user else None
+    comments = sorted(Comment.query.filter_by(commentspace=event.comments, reply_to=None).order_by('created_at').all(),
+        key=lambda c: c.votes.count, reverse=True)
+    commentform = CommentForm()
+    delcommentform = DeleteCommentForm()
+    commentspace = event.comments
+    if request.method == 'POST':
+        if request.form.get('form.id') == 'newcomment' and commentform.validate():
+            if commentform.edit_id.data:
+                comment = commentspace.get_comment(int(commentform.edit_id.data))
+                if comment:
+                    if comment.user == g.user:
+                        comment.message = commentform.message.data
+                        comment.message_html = markdown(comment.message)
+                        comment.edited_at = datetime.utcnow()
+                        flash("Your comment has been edited", "info")
+                    else:
+                        flash("You can only edit your own comments", "info")
+                else:
+                    flash("No such comment", "error")
+            else:
+                comment = Comment(user=g.user, commentspace=event.comments, message=commentform.message.data)
+                comment.message_html = bleach.linkify(markdown(commentform.message.data))
+                event.comments.count += 1
+                comment.votes.vote(g.user)  # Vote for your own comment
+                comment.make_id()
+                db.session.add(comment)
+                flash("Your comment has been posted", "info")
+            db.session.commit()
+            # Redirect despite this being the same page because HTTP 303 is required to not break
+            # the browser Back button
+            return redirect(event.url_for() + "#wall")
+
+        elif request.form.get('form.id') == 'delcomment' and delcommentform.validate():
+            comment = commentspace.get_comment(int(delcommentform.comment_id.data))
+            if comment:
+                if comment.user == g.user:
+                    comment.delete()
+                    event.comments.count -= 1
+                    db.session.commit()
+                    flash("Your comment was deleted.", "info")
+                else:
+                    flash("You did not post that comment.", "error")
+            else:
+                flash("No such comment.", "error")
+            return redirect(event.url_for() + "#wall")
     return render_template('event.html', profile=profile, event=event,
         projects=event.projects,
         accepted_participants=accepted_participants,
@@ -59,7 +110,60 @@ def event_view(profile, event):
         applied=applied,
         current_participant=current_participant,
         sponsors=event.sponsors,
-        workflow=workflow)
+        comments=comments,
+        commentform=commentform,
+        delcommentform=delcommentform)
+
+
+@app.route('/<profile>/<event>/comments/<int:cid>/voteup', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
+    (Comment, {'url_id': 'cid', 'commentspace': 'event.comments'}, 'comment'))
+def wall_voteupcomment(profile, event, comment):
+    comment.votes.vote(g.user, votedown=False)
+    db.session.commit()
+    flash("Your vote has been recorded", "info")
+    return redirect(event.url_for() + "#wall")
+
+
+@app.route('/<profile>/<event>/comments/<int:cid>/votedown', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
+    (Comment, {'url_id': 'cid', 'commentspace': 'event.comments'}, 'comment'))
+def wall_votedowncomment(profile, event, comment):
+    comment.votes.vote(g.user, votedown=True)
+    db.session.commit()
+    flash("Your vote has been recorded", "info")
+    return redirect(event.url_for() + "#wall", code=302)
+
+
+@app.route('/<profile>/<event>/comments/<int:cid>/json')
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
+    (Comment, {'url_id': 'cid', 'commentspace': 'event.comments'}, 'comment'))
+def wall_jsoncomment(profile, event, comment):
+    # comment = Comment.query.get(cid)
+    if comment:
+        return jsonp(message=comment.message)
+    return jsonp(message='')
+
+
+@app.route('/<profile>/<event>/comments/<int:cid>/cancelvote', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
+    (Comment, {'url_id': 'cid', 'commentspace': 'event.comments'}, 'comment'))
+def wall_votecancelcomment(profile, event, comment):
+    comment.votes.cancelvote(g.user)
+    db.session.commit()
+    flash("Your vote has been withdrawn", "info")
+    return redirect(event.url_for() + "#wall", code=302)
 
 
 @app.route('/<profile>/new', methods=['GET', 'POST'])
@@ -158,7 +262,6 @@ def event_update_participant_status(profile, event):
             participant.status = status
             try:
                 text_message = getattr(event, (participants_email_attrs[status] + '_text'))
-                print text_message.replace("*|FULLNAME|*", participant.user.fullname)
                 text_message = text_message.replace("*|FULLNAME|*", participant.user.fullname)
                 message = getattr(event, participants_email_attrs[status])
                 message = message.replace("*|FULLNAME|*", participant.user.fullname)

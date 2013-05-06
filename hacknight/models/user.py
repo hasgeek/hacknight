@@ -3,7 +3,7 @@
 from flask import url_for
 from flask.ext.lastuser.sqlalchemy import UserBase
 from hacknight.models import db
-from hacknight.models.event import Profile
+from hacknight.models.profile import Profile
 
 __all__ = ['User']
 
