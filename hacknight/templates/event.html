@@ -96,6 +96,7 @@
           <li><a href="{{ event.url_for('edit') }}"><i class="icon-pencil"></i> Edit details...</a></li>
           <li><a href="{{ event.url_for('delete') }}"><i class="icon-trash"></i> Delete event...</a></li>
           <li><a href="{{ event.url_for('send_email') }}"><i class="icon-envelope"></i>Email participants...</a></li>
+          <li><a href="{{ event.url_for('email_template') }}"><i class="icon-envelope"></i>Email template...</a></li>
           {% with transitions = workflow.transitions() %}
             {% for key in transitions %}
               <li><a href="{{ event.url_for('event_change',method_name=key) }}" data-name="{{ key }}" class="event_change" data-method="POST"><i class="icon-pencil"></i>{{ transitions[key]['description'] }}</a></li>
