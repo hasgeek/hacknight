@@ -22,7 +22,7 @@ def shortdate(date):
 
 @app.template_filter('fulldate')
 def fulldate(date):
-    return utc.localize(date).astimezone(app.config['tz']).strftime("%a, %b %e %H:%M")
+    return utc.localize(date).astimezone(app.config['tz']).strftime("%a, %b %e %I:%M %p")
 
 
 @app.template_filter('weekdate')
