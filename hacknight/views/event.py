@@ -70,6 +70,7 @@ def event_new(profile):
         abort(403)
     form = EventForm(parent=profile, model=Event)
     form.start_datetime.timezone = app.config['tz']
+    print app.config['tz']
     form.end_datetime.timezone = app.config['tz']
     if form.validate_on_submit():
         event = Event(profile=profile)
