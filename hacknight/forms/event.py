@@ -38,7 +38,7 @@ class EventForm(Form):
     end_datetime = DateTimeField("End date/time", description="The date and time at which this event ends", validators=[wtf.Required()])
     ticket_price = wtf.TextField("Ticket price", description="Entry fee, if any, to be paid at the venue", validators=[wtf.validators.length(max=250)])
     total_participants = wtf.IntegerField("Venue capacity", description="The number of people this venue can accommodate. Registrations will be closed after that. Use 0 to indicate unlimited capacity", default=50, validators=[wtf.Required()])
-    website = wtf.TextField("Website", description="Related Website (Optional)", validators=[wtf.Optional(), wtf.validators.length(max=250)])
+    website = wtf.html5.URLField("Website", description="Related Website (Optional)", validators=[wtf.Optional(), wtf.URL()])
     status = wtf.SelectField("Event status", description="Current status of this hacknight", coerce=int, choices=STATUS_CHOICES)
 
     def validate_end_datetime(self, field):
