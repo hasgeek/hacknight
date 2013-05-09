@@ -69,8 +69,8 @@ def event_new(profile):
     if profile.userid not in g.user.user_organizations_owned_ids():
         abort(403)
     form = EventForm(parent=profile, model=Event)
-    form.start_datetime.timezone = app.config['tz']
-    form.end_datetime.timezone = app.config['tz']
+    form.start_datetime.timezone = app.config['TIMEZONE']
+    form.end_datetime.timezone = app.config['TIMEZONE']
     if form.validate_on_submit():
         event = Event(profile=profile)
         form.populate_obj(event)
@@ -97,6 +97,8 @@ def event_edit(profile, event):
     if not workflow.can_edit():
         abort(403)
     form = EventForm(obj=event)
+    form.start_datetime.timezone = app.config['TIMEZONE']
+    form.end_datetime.timezone = app.config['TIMEZONE']
     if form.validate_on_submit():
         form.populate_obj(event)
         event.make_name()
