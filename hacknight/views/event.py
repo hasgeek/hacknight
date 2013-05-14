@@ -80,6 +80,7 @@ def event_new(profile):
         participant = Participant(user=g.user, event=event)
         participant.status = PARTICIPANT_STATUS.CONFIRMED
         db.session.add(participant)
+        #raise
         db.session.commit()
         flash(u"New event created", "success")
         return render_redirect(url_for('event_view', profile=profile.name, event=event.name), code=303)
