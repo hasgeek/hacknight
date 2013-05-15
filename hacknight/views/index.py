@@ -46,7 +46,6 @@ def cleanurl(url):
 @baseframe.app_errorhandler(404)
 def page_not_found(e):
     r = request.view_args
-    print request.__dict__
     if r and 'profile' in r and 'event' in r:
         profile = Profile.query.filter_by(name=r['profile']).first()
         if profile:
