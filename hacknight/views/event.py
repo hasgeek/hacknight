@@ -103,12 +103,12 @@ def event_edit(profile, event):
         event.make_name()
         new_name = event.name
         if new_name != old_name:
-            redirect = Redirect.query.filter_by(old_event_name=old_name, profile_id=profile.id).first()
-            if redirect:
-                redirect.new_event_name = new_name
-                db.session.add(redirect)
+            redirect_to = Redirect.query.filter_by(old_event_name=old_name, profile_id=profile.id).first()
+            if redirect_to:
+                redirect_to.new_event_name = new_name
+                db.session.add(redirect_to)
             else:
-                new_redirect = Redirect(old_event_name=old_name, profile_id=profile.id, new_event_name=new_name)  
+                new_redirect = Redirect(old_event_name=old_name, profile_id=profile.id, new_event_name=new_name)
                 db.session.add(new_redirect)
         event.profile_id = profile.id
         db.session.commit()
