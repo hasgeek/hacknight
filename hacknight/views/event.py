@@ -102,14 +102,12 @@ def event_edit(profile, event):
         form.populate_obj(event)
         event.make_name()
         if event.name != old_name:
-            redirect_to = EventRedirect.query.filter_by(name=old_name, profile_id=profile.id).first()
+            redirect_to = EventRedirect.query.filter_by(name=old_name, profile=profile).first()
             if redirect_to:
-                redirect_to.event_id = event.id
-                db.session.add(redirect_to)
+                redirect_to.event = event
             else:
-                new_redirect = EventRedirect(name=old_name, profile_id=profile.id, event_id=event.id)
-                db.session.add(new_redirect)
-        event.profile_id = profile.id
+                redirect_to = EventRedirect(name=old_name, profile=profile, event=event)
+                db.session.add(redirect_to)
         db.session.commit()
         flash(u"Your edits to %s are saved" % event.title, "success")
         return render_redirect(event.url_for(), code=303)
