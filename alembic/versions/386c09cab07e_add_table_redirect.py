@@ -16,12 +16,16 @@ import sqlalchemy as sa
 
 def upgrade():
     op.create_table(
-        'redirect',
+        'event_redirect',
         sa.Column('id', sa.Integer, primary_key=True),
         sa.Column('profile_id', sa.Integer, nullable=False),
-        sa.Column('old_event_name', sa.Unicode(250), nullable=False),
-        sa.Column('new_event_name', sa.Unicode(250), nullable=False))
+        sa.Column('name', sa.Unicode(250), nullable=False),
+        sa.Column('event_id', sa.Integer, nullable=False),
+        sa.Column('created_at', sa.DateTime(), nullable=False),
+        sa.Column('updated_at', sa.DateTime(), nullable=False))
+    op.create_foreign_key("fk_event_redirect_event_id", "event_redirect", "event", ["event_id"], ["id"])
 
 
 def downgrade():
-    op.drop_table('redirect')
+    op.drop_table('event_redirect')
+    op.drop_constraint("fk_event_redirect_event_id")

@@ -2,7 +2,7 @@
 
 from flask import render_template, request, redirect
 from hacknight import app, baseframe
-from hacknight.models.event import Event, EVENT_STATUS, Redirect, Profile
+from hacknight.models.event import Event, EVENT_STATUS, EventRedirect, Profile
 from datetime import datetime
 from pytz import utc
 
@@ -49,7 +49,7 @@ def page_not_found(e):
     if r and 'profile' in r and 'event' in r:
         profile = Profile.query.filter_by(name=r['profile']).first()
         if profile:
-            redirect_to = Redirect.query.filter_by(profile=profile, old_event_name=r['event']).first()
+            redirect_to = EventRedirect.query.filter_by(profile=profile, name=r['event']).first()
             if redirect_to:
                 return redirect(redirect_to.event.url_for(), 302)
     return render_template('404.html'), 404

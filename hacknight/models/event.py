@@ -4,7 +4,7 @@ from flask import url_for
 from sqlalchemy.orm import deferred
 from hacknight.models import db, BaseNameMixin, BaseScopedNameMixin, BaseMixin
 
-__all__ = ['Profile', 'Event', 'EVENT_STATUS', 'PROFILE_TYPE', 'Redirect']
+__all__ = ['Profile', 'Event', 'EVENT_STATUS', 'PROFILE_TYPE', 'EventRedirect']
 #need to add EventTurnOut, EventPayment later
 
 
@@ -125,13 +125,14 @@ class Event(BaseScopedNameMixin, db.Model):
             return url_for('email_template_form', profile=self.profile.name, event=self.name, _external=_external)
 
 
-class Redirect(BaseMixin, db.Model):
-    __tablename__ = "redirect"
+class EventRedirect(BaseMixin, db.Model):
+    __tablename__ = "event_redirect"
 
     profile_id = db.Column(db.Integer, db.ForeignKey('profile.id'), nullable=False)
     profile = db.relationship(Profile)
-    parent = db.synonym('profile')
 
-    old_event_name = db.Column(db.Unicode(250), nullable=False)
-    new_event_name = db.Column(db.Unicode(250), db.ForeignKey('event.name'), nullable=False)
-    event = db.relationship(Event)
+    name = db.Column(db.Unicode(250), nullable=False)
+    event_id = db.Column(None, db.ForeignKey('event.id'), nullable=False)
+    event = db.relationship(Event, backref=db.backref('redirects', cascade='all, delete-orphan'))
+
+    __table_args__ = (db.UniqueConstraint(profile_id, name),)
