@@ -100,7 +100,8 @@ def event_edit(profile, event):
     if form.validate_on_submit():
         old_name = event.name
         form.populate_obj(event)
-        event.make_name()
+        if not event.name:
+            event.make_name()
         if event.name != old_name:
             redirect_to = EventRedirect.query.filter_by(name=old_name, profile=profile).first()
             if redirect_to:
