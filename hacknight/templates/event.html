@@ -91,12 +91,12 @@
         {% endif %}
         {%- if event.owner_is(g.user) %}
           <li class="nav-header">Manage event</li>
-          <li><a href="{{ event.url_for('open') }}"><i class="icon-wrench"></i> Manage event</a></li>
-          <li><a href="{{ event.url_for('export') }}"><i class="icon-wrench"></i> Export participants list</a></li>
-          <li><a href="{{ event.url_for('edit') }}"><i class="icon-pencil"></i> Edit details...</a></li>
-          <li><a href="{{ event.url_for('delete') }}"><i class="icon-trash"></i> Delete event...</a></li>
-          <li><a href="{{ event.url_for('send_email') }}"><i class="icon-envelope"></i>Email participants...</a></li>
-          <li><a href="{{ event.url_for('email_template') }}"><i class="icon-envelope"></i>Email template...</a></li>
+          <li><a href="{{ event.url_for('open') }}"><span class="icon-wrench">Manage event</span></a></li>
+          <li><a href="{{ event.url_for('export') }}"><span class="icon-wrench">Export participant list</span></a></li>
+          <li><a href="{{ event.url_for('edit') }}"><span class="icon-pencil">Edit details</span></a></li>
+          <li><a href="{{ event.url_for('email_template') }}"><span class="icon-pencil">Edit email templates</span></a></li>
+          <li><a href="{{ event.url_for('delete') }}"><span class="icon-trash">Delete event...</span></a></li>
+          <li><a href="{{ event.url_for('send_email') }}"><span class="icon-envelope">Email participants...</span></a></li>
         {% endif -%}
         <li class="nav-header">Share</li>
         <li><a target="_blank" href="http://twitter.com/share?url={{ request.url }}&amp;via=HasGeek&amp;text={{ event.title }}" class="socialite twitter-share" data-url="{{ request.url }}" data-text="{{ event.title }}" data-via="HasGeek"><span class="icon-twitter">Twitter</span></a></li>
@@ -112,8 +112,6 @@
         </ul>
       {% endif %}
     </div>
-
-
   </div>
   <ul class="nav nav-tabs nav-tabs-auto">
     <li><a href="#participants" data-toggle="tab">Participants</a></li>
