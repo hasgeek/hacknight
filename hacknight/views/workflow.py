@@ -98,6 +98,7 @@ class EventWorkflow(DocumentWorkflow):
     withdrawn = WorkflowState(EVENT_STATUS.WITHDRAWN, title=u"Withdrawn")
     published = WorkflowState(EVENT_STATUS.PUBLISHED, title="Published")
 
+
     #: States in which an owner can edit
     editable = WorkflowStateGroup([draft, active, published, closed], title=u"Editable")
     public = WorkflowStateGroup([published, closed], title=u"Public")
