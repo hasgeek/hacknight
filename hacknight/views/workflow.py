@@ -90,24 +90,19 @@ class EventWorkflow(DocumentWorkflow):
 
     state_attr = 'status'
     draft = WorkflowState(EVENT_STATUS.DRAFT, title=u"Draft")
-    active = WorkflowState(EVENT_STATUS.ACTIVE, title=u"Active")
     closed = WorkflowState(EVENT_STATUS.CLOSED, title=u"Closed")
-    completed = WorkflowState(EVENT_STATUS.COMPLETED, title=u"Completed")
-    cancelled = WorkflowState(EVENT_STATUS.CANCELLED, title=u"Cancelled")
-    rejected = WorkflowState(EVENT_STATUS.REJECTED, title=u"Rejected")
-    withdrawn = WorkflowState(EVENT_STATUS.WITHDRAWN, title=u"Withdrawn")
-    published = WorkflowState(EVENT_STATUS.PUBLISHED, title="Published")
+    public = WorkflowState(EVENT_STATUS.PUBLIC, title=u"Public")
 
 
     #: States in which an owner can edit
-    editable = WorkflowStateGroup([draft, active, published, closed], title=u"Editable")
-    public = WorkflowStateGroup([published, closed], title=u"Public")
-    appliable = WorkflowStateGroup([active, published], title="User can apply for an event")
+    editable = WorkflowStateGroup([draft, public, closed], title=u"Editable")
+    public_states = WorkflowStateGroup([public, closed], title=u"Public")
+    appliable = WorkflowStateGroup([public], title="User can apply for an event")
 
     openit = WorkflowStateGroup([draft], title=u"Open it")
-    create_projects = WorkflowStateGroup([draft, active, published], title="States in which projects can be created")
+    create_projects = WorkflowStateGroup([draft, public], title="States in which projects can be created")
     #: States in which a reviewer can view
-    reviewable = WorkflowStateGroup([draft, published],
+    reviewable = WorkflowStateGroup([draft, public],
                                     title=u"Reviewable")
 
     def permissions(self):
@@ -121,83 +116,58 @@ class EventWorkflow(DocumentWorkflow):
         base_permissions.extend(lastuser.permissions())
         return base_permissions
 
-    @draft.transition(published, 'owner', title=u"Open", category="primary",
+    @draft.transition(public, 'owner', title=u"Open", category="primary",
         description=u"Make hacknight public", view="event_change")
     def openit(self):
         """
         Open the hacknight.
         """
-        if not self.document.status == EVENT_STATUS.PUBLISHED:
-            self.document.status = EVENT_STATUS.PUBLISHED
+        if not self.document.status == EVENT_STATUS.PUBLIC:
+            self.document.status = EVENT_STATUS.PUBLIC
 
-    @draft.transition(cancelled, 'owner', title=u"Cancel", category="warning",
+    @draft.transition(closed, 'owner', title=u"Cancel", category="warning",
         description=u"Cancel hacknight", view="event_change")
     def cancel_draft(self):
         """
         Cancel the hacknight
         """
-        self.document.status = EVENT_STATUS.CANCELLED
+        self.document.status = EVENT_STATUS.CLOSED
 
-    @active.transition(cancelled, 'owner', title=u"Cancel", category="warning",
+    @public.transition(closed, 'owner', title=u"Cancel", category="warning",
         description=u"Cancel hacknight", view="event_change")
-    def cancel_active(self):
+    def cancel_public(self):
         """
         Cancel the hacknight
         """
-        self.document.status = EVENT_STATUS.CANCELLED
+        self.document.status = EVENT_STATUS.CLOSED
 
-    @active.transition(closed, 'owner', title=u"Close", category="primary",
-        description=u"Close registrations", view="event_change")
+    @public.transition(closed, 'owner', title=u"Close", category="primary",
+        description=u"Close Hacknight", view="event_change")
     def close(self):
         """
         Close the hacknight
         """
         self.document.status = EVENT_STATUS.CLOSED
 
-
-    @published.transition(cancelled, 'owner', title=u"Cancel", category="warning",
-        description=u"Cancel hacknight", view="event_change")
-    def deactive(self):
-        """
-        Cancel the hacknight
-        """
-        self.document.status = EVENT_STATUS.CANCELLED
-
-    @published.transition(closed, 'owner', title=u"Close", category="primary",
-        description=u"Close registration", view="event_change")
-    def published_close(self):
-        """
-        Close the hacknight
-        """
-        self.document.status = EVENT_STATUS.CLOSED
-
-    @closed.transition(active, 'owner', title=u"Complete", category="success",
+    @closed.transition(public, 'owner', title=u"Complete", category="success",
         description=u"Reopen hacknight", view="event_change")
     def reopen(self):
         """
         Hacknight is now completed.
         """
-        self.document.status = EVENT_STATUS.ACTIVE
-
-    @cancelled.transition(active, 'owner', title=u"Complete", category="success",
-        description=u"Reopen hacknight", view="event_change")
-    def cancel_reopen(self):
-        """
-        Hacknight is now completed.
-        """
-        self.document.status = EVENT_STATUS.ACTIVE
+        self.document.status = EVENT_STATUS.PUBLIC
 
     def is_public(self):
         """
         Is the hacknight public?
         """
-        return self.public()
+        return self.public_states()
 
     def can_view(self):
         """
         Can the current user view this?
         """
-        return self.public() or 'owner' in self.permissions()
+        return self.public_states() or 'owner' in self.permissions()
 
     def can_edit(self):
         """

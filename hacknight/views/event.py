@@ -97,7 +97,6 @@ def event_edit(profile, event):
     if not workflow.can_edit():
         abort(403)
     form = EventForm(obj=event)
-    del form.status
     if form.validate_on_submit():
         old_name = event.name
         form.populate_obj(event)
