@@ -103,6 +103,10 @@
             {% endfor %}
           {% endwith %}
         {% endif -%}
+        <li class="nav-header">Share</li>
+        <li><a target="_blank" href="http://twitter.com/share?url={{ request.url }}&amp;via=HasGeek&amp;text={{ event.title }}" class="socialite twitter-share" data-url="{{ request.url }}" data-text="{{ event.title }}" data-via="HasGeek"><span class="icon-twitter">Twitter</span></a></li>
+        <li><a target="_blank" href="http://www.facebook.com/sharer.php?u={{ request.url }}&amp;t={{ event.title }}" class="socialite facebook-share" data-href="{{ request.url }}"><span class="icon-facebook">Facebook</span></a></li>
+        <li><a target="_blank" href="https://plus.google.com/share?url={{ request.url }}" class="socialite googleplus-share" data-href="{{ request.url }}" data-action="share"><span class="icon-google-plus">Google+</span></a></li>
       </ul>
       {% if event.sponsors %}
         <h3>Sponsors</h3>

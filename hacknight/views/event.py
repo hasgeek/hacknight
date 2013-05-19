@@ -8,7 +8,7 @@ from flask import render_template, abort, flash, url_for, g, request, Markup
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app, mail
-from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS
+from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS, EventRedirect
 from hacknight.forms.event import EventForm, ConfirmWithdrawForm, SendEmailForm, EmailEventParticipantsForm
 from hacknight.forms.participant import ParticipantForm
 from hacknight.views.login import lastuser
@@ -99,9 +99,17 @@ def event_edit(profile, event):
     form = EventForm(obj=event)
     del form.status
     if form.validate_on_submit():
+        old_name = event.name
         form.populate_obj(event)
-        event.make_name()
-        event.profile_id = profile.id
+        if not event.name:
+            event.make_name()
+        if event.name != old_name:
+            redirect_to = EventRedirect.query.filter_by(name=old_name, profile=profile).first()
+            if redirect_to:
+                redirect_to.event = event
+            else:
+                redirect_to = EventRedirect(name=old_name, profile=profile, event=event)
+                db.session.add(redirect_to)
         db.session.commit()
         flash(u"Your edits to %s are saved" % event.title, "success")
         return render_redirect(event.url_for(), code=303)
