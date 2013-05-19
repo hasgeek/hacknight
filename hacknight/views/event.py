@@ -169,7 +169,7 @@ def event_update_participant_status(profile, event):
                 text_message = text_message.replace("*|FULLNAME|*", participant.user.fullname)
                 message = unicode(getattr(event, participants_email_attrs[status]))
                 message = message.replace("*|FULLNAME|*", participant.user.fullname)
-                if message:
+                if message and g.user.email:
                     send_email(sender=(g.user.fullname, g.user.email), to=participant.email,
                     subject="%s - Hacknight participation status" % event.title , body=text_message, html=message)
             except KeyError:
@@ -333,7 +333,8 @@ def event_send_email(profile, event):
             if participant.email:
                 message = form.message.data.replace("*|FULLNAME|*", participant.user.fullname)
                 text_message = html2text(message)
-                send_email(sender=(g.user.fullname, g.user.email), to=participant.email, subject=subject, body=text_message, html=message)
+                if g.user.email:
+                    send_email(sender=(g.user.fullname, g.user.email), to=participant.email, subject=subject, body=text_message, html=message)
                 count += 1
         flash("Your message was sent to %d participant(s)." % count)
         return render_redirect(event.url_for())
