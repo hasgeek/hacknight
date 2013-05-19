@@ -29,7 +29,8 @@ def send_email(sender, to, subject, body, html=None):
     msg.body = body
     if html:
         msg.html = html
-    mail.send(msg)
+    if recipients:
+        mail.send(msg)
 
 
 @app.route('/<profile>/<event>', methods=["GET"])
