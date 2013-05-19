@@ -165,10 +165,9 @@ def event_update_participant_status(profile, event):
         if participant.status != status:
             participant.status = status
             try:
-                text_message = getattr(event, (participants_email_attrs[status] + '_text'))
-                print text_message.replace("*|FULLNAME|*", participant.user.fullname)
+                text_message = unicode(getattr(event, (participants_email_attrs[status] + '_text')))
                 text_message = text_message.replace("*|FULLNAME|*", participant.user.fullname)
-                message = getattr(event, participants_email_attrs[status])
+                message = unicode(getattr(event, participants_email_attrs[status]))
                 message = message.replace("*|FULLNAME|*", participant.user.fullname)
                 if message:
                     send_email(sender=(g.user.fullname, g.user.email), to=participant.email,

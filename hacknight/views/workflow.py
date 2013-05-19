@@ -116,8 +116,8 @@ class EventWorkflow(DocumentWorkflow):
         base_permissions.extend(lastuser.permissions())
         return base_permissions
 
-    @draft.transition(public, 'owner', title=u"Open", category="primary",
-        description=u"Make hacknight public", view="event_change")
+    @draft.transition(public, 'owner', title=u"Open", category=u"primary",
+        description=u"Make hacknight public", view=u"event_change")
     def openit(self):
         """
         Open the hacknight.
@@ -125,8 +125,8 @@ class EventWorkflow(DocumentWorkflow):
         if not self.document.status == EVENT_STATUS.PUBLIC:
             self.document.status = EVENT_STATUS.PUBLIC
 
-    @draft.transition(closed, 'owner', title=u"Cancel", category="warning",
-        description=u"Cancel hacknight", view="event_change")
+    @draft.transition(closed, 'owner', title=u"Cancel", category=u"warning",
+        description=u"Cancel hacknight", view=u"event_change")
     def cancel_draft(self):
         """
         Cancel the hacknight
