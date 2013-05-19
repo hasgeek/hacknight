@@ -110,6 +110,10 @@ def project_delete(profile, project, event):
 
 
 @app.route('/<profile>/<event>/projects', methods=["GET", "POST"])
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
+)
 def projects(profile, event):
     return redirect(event.url_for())
 
