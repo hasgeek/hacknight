@@ -29,7 +29,7 @@ def send_email(sender, to, subject, body, html=None):
     msg.body = body
     if html:
         msg.html = html
-    if recipients:
+    if to:
         mail.send(msg)
 
 
