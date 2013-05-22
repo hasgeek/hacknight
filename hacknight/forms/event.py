@@ -47,10 +47,10 @@ class EventForm(Form):
 
 
 class EmailEventParticipantsForm(Form):
-    pending_message = RichTextField("Pending Message", description="Message to be sent for pending participants. '*|FULLNAME|*' will be replaced with user's fullname.", validators=[wtf.Optional()])
-    confirmation_message = RichTextField("Confirmation Message", description="Message to be sent for confirmed participants. '*|FULLNAME|*' will be replaced with user's fullname.", validators=[wtf.Optional()])
-    rejected_message = RichTextField("Rejected Message", description="Message to be sent for rejected participants. '*|FULLNAME|*' will be replaced with user's fullname.", validators=[wtf.Optional()])
-    waitlisted_message = RichTextField("Waitlisted Message", description="Message to be sent for waitlisted participants. '*|FULLNAME|*' will be replaced with user's fullname.", validators=[wtf.Optional()])
+    pending_message = RichTextField("Pending Message", description="Message to be sent for pending participants. '*|FULLNAME|*' will be replaced with user's fullname.", validators=[wtf.Optional()], tinymce_options = {'convert_urls': False, 'remove_script_host': False})
+    confirmation_message = RichTextField("Confirmation Message", description="Message to be sent for confirmed participants. '*|FULLNAME|*' will be replaced with user's fullname.", validators=[wtf.Optional()], tinymce_options = {'convert_urls': False, 'remove_script_host': False})
+    rejected_message = RichTextField("Rejected Message", description="Message to be sent for rejected participants. '*|FULLNAME|*' will be replaced with user's fullname.", validators=[wtf.Optional()], tinymce_options = {'convert_urls': False, 'remove_script_host': False})
+    waitlisted_message = RichTextField("Waitlisted Message", description="Message to be sent for waitlisted participants. '*|FULLNAME|*' will be replaced with user's fullname.", validators=[wtf.Optional()], tinymce_options = {'convert_urls': False, 'remove_script_host': False})
 
 
 class ConfirmWithdrawForm(wtf.Form):
