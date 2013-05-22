@@ -29,7 +29,8 @@ def send_email(sender, to, subject, body, html=None):
     msg.body = body
     if html:
         msg.html = html
-    mail.send(msg)
+    if to:
+        mail.send(msg)
 
 
 @app.route('/<profile>/<event>', methods=["GET"])
@@ -169,7 +170,7 @@ def event_update_participant_status(profile, event):
                 text_message = text_message.replace("*|FULLNAME|*", participant.user.fullname)
                 message = unicode(getattr(event, participants_email_attrs[status]))
                 message = message.replace("*|FULLNAME|*", participant.user.fullname)
-                if message:
+                if message and g.user.email:
                     send_email(sender=(g.user.fullname, g.user.email), to=participant.email,
                     subject="%s - Hacknight participation status" % event.title , body=text_message, html=message)
             except KeyError:
@@ -333,7 +334,8 @@ def event_send_email(profile, event):
             if participant.email:
                 message = form.message.data.replace("*|FULLNAME|*", participant.user.fullname)
                 text_message = html2text(message)
-                send_email(sender=(g.user.fullname, g.user.email), to=participant.email, subject=subject, body=text_message, html=message)
+                if g.user.email:
+                    send_email(sender=(g.user.fullname, g.user.email), to=participant.email, subject=subject, body=text_message, html=message)
                 count += 1
         flash("Your message was sent to %d participant(s)." % count)
         return render_redirect(event.url_for())
@@ -376,10 +378,10 @@ def email_template_form(profile, event):
         form.pending_message.data = render_template('pending_participants_email.md', event=event)
     if form.validate_on_submit():
         form.populate_obj(event)
-        event.confirmation_message_text = html2text(form.confirmation_message.data)
-        event.pending_message_text = html2text(form.pending_message.data)
-        event.waitlisted_message_text = html2text(form.waitlisted_message.data)
-        event.rejected_message_text = html2text(form.rejected_message.data)
+        event.confirmation_message_text = html2text(event.confirmation_message)
+        event.pending_message_text = html2text(event.pending_message)
+        event.waitlisted_message_text = html2text(event.waitlisted_message)
+        event.rejected_message_text = html2text(event.rejected_message)
         db.session.commit()
         flash(u"Participants Email template for %s is saved" % event.title, "success")
         return render_redirect(event.url_for(), code=303)

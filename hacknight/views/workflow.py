@@ -28,11 +28,11 @@ class ParticipantWorkflow(DocumentWorkflow):
     path_to_hacknight = WorkflowStateGroup([pending, waiting_list], title=u'Path to hacknight',
         description=u'If the participant is in any one of the state he/she can become hacknight member')
     reject_member = WorkflowStateGroup([pending, waiting_list],
-    title=u'Path to remove a member from to hacknight',
-    description=u'If the participant is in any one of the state he/she can be rejected for hacknight')
+        title=u'Path to remove a member from to hacknight',
+        description=u'If the participant is in any one of the state he/she can be rejected for hacknight')
     withdrawn_member = WorkflowStateGroup([confirmed, waiting_list, pending],
-    title=u'Path to withdraw membership',
-    description=u'If the participant is in any one of the state he/she can withdraw for hacknight')
+        title=u'Path to withdraw membership',
+        description=u'If the participant is in any one of the state he/she can withdraw for hacknight')
     #copied from geekup, in hacknight only event owner can approve
 
     def permissions(self):
