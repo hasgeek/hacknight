@@ -350,14 +350,15 @@ def event_send_email(profile, event):
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'), permission='send-email')
 def email_template_form(profile, event):
     form = EmailEventParticipantsForm(obj=event)
-    if not form.confirmation_message.data:
-        form.confirmation_message.data = render_template('confirmed_participants_email.md', event=event)
-    if not form.waitlisted_message.data:
-        form.waitlisted_message.data = render_template('waitlisted_participants_email.md', event=event)
-    if not form.rejected_message.data:
-        form.rejected_message.data = render_template('rejected_participants_email.md', event=event)
-    if not form.pending_message.data:
-        form.pending_message.data = render_template('pending_participants_email.md', event=event)
+    if not (form.confirmation_message.data or form.waitlisted_message.data or form.rejected_message.data or form.pending_message.data):
+        if not form.confirmation_message.data:
+            form.confirmation_message.data = render_template('confirmed_participants_email.md', event=event)
+        if not form.waitlisted_message.data:
+            form.waitlisted_message.data = render_template('waitlisted_participants_email.md', event=event)
+        if not form.rejected_message.data:
+            form.rejected_message.data = render_template('rejected_participants_email.md', event=event)
+        if not form.pending_message.data:
+            form.pending_message.data = render_template('pending_participants_email.md', event=event)
     if form.validate_on_submit():
         form.populate_obj(event)
         event.confirmation_message_text = html2text(event.confirmation_message)
