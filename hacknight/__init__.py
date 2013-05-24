@@ -8,7 +8,7 @@ from flask.ext.lastuser import Lastuser
 from flask.ext.lastuser.sqlalchemy import UserManager
 from flask.ext.mail import Mail
 from flask.ext.assets import Environment, Bundle
-from baseframe import baseframe, assets, Version#, baseframe_js, baseframe_css
+from baseframe import baseframe, assets, Version
 import coaster.app
 from ._version import __version__
 
