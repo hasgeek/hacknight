@@ -15,6 +15,7 @@ from ._version import __version__
 # First, make an app and config it
 
 version = Version(__version__)
+leaflet_version = Version('0.3.0')
 app = Flask(__name__, instance_relative_config=True)
 lastuser = Lastuser()
 mail = Mail()
@@ -28,16 +29,16 @@ import hacknight.views
 # Third, setup baseframe and assets
 
 app.register_blueprint(baseframe)
-assets['leaflet.css'][version] = 'js/leaflet/leaflet.css'
-assets['leaflet.js'][version] = 'js/leaflet/leaflet.js'
+assets['leaflet.css'][leaflet_version] = 'js/leaflet/leaflet.css'
+assets['leaflet.js'][leaflet_version] = 'js/leaflet/leaflet.js'
 assets['hacknight.css'][version] = 'css/app.css'
 assets['hacknight.js'][version] = 'js/scripts.js'
 
 
 def init_for(env):
     coaster.app.init_app(app, env)
-    baseframe.init_app(app, requires=['baseframe', 'hacknight', 'leaflet'])
     lastuser.init_app(app)
     lastuser.init_usermanager(UserManager(hacknight.models.db, hacknight.models.User))
     mail.init_app(app)
     app.config['tz'] = timezone(app.config['TIMEZONE'])
+    baseframe.init_app(app, requires=['baseframe', 'hacknight', 'leaflet'])
