@@ -37,8 +37,8 @@ assets['hacknight.js'][version] = 'js/scripts.js'
 
 def init_for(env):
     coaster.app.init_app(app, env)
+    baseframe.init_app(app, requires=['baseframe', 'leaflet', 'hacknight'])
     lastuser.init_app(app)
     lastuser.init_usermanager(UserManager(hacknight.models.db, hacknight.models.User))
     mail.init_app(app)
     app.config['tz'] = timezone(app.config['TIMEZONE'])
-    baseframe.init_app(app, requires=['baseframe', 'hacknight', 'leaflet'])
