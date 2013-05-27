@@ -34,7 +34,7 @@ class EVENT_STATUS:
     WITHDRAWN = 7
 
 
-class Profile(BaseNameMixin, ProfileMixin, db.Model):
+class Profile(ProfileMixin, BaseNameMixin, db.Model):
     __tablename__ = 'profile'
 
     userid = db.Column(db.Unicode(22), nullable=False, unique=True)
