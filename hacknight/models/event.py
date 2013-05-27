@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import url_for
+from flask.ext.lastuser.sqlalchemy import ProfileMixin
 from sqlalchemy.orm import deferred
 from hacknight.models import db, BaseNameMixin, BaseScopedNameMixin, BaseMixin
 
@@ -33,7 +34,7 @@ class EVENT_STATUS:
     WITHDRAWN = 7
 
 
-class Profile(BaseNameMixin, db.Model):
+class Profile(ProfileMixin, BaseNameMixin, db.Model):
     __tablename__ = 'profile'
 
     userid = db.Column(db.Unicode(22), nullable=False, unique=True)
