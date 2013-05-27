@@ -17,8 +17,7 @@
     <updated>{{ event.updated_at.isoformat() }}Z</updated>
     <published>{{ event.updated_at.isoformat() }}Z</published>
     <content type="html">
-      &lt;p&gt;
-        {{ event.description|e }}
+      {{ event.description|forceescape }}
       {%- if event.start_datetime %}
         Start DateTime: {{ event.start_datetime | fulldate}}
         End DateTime: {{ event.end_datetime | fulldate}}
@@ -26,7 +25,6 @@
       {% if event.ticket_price -%}
           Ticketprice: {{ event.ticket_price }} Rs
       {%- endif %}
-      &lt;/p&gt;
       &lt;p&gt;
       {% if event.venue -%}
         &lt;b&gt;Venue&lt;/b&gt;
