@@ -9,8 +9,8 @@ from flask import render_template, abort, flash, url_for, g, request, Markup, Re
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app, mail
-from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS
-from hacknight.forms.event import EventForm, ConfirmWithdrawForm, SendEmailForm, EmailEventParticipantsForm, EVENT_STATUS
+from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS, EVENT_STATUS
+from hacknight.forms.event import EventForm, ConfirmWithdrawForm, SendEmailForm, EmailEventParticipantsForm
 from hacknight.forms.participant import ParticipantForm
 from hacknight.views.login import lastuser
 from hacknight.views.workflow import ParticipantWorkflow
@@ -342,7 +342,7 @@ def feed(event=None, title=None):
     if event:
         events = [event]
     else:
-        events = Event.query.filter(Event.status == EVENT_STATUS.PUBLISHED).all()
+        events = Event.query.filter(Event.status == EVENT_STATUS.PUBLIC).all()
     if events:
         updated = events[0].updated_at.isoformat() + 'Z'
     else:
