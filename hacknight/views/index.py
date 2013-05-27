@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template
-from hacknight import app
-from hacknight.models.event import Event, EVENT_STATUS
+from flask import render_template, request, redirect
+from hacknight import app, baseframe
+from hacknight.models.event import Event, EVENT_STATUS, EventRedirect, Profile
 from datetime import datetime
 from pytz import utc
 
@@ -22,7 +22,7 @@ def shortdate(date):
 
 @app.template_filter('fulldate')
 def fulldate(date):
-    return utc.localize(date).astimezone(app.config['tz']).strftime("%a, %b %e %H:%M %p")
+    return utc.localize(date).astimezone(app.config['tz']).strftime("%a, %b %e %l:%M %p")
 
 
 @app.template_filter('weekdate')
@@ -41,3 +41,15 @@ def cleanurl(url):
         # but leave it in if it's a path
         url = url[:-1]
     return url
+
+
+@baseframe.app_errorhandler(404)
+def page_not_found(e):
+    r = request.view_args
+    if r and 'profile' in r and 'event' in r:
+        profile = Profile.query.filter_by(name=r['profile']).first()
+        if profile:
+            redirect_to = EventRedirect.query.filter_by(profile=profile, name=r['event']).first()
+            if redirect_to:
+                return redirect(redirect_to.event.url_for(), 302)
+    return render_template('404.html'), 404

@@ -4,6 +4,7 @@
 {% block baseheadline -%}
   {% block headline -%}
     <div class="page-header">
+      <h3><a href="{{ profile.url_for() }}">{{ event.profile.title }}</a><i class="icon-caret-right"></i></h3>
       <h1><a href="{{ event.url_for() }}">{{ self.title()|e }}</a></h1>
     </div>
   {%- endblock %}
