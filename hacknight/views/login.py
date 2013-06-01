@@ -25,9 +25,16 @@ def logout():
 @app.route('/login/redirect')
 @lastuser.auth_handler
 def lastuserauth():
-    Profile.update_from_user(g.user, db.session)
+    Profile.update_from_user(g.user, db.session, type_user=PROFILE_TYPE.PERSON, type_org=PROFILE_TYPE.ORGANIZATION)
     db.session.commit()
     return redirect(get_next_url())
+
+
+@app.route('/login/notify')
+@lastuser.notification_handler
+def lastusernotify(user):
+    Profile.update_from_user(user, db.session, type_user=PROFILE_TYPE.PERSON, type_org=PROFILE_TYPE.ORGANIZATION)
+    db.session.commit()
 
 
 @lastuser.auth_error_handler
