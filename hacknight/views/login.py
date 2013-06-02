@@ -30,7 +30,7 @@ def lastuserauth():
     return redirect(get_next_url())
 
 
-@app.route('/login/notify')
+@app.route('/login/notify', methods=['POST'])
 @lastuser.notification_handler
 def lastusernotify(user):
     Profile.update_from_user(user, db.session, type_user=PROFILE_TYPE.PERSON, type_org=PROFILE_TYPE.ORGANIZATION)
