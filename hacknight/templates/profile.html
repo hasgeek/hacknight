@@ -5,7 +5,17 @@
 {% block content %}
   {{ profile.description|safe }}
   {% if events -%}
-    <div class="light-bg">{{ cardset(events) }}</div>
+    <div class="row">
+      {% if upcoming_events -%}
+        <div class="centered upcoming light-bg">{{ cardset(upcoming_events, type = 'upcoming') }}</div>
+      {% endif %}
+      {% if upcoming_events and past_events %}
+        <hr>
+      {% endif %}
+      {% if past_events -%}
+        <div class="centered">{{ cardset(past_events, type = 'past') }}</div>
+      {% endif %}
+    </div>
   {%- else -%}
     <p>
       {%- if is_user -%}
