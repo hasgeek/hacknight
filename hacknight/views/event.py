@@ -141,7 +141,7 @@ def event_open(profile, event):
         abort(403)
     participants = Participant.query.filter(
         Participant.status != PARTICIPANT_STATUS.WITHDRAWN,
-        Participant.event == event).order_by('created_at')
+        Participant.event == event).order_by(Participant.status)
     return render_template('manage_event.html', profile=profile, event=event,
         participants=participants, statuslabels=participant_status_labels, enumerate=enumerate)
 
