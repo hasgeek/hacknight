@@ -44,10 +44,12 @@
 
 {% block main -%}
   {% block basecontent %}
-    {% block content %}
-      
+    {% block content %}     
       <div class="row">
-        <div class="centered upcoming">{{ cardset(upcoming_events, type = 'upcoming') }}</div><hr/>
+        <div class="centered upcoming">{{ cardset(upcoming_events, type = 'upcoming') }}</div>
+        {% if upcoming_events and past_events %}
+          <hr>          
+        {% endif %} 
         <div class="centered">{{ cardset(past_events, type = 'past') }}</div>
       </div>
     {% endblock %}
