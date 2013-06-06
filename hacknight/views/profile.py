@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import operator
 from flask import render_template, g, abort, flash
 from coaster.views import load_model
 from baseframe.forms import render_redirect, render_form
@@ -16,9 +17,14 @@ from pytz import utc
 @app.route('/<profile>')
 @load_model(Profile, {'name': 'profile'}, 'profile')
 def profile_view(profile):
-    events = Event.query.filter_by(profile_id=profile.id).all()
-    upcoming_events = Event.query.filter_by(profile_id=profile.id).filter(Event.end_datetime > datetime.utcnow()).order_by(Event.start_datetime.asc()).all()
-    past_events = Event.query.filter_by(profile_id=profile.id).filter(Event.end_datetime < datetime.utcnow()).order_by(Event.end_datetime.desc()).all() 
+    events = Event.query.filter_by(profile_id=profile.id).order_by(Event.start_datetime.asc()).all()
+    upcoming_events, past_events = [], []
+    for event in events:
+        if event.end_datetime >= datetime.utcnow():
+            upcoming_events.append(event)
+        else:
+            past_events.append(event)
+    past_events = sorted(past_events, key=operator.attrgetter('end_datetime'), reverse=True)
     user = User.query.filter_by(userid=profile.userid).first()
     return render_template('profile.html', profile=profile, events=events, upcoming_events=upcoming_events, past_events=past_events, is_user=True if user else False)
 
