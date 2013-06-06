@@ -45,6 +45,28 @@
 {% block footerscripts %}
   <script type="text/javascript">
     $(function() {
+      var updateParticipantsStatus = function(){
+        var all_participants = $(".participant-status-label").toArray();
+        var counts = {};
+        for (var index in all_participants){
+          var status = $(all_participants[index]).html();
+          if (status in counts){
+            counts[status] += 1;
+          } else {
+            counts[status] = 1;
+          }
+        }
+        var string = "Participants (";
+        for (var key in counts){
+          string += key + ": " + counts[key] + ", ";
+        }
+        string += ")";
+        $(".h3-title").text(string);
+      }
+      //get all participants status label
+      $(document).ready(function(){
+        updateParticipantsStatus();
+      });
       $('.update-participant-status').click(function(e) {
         var el = $(this),
             id = el.attr('data-id'),
@@ -56,6 +78,7 @@
               $('div#contact-info').html("");
         e.stopPropagation();
         participantEl.children('.participant-status-label').text(statusLabels[newStatus]);
+        updateParticipantsStatus();
         $.post('manage/update', {participantid: id, status: newStatus})
           .error( function(){ location.reload(); } );
         return false;
