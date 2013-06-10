@@ -4,7 +4,7 @@ from hacknight.models import db, BaseMixin
 from hacknight.models.user import User
 from hacknight.models.event import Event
 
-__all__ = ['Participant', 'PARTICIPANT_STATUS']
+__all__ = ['Participant', 'PARTICIPANT_STATUS', 'participant_status']
 
 
 class PARTICIPANT_STATUS:
@@ -13,6 +13,14 @@ class PARTICIPANT_STATUS:
     CONFIRMED = 2
     REJECTED = 3
     WITHDRAWN = 4
+
+participant_status = {
+    PARTICIPANT_STATUS.PENDING: "pending",
+    PARTICIPANT_STATUS.WL: "waitlisted",
+    PARTICIPANT_STATUS.CONFIRMED: "confirmed",
+    PARTICIPANT_STATUS.REJECTED: "rejected",
+    PARTICIPANT_STATUS.WITHDRAWN: "withdrawn",
+}
 
 
 class Participant(BaseMixin, db.Model):

@@ -8,7 +8,7 @@ from flask import render_template, abort, flash, url_for, g, request, Markup
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app, mail
-from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS, EventRedirect
+from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS, EventRedirect, participant_status
 from hacknight.forms.event import EventForm, ConfirmWithdrawForm, SendEmailForm, EmailEventParticipantsForm
 from hacknight.forms.participant import ParticipantForm
 from hacknight.views.login import lastuser
@@ -172,7 +172,7 @@ def event_update_participant_status(profile, event):
                 message = message.replace("*|FULLNAME|*", participant.user.fullname)
                 if message and g.user.email:
                     send_email(sender=(g.user.fullname, g.user.email), to=participant.email,
-                    subject="%s - Hacknight participation status" % event.title , body=text_message, html=message)
+                    subject="%s participation is %s" %(event.title, participant_status.get(participant.status)), body=text_message, html=message)
             except KeyError:
                 pass
             db.session.commit()
