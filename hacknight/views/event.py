@@ -343,6 +343,24 @@ def event_send_email(profile, event):
             submit=u"Send", cancel_url=event.url_for(), ajax=False)
 
 
+@app.route('/<profile>/<event>/change/<method_name>', methods=['POST'])
+@lastuser.requires_login
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'), permission='edit')
+def event_change(profile, event):
+    if request.is_xhr:
+        workflow = event.workflow()
+        method_name = request.view_args['method_name']
+        try:
+            getattr(workflow, method_name)()
+            flash("Event state changed", "success")
+        except AttributeError:
+            flash("Unable to change event state", "error")
+        db.session.commit()
+    return render_redirect(event.url_for())
+
+
 @app.route('/<profile>/<event>/email_template', methods=['GET', 'POST'])
 @lastuser.requires_login
 @load_models(

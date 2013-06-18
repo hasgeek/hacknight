@@ -32,7 +32,10 @@ def project_new(profile, event, form=None):
         abort(403)
     if participant.status != PARTICIPANT_STATUS.CONFIRMED:
         abort(403)
-
+    workflow = event.workflow()
+    if not workflow.create_projects():
+        flash("You cannot create projects since the hacknight is closed.")
+        return redirect(event.url_for())
     form = ProjectForm()
     if form.validate_on_submit():
         project = Project(event=event, user=g.user)

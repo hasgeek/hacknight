@@ -1,4 +1,4 @@
-# -*- coding: utf-8- *-
+# -*- coding: utf-8 -*-
 
 from flask import g
 from coaster.docflow import DocumentWorkflow, WorkflowState, WorkflowStateGroup
@@ -28,11 +28,11 @@ class ParticipantWorkflow(DocumentWorkflow):
     path_to_hacknight = WorkflowStateGroup([pending, waiting_list], title=u'Path to hacknight',
         description=u'If the participant is in any one of the state he/she can become hacknight member')
     reject_member = WorkflowStateGroup([pending, waiting_list],
-    title=u'Path to remove a member from to hacknight',
-    description=u'If the participant is in any one of the state he/she can be rejected for hacknight')
+        title=u'Path to remove a member from to hacknight',
+        description=u'If the participant is in any one of the state he/she can be rejected for hacknight')
     withdrawn_member = WorkflowStateGroup([confirmed, waiting_list, pending],
-    title=u'Path to withdraw membership',
-    description=u'If the participant is in any one of the state he/she can withdraw for hacknight')
+        title=u'Path to withdraw membership',
+        description=u'If the participant is in any one of the state he/she can withdraw for hacknight')
     #copied from geekup, in hacknight only event owner can approve
 
     def permissions(self):
@@ -90,21 +90,19 @@ class EventWorkflow(DocumentWorkflow):
 
     state_attr = 'status'
     draft = WorkflowState(EVENT_STATUS.DRAFT, title=u"Draft")
-    active = WorkflowState(EVENT_STATUS.ACTIVE, title=u"Active")
     closed = WorkflowState(EVENT_STATUS.CLOSED, title=u"Closed")
-    completed = WorkflowState(EVENT_STATUS.COMPLETED, title=u"Completed")
-    cancelled = WorkflowState(EVENT_STATUS.CANCELLED, title=u"Cancelled")
-    rejected = WorkflowState(EVENT_STATUS.REJECTED, title=u"Rejected")
-    withdrawn = WorkflowState(EVENT_STATUS.WITHDRAWN, title=u"Withdrawn")
-    published = WorkflowState(EVENT_STATUS.PUBLISHED, title=u"Public")
+    public = WorkflowState(EVENT_STATUS.PUBLIC, title=u"Public")
 
-     #: States in which an owner can edit
-    editable = WorkflowStateGroup([draft, active, closed, completed, cancelled, rejected, withdrawn, published], title=u"Editable")
-    public = WorkflowStateGroup([active, closed], title=u"Public")
-    appliable = WorkflowStateGroup([active, published], title="User can apply for an event")
+
+    #: States in which an owner can edit
+    editable = WorkflowStateGroup([draft, public, closed], title=u"Editable")
+    public_states = WorkflowStateGroup([public, closed], title=u"Public")
+    appliable = WorkflowStateGroup([public], title="User can apply for an event")
+
     openit = WorkflowStateGroup([draft], title=u"Open it")
+    create_projects = WorkflowStateGroup([draft, public], title="States in which projects can be created")
     #: States in which a reviewer can view
-    reviewable = WorkflowStateGroup([draft, active, closed, rejected, completed],
+    reviewable = WorkflowStateGroup([draft, public],
                                     title=u"Reviewable")
 
     def permissions(self):
@@ -118,74 +116,58 @@ class EventWorkflow(DocumentWorkflow):
         base_permissions.extend(lastuser.permissions())
         return base_permissions
 
-    @draft.transition(active, 'owner', title=u"Open", category="primary",
-        description=u"Open the hacknight for registrations.", view="event_open")
+    @draft.transition(public, 'owner', title=u"Open", category=u"primary",
+        description=u"Make hacknight public", view=u"event_change")
     def openit(self):
         """
         Open the hacknight.
         """
-        if not self.document.status == EVENT_STATUS.PUBLISHED:
-            self.document.status = EVENT_STATUS.PUBLISHED
+        if not self.document.status == EVENT_STATUS.PUBLIC:
+            self.document.status = EVENT_STATUS.PUBLIC
 
-    @draft.transition(cancelled, 'owner', title=u"Cancel", category="warning",
-        description=u"Cancel the hacknight, before opening.", view="event_cancel")
+    @draft.transition(closed, 'owner', title=u"Cancel", category=u"warning",
+        description=u"Cancel hacknight", view=u"event_change")
     def cancel_draft(self):
         """
         Cancel the hacknight
         """
-        self.document.status = EVENT_STATUS.CANCELLED
+        self.document.status = EVENT_STATUS.CLOSED
 
-    @active.transition(cancelled, 'owner', title=u"Cancel", category="warning",
-        description=u"Cancel the hacknight, before opening.", view="event_cancel")
-    def cancel_active(self):
+    @public.transition(closed, 'owner', title=u"Cancel", category="warning",
+        description=u"Cancel hacknight", view="event_change")
+    def cancel_public(self):
         """
         Cancel the hacknight
         """
-        self.document.status = EVENT_STATUS.CANCELLED
+        self.document.status = EVENT_STATUS.CLOSED
 
-    @draft.transition(rejected, 'owner', title=u"Rejected", category="danger",
-        description=u"Reject the hacknight proposed by someone else", view="event_reject")
-    def reject(self):
-        """
-        Reject the hacknight
-        """
-        pass
-
-    @draft.transition(withdrawn, 'owner', title=u"Withdraw", category="danger",
-        description=u"Withdraw the hacknight", view="event_withdraw")
-    def withdraw(self):
-        """
-        Withdraw the hacknight
-        """
-        pass
-
-    @active.transition(closed, 'owner', title=u"Close", category="primary",
-        description=u"Close registrations for the hacknight", view="event_close")
+    @public.transition(closed, 'owner', title=u"Close", category="primary",
+        description=u"Close Hacknight", view="event_change")
     def close(self):
         """
         Close the hacknight
         """
-        pass
+        self.document.status = EVENT_STATUS.CLOSED
 
-    @closed.transition(completed, 'owner', title=u"Complete", category="success",
-        description=u"hacknight completed", view="event_completed")
-    def complete(self):
+    @closed.transition(public, 'owner', title=u"Complete", category="success",
+        description=u"Reopen hacknight", view="event_change")
+    def reopen(self):
         """
         Hacknight is now completed.
         """
-        pass
+        self.document.status = EVENT_STATUS.PUBLIC
 
     def is_public(self):
         """
         Is the hacknight public?
         """
-        return self.public()
+        return self.public_states()
 
     def can_view(self):
         """
         Can the current user view this?
         """
-        return self.public() or 'owner' in self.permissions()
+        return self.public_states() or 'owner' in self.permissions()
 
     def can_edit(self):
         """
@@ -205,7 +187,11 @@ class EventWorkflow(DocumentWorkflow):
         """
         return 'owner' in self.permissions() and self.editable()
 
+    def is_active(self):
+        return self.create_projects()
+
     def can_apply(self):
         return self.appliable()
+
 
 EventWorkflow.apply_on(Event)

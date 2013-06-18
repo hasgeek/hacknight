@@ -25,13 +25,8 @@ profile_types = {
 
 class EVENT_STATUS:
     DRAFT = 0
-    PUBLISHED = 1
-    ACTIVE = 2
-    COMPLETED = 3
-    CANCELLED = 4
-    CLOSED = 5
-    REJECTED = 6
-    WITHDRAWN = 7
+    PUBLIC = 1
+    CLOSED = 2
 
 
 class Profile(ProfileMixin, BaseNameMixin, db.Model):
@@ -93,8 +88,7 @@ class Event(BaseScopedNameMixin, db.Model):
 
     def permissions(self, user, inherited=None):
         perms = super(Event, self).permissions(user, inherited)
-        if user is not None and user.userid == self.profile.userid or self.status in [EVENT_STATUS.PUBLISHED,
-            EVENT_STATUS.ACTIVE, EVENT_STATUS.COMPLETED, EVENT_STATUS.CANCELLED,
+        if user is not None and user.userid == self.profile.userid or self.status in [EVENT_STATUS.PUBLIC,
             EVENT_STATUS.CLOSED]:
             perms.add('view')
         if user is not None and self.profile.userid in user.user_organizations_owned_ids():
@@ -103,7 +97,7 @@ class Event(BaseScopedNameMixin, db.Model):
             perms.add('send-email')
         return perms
 
-    def url_for(self, action='view', _external=False):
+    def url_for(self, action='view', _external=False, **kwargs):
         if action == 'view':
             return url_for('event_view', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'edit':
@@ -122,6 +116,8 @@ class Event(BaseScopedNameMixin, db.Model):
             return url_for('event_export', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'send_email':
             return url_for('event_send_email', profile=self.profile.name, event=self.name, _external=_external)
+        elif action == 'event_change':
+            return url_for('event_change', profile=self.profile.name, event=self.name, method_name=kwargs['method_name'], _external=_external)
         elif action == 'email_template':
             return url_for('email_template_form', profile=self.profile.name, event=self.name, _external=_external)
 

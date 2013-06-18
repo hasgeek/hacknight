@@ -92,11 +92,16 @@
         {%- if event.owner_is(g.user) %}
           <li class="nav-header">Manage event</li>
           <li><a href="{{ event.url_for('open') }}"><span class="icon-wrench">Manage event</span></a></li>
-          <li><a href="{{ event.url_for('export') }}"><span class="icon-wrench">Export participant list</span></a></li>
-          <li><a href="{{ event.url_for('edit') }}"><span class="icon-pencil">Edit details</span></a></li>
-          <li><a href="{{ event.url_for('email_template') }}"><span class="icon-pencil">Edit email templates</span></a></li>
+          <li><a href="{{ event.url_for('export') }}"><span class="icon-wrench">Export participants list</span></a></li>
+          <li><a href="{{ event.url_for('edit') }}"><span class="icon-pencil">Edit details...</span></a></li>
           <li><a href="{{ event.url_for('delete') }}"><span class="icon-trash">Delete event...</span></a></li>
           <li><a href="{{ event.url_for('send_email') }}"><span class="icon-envelope">Email participants...</span></a></li>
+          <li><a href="{{ event.url_for('email_template') }}"><span class="icon-envelope">Email template...</span></a></li>
+          {% with transitions = workflow.transitions() %}
+            {% for key in transitions %}
+              <li><a href="{{ event.url_for('event_change', method_name=key) }}" data-name="{{ key }}" class="event_change" data-method="POST"><i class="icon-pencil"></i>{{ transitions[key]['description'] }}</a></li>
+            {% endfor %}
+          {% endwith %}
         {% endif -%}
         <li class="nav-header">Share</li>
         <li><a target="_blank" href="http://twitter.com/share?url={{ request.url }}&amp;via=HasGeek&amp;text={{ event.title }}" class="socialite twitter-share" data-url="{{ request.url }}" data-text="{{ event.title }}" data-via="HasGeek"><span class="icon-twitter">Twitter</span></a></li>
@@ -213,6 +218,17 @@ if("{{ event.profile.userid }}"=="{{ g.user.userid }}")
           map.setView(venue, map.getZoom());
       };
     {% endif %} 
+    // Add event handler for hacknight event state change
+    $(".event_change").on('click', function(event){
+      event.preventDefault();
+      $.ajax({
+        url: this.getAttribute('href'),
+        type: this.getAttribute('data-method'),
+        success: function(msg) { //reload same page
+          window.location.reload(true);
+        }
+      });
+    });
   });
   </script>
 

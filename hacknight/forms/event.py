@@ -3,21 +3,9 @@
 from flask import Markup
 import flask.ext.wtf as wtf
 from baseframe.forms import Form, RichTextField, DateTimeField, ValidName, AvailableName
-from hacknight.models import Venue, EVENT_STATUS
+from hacknight.models import Venue
 
 __all__ = ['EventForm', 'ConfirmWithdrawForm', 'SendEmailForm']
-
-
-STATUS_CHOICES = [
-    (EVENT_STATUS.DRAFT, 'Draft'),
-    (EVENT_STATUS.PUBLISHED, 'Published'),
-    (EVENT_STATUS.ACTIVE, 'Active'),
-    (EVENT_STATUS.COMPLETED, 'Completed'),
-    (EVENT_STATUS.CANCELLED, 'Cancelled'),
-    (EVENT_STATUS.CLOSED, 'Closed'),
-    (EVENT_STATUS.REJECTED, 'Rejected'),
-    (EVENT_STATUS.WITHDRAWN, 'Withdrawn')
-]
 
 
 class EventForm(Form):
@@ -39,7 +27,6 @@ class EventForm(Form):
     ticket_price = wtf.TextField("Ticket price", description="Entry fee, if any, to be paid at the venue", validators=[wtf.validators.length(max=250)])
     total_participants = wtf.IntegerField("Venue capacity", description="The number of people this venue can accommodate. Registrations will be closed after that. Use 0 to indicate unlimited capacity", default=50, validators=[wtf.Required()])
     website = wtf.html5.URLField("Website", description="Related Website (Optional)", validators=[wtf.Optional(), wtf.validators.length(max=250), wtf.URL()])
-    status = wtf.SelectField("Event status", description="Current status of this hacknight", coerce=int, choices=STATUS_CHOICES)
 
     def validate_end_datetime(self, field):
         if field.data < self.start_datetime.data:
