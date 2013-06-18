@@ -15,11 +15,11 @@ class PARTICIPANT_STATUS:
     WITHDRAWN = 4
 
 participant_status = {
-    PARTICIPANT_STATUS.PENDING: "pending",
-    PARTICIPANT_STATUS.WL: "waitlisted",
-    PARTICIPANT_STATUS.CONFIRMED: "confirmed",
-    PARTICIPANT_STATUS.REJECTED: "rejected",
-    PARTICIPANT_STATUS.WITHDRAWN: "withdrawn",
+    PARTICIPANT_STATUS.PENDING: "participation is pending",
+    PARTICIPANT_STATUS.WL: "participation is waitlisted",
+    PARTICIPANT_STATUS.CONFIRMED: "participation is confirmed",
+    PARTICIPANT_STATUS.REJECTED: "participation is rejected",
+    PARTICIPANT_STATUS.WITHDRAWN: "participation is withdrawn",
 }
 
 

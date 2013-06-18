@@ -172,7 +172,7 @@ def event_update_participant_status(profile, event):
                 message = message.replace("*|FULLNAME|*", participant.user.fullname)
                 if message and g.user.email:
                     send_email(sender=(g.user.fullname, g.user.email), to=participant.email,
-                    subject="%s participation is %s" %(event.title, participant_status.get(participant.status)), body=text_message, html=message)
+                    subject="%s %s" % (event.title, participant_status.get(participant.status)), body=text_message, html=message)
             except KeyError:
                 pass
             db.session.commit()
