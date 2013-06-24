@@ -28,7 +28,6 @@ import hacknight.views
 
 # Third, setup baseframe and assets
 
-app.register_blueprint(baseframe)
 assets['leaflet.css'][leaflet_version] = 'js/leaflet/leaflet.css'
 assets['leaflet.js'][leaflet_version] = 'js/leaflet/leaflet.js'
 assets['hacknight.css'][version] = 'css/app.css'
