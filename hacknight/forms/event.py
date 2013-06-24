@@ -63,5 +63,5 @@ class ConfirmWithdrawForm(wtf.Form):
 
 class SendEmailForm(Form):
     subject = wtf.TextField("Subject", description="Subject for the email", validators=[wtf.Required(), wtf.validators.length(max=250)])
-    message = RichTextField("Message", description="Email message, only `FULLNAME` will be replaced with participant fullname", validators=[wtf.Required()])
+    message = RichTextField("Message", description="Email message, only *|FULLNAME|* will be replaced with participant fullname", validators=[wtf.Required()], tinymce_options={'convert_urls': False, 'remove_script_host': False})
     send_to = wtf.RadioField("Send email to", default=2, coerce=int)
