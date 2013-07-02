@@ -175,18 +175,15 @@
 
 {% block footerscripts %}
 <script>
-if({{ applied }})
-{
-console.log({{ applied }});
+{% if applied %}
   $("#register").addClass("hidden");
   $("#withdraw").removeClass("hidden");
-};
+{% endif %}
 
-if("{{ event.profile.userid }}"=="{{ g.user.userid }}")
-{
+{% if event.profile.userid == g.user.userid %}
   $("#register").addClass("hidden");
   $("#withdraw").addClass("hidden");
-};
+{% endif %}
 
 </script>
 
