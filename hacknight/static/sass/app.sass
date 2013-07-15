@@ -3,7 +3,7 @@
 // Baseframe's defaults:
 $font-size: 14px
 $line-height: 22px
-$font-color: #aaa
+$font-color: #bcc6cc
 $font-faint-color: #666
 $border-color: #222426
 $background-color: rgba(0, 0, 0, 0.1)
@@ -146,9 +146,10 @@ hr
     background-color: #856A91
     padding-left: 5px
     width: 45px
-    height: 50px
+    height: 62px
     float: left
     color: #fff
+    margin-top: -11px
   .participant-name
     width: 180px
     height: 50px
@@ -308,10 +309,12 @@ input, textarea, select, .uneditable-input
     vertical-align: top
   a:hover
     text-decoration: none
+.nav-list > li
+  padding-right: 14px
 
 .nav-list > li > a, .nav-list .nav-header
   margin-left: -14px
-  margin-right: -14px
+  margin-right: -28px
   padding: 0 14px
   text-shadow: none
 .nav-list .nav-header
@@ -537,10 +540,11 @@ input, textarea, select, .uneditable-input
 .leaflet-popup-close-button
   top: 3px
   right: 3px
+  background-color: #000 !important
 
 .leaflet-popup-content-wrapper, .leaflet-popup-tip
-  color: white
-  background: rgba(34, 34, 34, 0.95)
+  color: #fff
+  background: #000 !important
   +box-shadow(0 0 10px #444)
 
 .leaflet-popup-close-button

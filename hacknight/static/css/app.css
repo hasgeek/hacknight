@@ -16,7 +16,7 @@
 body {
   background-color: #323a40;
   background-image: url('../img/bg.png?1366267473');
-  color: #aaaaaa;
+  color: #bcc6cc;
 }
 
 .nav-tabs {
@@ -158,9 +158,10 @@ hr {
   background-color: #856a91;
   padding-left: 5px;
   width: 45px;
-  height: 50px;
+  height: 62px;
   float: left;
   color: white;
+  margin-top: -11px;
 }
 .participant .participant-name {
   width: 180px;
@@ -1558,7 +1559,7 @@ hr {
 }
 
 label {
-  color: #aaaaaa;
+  color: #bcc6cc;
 }
 
 .help-block {
@@ -1566,7 +1567,7 @@ label {
 }
 
 input, textarea, select, .uneditable-input {
-  color: #aaaaaa;
+  color: #bcc6cc;
   background-color: rgba(0, 0, 0, 0.1);
   border-color: #222426;
 }
@@ -1643,9 +1644,13 @@ input, textarea, select, .uneditable-input {
   text-decoration: none;
 }
 
+.nav-list > li {
+  padding-right: 14px;
+}
+
 .nav-list > li > a, .nav-list .nav-header {
   margin-left: -14px;
-  margin-right: -14px;
+  margin-right: -28px;
   padding: 0 14px;
   text-shadow: none;
 }
@@ -1656,12 +1661,12 @@ input, textarea, select, .uneditable-input {
 }
 
 .nav-list > li > a [class^="icon-"]::before, .nav-list > li > a [class*=" icon-"]::before {
-  color: #aaaaaa;
+  color: #bcc6cc;
 }
 
 .nav > li > a:hover {
   background-color: #0e0f11;
-  color: #aaaaaa;
+  color: #bcc6cc;
 }
 
 .source-files {
@@ -2061,11 +2066,12 @@ input, textarea, select, .uneditable-input {
 .leaflet-popup-close-button {
   top: 3px;
   right: 3px;
+  background-color: black !important;
 }
 
 .leaflet-popup-content-wrapper, .leaflet-popup-tip {
   color: white;
-  background: rgba(34, 34, 34, 0.95);
+  background: black !important;
   -webkit-box-shadow: 0 0 10px #444444;
   -moz-box-shadow: 0 0 10px #444444;
   box-shadow: 0 0 10px #444444;
@@ -2076,7 +2082,7 @@ input, textarea, select, .uneditable-input {
 }
 
 .leaflet-container .leaflet-control-attribution {
-  color: #aaaaaa;
+  color: #bcc6cc;
   background-color: rgba(0, 0, 0, 0.7);
   font: 12px/1.5 Lato, "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   -webkit-box-shadow: 0 0 7px #444444;
