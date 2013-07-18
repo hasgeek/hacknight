@@ -87,7 +87,7 @@ def event_new(profile):
     return render_form(form=form, title="New Event", submit=u"Create",
         cancel_url=profile.url_for(), ajax=False)
 
-
+#77.66063
 @app.route('/<profile>/<event>/edit', methods=['GET', 'POST'])
 @lastuser.requires_login
 @load_models(
@@ -137,6 +137,7 @@ def show_participant_status(status):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_open(profile, event):
+    print event.confirmed_participants_count()
     if profile.userid not in g.user.user_organizations_owned_ids():
         abort(403)
     participants = Participant.query.filter(
@@ -164,18 +165,21 @@ def event_update_participant_status(profile, event):
         if participant.status == PARTICIPANT_STATUS.WITHDRAWN:
             abort(403)
         if participant.status != status:
-            participant.status = status
-            try:
-                text_message = unicode(getattr(event, (participants_email_attrs[status] + '_text')))
-                text_message = text_message.replace("*|FULLNAME|*", participant.user.fullname)
-                message = unicode(getattr(event, participants_email_attrs[status]))
-                message = message.replace("*|FULLNAME|*", participant.user.fullname)
-                if message and g.user.email:
-                    send_email(sender=(g.user.fullname, g.user.email), to=participant.email,
-                    subject="%s - Hacknight participation status" % event.title , body=text_message, html=message)
-            except KeyError:
-                pass
-            db.session.commit()
+            if event.confirmed_participants_count() < event.maximum_participants:
+                participant.status = status
+                try:
+                    text_message = unicode(getattr(event, (participants_email_attrs[status] + '_text')))
+                    text_message = text_message.replace("*|FULLNAME|*", participant.user.fullname)
+                    message = unicode(getattr(event, participants_email_attrs[status]))
+                    message = message.replace("*|FULLNAME|*", participant.user.fullname)
+                    if message and g.user.email:
+                        send_email(sender=(g.user.fullname, g.user.email), to=participant.email,
+                        subject="%s - Hacknight participation status" % event.title , body=text_message, html=message)
+                except KeyError:
+                    pass
+                db.session.commit()
+        else:
+            flash("Venue capacity is full", "error")
         return "Done"
     abort(403)
 
@@ -311,7 +315,7 @@ def event_delete(profile, event):
     return render_delete_sqla(event, db, title=u"Confirm delete",
         message=u"Delete Event '%s'? This cannot be undone." % event.title,
         success=u"You have deleted an event '%s'." % event.title,
-         next=profile.url_for())
+        next=profile.url_for())
 
 
 @app.route('/<profile>/<event>/send_email', methods=['GET', 'POST'])
