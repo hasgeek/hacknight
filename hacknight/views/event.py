@@ -87,7 +87,7 @@ def event_new(profile):
     return render_form(form=form, title="New Event", submit=u"Create",
         cancel_url=profile.url_for(), ajax=False)
 
-#77.66063
+
 @app.route('/<profile>/<event>/edit', methods=['GET', 'POST'])
 @lastuser.requires_login
 @load_models(

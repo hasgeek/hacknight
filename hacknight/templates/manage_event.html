@@ -47,8 +47,7 @@
     $(function() {
       var updateParticipantsStatus = function(){
         var all_participants = $(".participant-status-label").toArray();
-        var counts = {},
-            vacancy = {{ event.maximum_participants - event.confirmed_participants_count() }};
+        var counts = {};
         for (var index in all_participants){
           var status = $(all_participants[index]).html();
           if (status in counts){
