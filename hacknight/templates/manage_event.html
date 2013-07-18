@@ -47,7 +47,8 @@
     $(function() {
       var updateParticipantsStatus = function(){
         var all_participants = $(".participant-status-label").toArray();
-        var counts = {};
+        var counts = {},
+            vacancy = {{ event.maximum_participants - event.confirmed_participants_count() }};
         for (var index in all_participants){
           var status = $(all_participants[index]).html();
           if (status in counts){
@@ -60,7 +61,7 @@
         for (var key in counts){
           string += key + ": " + counts[key] + ", ";
         }
-        string += " )";
+        string += ")";
         $(".h3-title").text(string);
       }
       //get all participants status label
@@ -75,7 +76,7 @@
             newStatus = el.attr('data-status'),
             statusLabels = {{statuslabels | tojson | safe}},
             isFull = "{{ event.confirmed_participants_count() < event.maximum_participants }}";
-        if (newStatus == 2){
+        if (newStatus == 2){ //if the new status is confirmed 
           if (isFull === "True") {
             $('div#contact-info').html("");  
           }
@@ -83,13 +84,13 @@
           e.stopPropagation();
           participantEl.children('.participant-status-label').text(statusLabels[newStatus]);
         }
-        if (isFull === "True" || (isFull === "False" && newStatus != 2) ){
-          console.log("status");
+        if (isFull === "True" || (isFull === "False" && newStatus != 2) || vacancy ){ 
+        //Send Ajax request to accept participant incase of vacancy.
           $.post('manage/update', {participantid: id, status: newStatus})
             .error( function(){ location.reload(); } );
+          window.location.reload(true);
         } else {
           toastr.error("Venue capacity is full.");
-          window.location.reload(true);
         }
         updateParticipantsStatus();
         return false;
