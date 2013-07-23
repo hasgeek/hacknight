@@ -1,0 +1,144 @@
+$font-color: #bcc6cc
+$border-color: #222426
+$font-faint-color: #666
+$background-color: rgba(0, 0, 0, 0.1)
+
+.sidebar
+  // border-right: 2px solid #0E0F11
+  // border-bottom: 2px solid #0E0F11
+
+  //border-right: #454E59 1px solid
+  border-bottom: #454E59 1px solid
+  -moz-box-shadow: inset 0 2px 3px #1C2126
+  -webkit-box-shadow: inset 0 2px 3px #1C2126
+  box-shadow: inset 0 2px 3px #1F2124
+
+  border-radius: 5px
+  margin-bottom: 20px
+  //+box-shadow(0 1px 2px $background-color, 0 0 10px $background-color inset)
+  background: #242930
+
+  .nav.nav-list:first-child
+    margin-top: -1px
+
+  &.nav.nav-list
+    padding-top: $line-height - 10px
+    padding-bottom: $line-height - 6px
+
+  .pager
+    margin-bottom: 0
+
+.share
+  ul
+    margin: 0
+    .nav-list
+      padding-left: 4px
+  li
+    list-style-type: none
+    list-style-position: outset
+    //display: inline-block
+    //padding: 1px
+    position: relative
+    float: left
+    margin: 5px
+    border-radius: 50%
+    border: 2px solid #151A21
+    -moz-box-shadow: 0 2px 3px #1C2126
+    -webkit-box-shadow: 0 2px 3px #1C2126
+    box-shadow: 0 2px 3px #1C2126
+    background: #242930
+    width: 35px
+    height: 35px
+    a
+      //display: inline-block
+      position: relative
+      float: left
+      //margin: 5px
+      font-size: 1.4em
+      padding-left: 0px
+      padding-top: 4px
+      padding-right: 7px
+      padding-bottom: 5px
+      border-radius: 50%
+      border-top: 1px solid #2F353F
+      width: 28px
+      height: 28px
+      span 
+        position: absolute
+        left: 0.4em !important
+        top: 0.3em !important
+  .btn
+    color: #065EC1
+    text-shadow: none
+    //text-shadow: 3px 4px 15px #000
+.btn-dark.active
+  color: #065EC1
+
+.btn-dark  
+  background-color: #171A20 
+  background-image: -moz-linear-gradient(top, #2C313B, #171A20) 
+  background-image: -ms-linear-gradient(top, #2C313B, #171A20) 
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#2C313B), to(#171A20)) 
+  background-image: -webkit-linear-gradient(top, #2C313B, #171A20) 
+  background-image: -o-linear-gradient(top, #2C313B, #171A20) 
+  background-image: linear-gradient(top, #2C313B, #171A20) 
+  background-repeat: repeat-x 
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#2C313B', endColorstr='#171A20', GradientType=0) 
+  border: none 
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false) 
+ 
+.btn-dark:hover, .btn-dark:active, .btn-dark.active, .btn-dark.disabled, .btn-dark[disabled]  
+  background-color: #171A20 
+  color: #efefef
+ 
+.btn-dark:active,.btn-dark.active
+  background-color: #003399 \9 
+
+.nav-list > li
+  padding-right: 14px
+
+.nav-list > li > a, .nav-list .nav-header
+  margin-left: -14px
+  margin-right: -28px
+  padding: 0 14px
+  text-shadow: none
+.nav-list .nav-header
+  padding-top: 5px
+  padding-bottom: 2px
+
+.nav-list > li > a [class^="icon-"]::before, .nav-list > li > a [class*=" icon-"]::before
+  color: $font-color
+
+.nav > li > a:hover
+  background-color: #0E0F11
+  color: $font-color
+
+.source-files
+  width: 100%
+  height: auto
+  background-image: image-url('black_bg.png')
+  margin-top: 30px
+  .nav > li > a 
+    padding-bottom: 15px
+  .nav-list .nav-header
+    padding-top: 10px
+  .nav > li > a:hover
+    background: transparent
+  i
+    color: #131418
+    //padding-left: 15px
+    font-size: 80px
+  .source-details
+    margin-left: -1px
+    width: 200px
+
+//Styles for sponsor logo
+.sponsor-box 
+  list-style-type: none
+
+.sponsor-box li
+  padding-top: 2em
+  list-style-type: none
+
+.sponsor-logo
+  width: 250px
