@@ -56,7 +56,7 @@ $class-slug: project-num !default
         text-decoration: none
         background-color: #242930
         box-shadow: none
-        border-bottom: 1px #181C21 solid
+        border-bottom-width: 1px
         -moz-box-shadow: inset 0 2px 3px #1C2126
         -webkit-box-shadow: inset 0 2px 3px #1C2126
         box-shadow: inset 0 2px 3px #1F2124
@@ -150,7 +150,9 @@ $class-slug: project-num !default
   .cardset, .userset
     li
       float: left
-      height: 150px
+      height: 170px
+      margin-right: -1px
+
       &:hover
         border-bottom: 2px
       .card-title
@@ -243,14 +245,27 @@ $class-slug: project-num !default
       height: 8.5em
   .cardset, .userset
     li
-      height: 15em
+      height: 16em
       a
-        width: 300px
+        width: 350px
         height: 100%
+      .card-badge
+        position: relative
+        float: right
+        right: 0
   .project-cards
     float: none
     .cardset, .userset
       text-align: center
       li
+        margin-right: 10px
         .card-title
           max-height: 30px
+@media (max-width: 400px)
+  .cardset, .userset
+    li
+      height: 16em
+      a
+        width: 280px
+        h2
+          font-size: 18px

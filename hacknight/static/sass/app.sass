@@ -1,6 +1,7 @@
 @import "compass"
 @import "cards"
 @import "participants"
+@import "comments"
 @import "sidebar"
 @import "components"
 
@@ -27,7 +28,6 @@ body
   width: 100%
   border-bottom: 1px solid #454E59
   background-color: #16191F
-  //opacity: 0.95
   padding-top: 50px
   -moz-box-shadow: 0 0 5px #222
   -webkit-box-shadow: 0 0 5px #222
@@ -40,7 +40,6 @@ body
   width: 100%
   border-bottom: 1px solid #454E59
   background-color: #16191F
-  //opacity: 0.9
   padding-top: 18px
 
 .box-border
@@ -181,15 +180,35 @@ input, textarea, select, .uneditable-input
     text-shadow: none
 
 .voting
-  background: $background-color
-  //opacity: 0.6
-  border: 3px solid #1A1E22
   margin-right: -6px
-
-.pager-nav, .voting
+  box-shadow: inset 0 0 5px #000000
+  border-bottom: #454E59 1px solid
+  -moz-box-shadow: inset 0 2px 3px #1C2126
+  -webkit-box-shadow: inset 0 2px 3px #1C2126
+  box-shadow: inset 0 2px 3px #1F2124
+  background: #242930
+  border-radius: 5px
   text-align: center
   line-height: 1
-  font-size: $font-size * 3
+  font-size: $font-size * 2
+
+.pager-nav
+  text-align: center
+  line-height: 1
+  font-size: $font-size * 2
+  border-radius: 50%
+  width: 40px
+  margin-bottom: 10px
+  opacity: 0.9
+  padding: 5px
+  text-shadow: 1px 1px #000
+
+  box-shadow: inset 0 0 5px #000000
+  border-bottom: #454E59 1px solid
+  -moz-box-shadow: inset 0 2px 3px #1C2126
+  -webkit-box-shadow: inset 0 2px 3px #1C2126
+  box-shadow: inset 0 2px 3px #1F2124
+  background: #242930
 
   div.votecount
     font-size: $font-size * 2
@@ -202,7 +221,8 @@ input, textarea, select, .uneditable-input
     vertical-align: top
   a:hover
     text-decoration: none
-
+  &.pull-right
+    float: right
 .mob-seperator
   display: none
 
@@ -211,15 +231,7 @@ input, textarea, select, .uneditable-input
   color: #efefef
 textarea
   width: 100%
-.pager-nav
-  background-image: image-url('black_bg.png')
-  border-radius: 30px
-  width: 46px
-  margin-bottom: 10px
-  opacity: 0.9
-  padding: 5px
-  text-shadow: 1px 1px #000
-  box-shadow: inset 0 0 5px #000000
+
 
 @media (min-width: 980px) and (max-width: 1200px)
   #page-header, #page-header-after-login

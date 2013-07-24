@@ -1,21 +1,15 @@
 $font-color: #bcc6cc
-$border-color: #222426
+$border-color: #454E59
 $font-faint-color: #666
 $background-color: rgba(0, 0, 0, 0.1)
 
 .sidebar
-  // border-right: 2px solid #0E0F11
-  // border-bottom: 2px solid #0E0F11
-
-  //border-right: #454E59 1px solid
-  border-bottom: #454E59 1px solid
+  border-bottom: $border-color 1px solid
   -moz-box-shadow: inset 0 2px 3px #1C2126
   -webkit-box-shadow: inset 0 2px 3px #1C2126
   box-shadow: inset 0 2px 3px #1F2124
-
   border-radius: 5px
   margin-bottom: 20px
-  //+box-shadow(0 1px 2px $background-color, 0 0 10px $background-color inset)
   background: #242930
 
   .nav.nav-list:first-child
@@ -36,8 +30,6 @@ $background-color: rgba(0, 0, 0, 0.1)
   li
     list-style-type: none
     list-style-position: outset
-    //display: inline-block
-    //padding: 1px
     position: relative
     float: left
     margin: 5px
@@ -50,10 +42,8 @@ $background-color: rgba(0, 0, 0, 0.1)
     width: 35px
     height: 35px
     a
-      //display: inline-block
       position: relative
       float: left
-      //margin: 5px
       font-size: 1.4em
       padding-left: 0px
       padding-top: 4px
@@ -70,7 +60,6 @@ $background-color: rgba(0, 0, 0, 0.1)
   .btn
     color: #065EC1
     text-shadow: none
-    //text-shadow: 3px 4px 15px #000
 .btn-dark.active
   color: #065EC1
 
@@ -126,7 +115,6 @@ $background-color: rgba(0, 0, 0, 0.1)
     background: transparent
   i
     color: #131418
-    //padding-left: 15px
     font-size: 80px
   .source-details
     margin-left: -1px
