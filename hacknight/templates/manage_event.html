@@ -56,7 +56,7 @@
             counts[status] = 1;
           }
         }
-        var string = "Participants (";
+        var string = "Participants (Maximum Participants: " + "{{ event.maximum_participants }}, ";
         for (var key in counts){
           string += key + ": " + counts[key] + ", ";
         }
@@ -73,14 +73,25 @@
             participantEl = $('.participant-list .participant-'+id),
             currentStatus = participantEl.attr('data-status'),
             newStatus = el.attr('data-status'),
-            statusLabels = {{statuslabels | tojson | safe}};
-            if (newStatus == 2)
-              $('div#contact-info').html("");
-        e.stopPropagation();
-        participantEl.children('.participant-status-label').text(statusLabels[newStatus]);
+            statusLabels = {{statuslabels | tojson | safe}},
+            isFull = "{{ event.confirmed_participants_count() < event.maximum_participants }}";
+        if (newStatus == 2){ //if the new status is confirmed 
+          if (isFull === "True") {
+            $('div#contact-info').html("");  
+          }
+        } else {
+          e.stopPropagation();
+          participantEl.children('.participant-status-label').text(statusLabels[newStatus]);
+        }
+        if (isFull === "True" || (isFull === "False" && newStatus != 2) || vacancy ){ 
+        //Send Ajax request to accept participant incase of vacancy.
+          $.post('manage/update', {participantid: id, status: newStatus})
+            .error( function(){ location.reload(); } );
+          window.location.reload(true);
+        } else {
+          toastr.error("Venue capacity is full.");
+        }
         updateParticipantsStatus();
-        $.post('manage/update', {participantid: id, status: newStatus})
-          .error( function(){ location.reload(); } );
         return false;
       });
     });
