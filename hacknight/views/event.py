@@ -158,7 +158,6 @@ def event_update_participant_status(profile, event):
         participantid = int(request.form['participantid'])
         status = int(request.form['status'])
         participant = Participant.query.get(participantid)
-
         if participant.event != event:
             abort(403)
         if participant.status == PARTICIPANT_STATUS.WITHDRAWN:
