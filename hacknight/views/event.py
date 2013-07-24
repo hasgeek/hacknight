@@ -137,7 +137,6 @@ def show_participant_status(status):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_open(profile, event):
-    print event.confirmed_participants_count()
     if profile.userid not in g.user.user_organizations_owned_ids():
         abort(403)
     participants = Participant.query.filter(
