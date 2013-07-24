@@ -83,7 +83,7 @@
           e.stopPropagation();
           participantEl.children('.participant-status-label').text(statusLabels[newStatus]);
         }
-        if (isFull === "True" || (isFull === "False" && newStatus != 2) || vacancy ){ 
+        if (isFull === "True" || (isFull === "False" && newStatus != 2)){ 
         //Send Ajax request to accept participant incase of vacancy.
           $.post('manage/update', {participantid: id, status: newStatus})
             .error( function(){ location.reload(); } );
