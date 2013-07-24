@@ -152,18 +152,22 @@ def event_open(profile, event):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_update_participant_status(profile, event):
+    print "==="
+    print request.is_xhr
     if request.is_xhr:
         if profile.userid not in g.user.user_organizations_owned_ids():
             abort(403)
         participantid = int(request.form['participantid'])
         status = int(request.form['status'])
         participant = Participant.query.get(participantid)
-
+        print "Received"
+        print status, participantid
         if participant.event != event:
             abort(403)
         if participant.status == PARTICIPANT_STATUS.WITHDRAWN:
             abort(403)
         if participant.status != status:
+            print status, participantid
             if event.confirmed_participants_count() < event.maximum_participants:
                 participant.status = status
                 try:

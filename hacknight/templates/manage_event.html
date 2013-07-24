@@ -85,9 +85,13 @@
         }
         if (isFull === "True" || (isFull === "False" && newStatus != 2)){ 
         //Send Ajax request to accept participant incase of vacancy.
-          $.post('manage/update', {participantid: id, status: newStatus})
-            .error( function(){ location.reload(); } );
-          window.location.reload(true);
+          $.ajax({
+            type: "POST",
+            url: "{{ event.url_for('update') }}",
+            data: {participantid: id, status: newStatus},
+            success: function(){ window.location.reload(true);},
+            error: function(msg){ toastr.error("Unable to send request");} 
+          })
         } else {
           toastr.error("Venue capacity is full.");
         }

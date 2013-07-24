@@ -118,6 +118,8 @@ class Event(BaseScopedNameMixin, db.Model):
             return url_for('project_new', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'apply':
             return url_for('event_apply', profile=self.profile.name, event=self.name, _external=_external)
+        elif action == 'update':
+            return url_for('event_update_participant_status', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'withdraw':
             return url_for('event_withdraw', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'open':
