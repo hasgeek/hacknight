@@ -340,7 +340,7 @@
   border-top: 2px solid #0087cf;
 }
 
-@media screen and (min-width: 980px) and (max-width: 1200px) {
+@media (min-width: 980px) and (max-width: 1200px) {
   .cardset li, .userset li {
     height: 15em;
   }
@@ -360,7 +360,7 @@
     height: 8.6em;
   }
 }
-@media screen and (min-width: 768px) and (max-width: 979px) {
+@media (min-width: 768px) and (max-width: 979px) {
   .cardset li, .userset li {
     height: 17em;
   }
@@ -390,11 +390,6 @@
   }
   .cardset.past h3 {
     font-size: 12px;
-  }
-
-  .project-cards .cardset li .card-title h2, .project-cards .userset li .card-title h2 {
-    font-size: 13px;
-    line-height: 17px;
   }
 }
 @media screen and (max-width: 767px) {
@@ -2047,15 +2042,11 @@
   margin-bottom: 0;
 }
 
-.side-heading.nav-list {
-  padding-left: 4px;
-}
-
-.share {
-  margin-bottom: 70px;
-}
 .share ul {
   margin: 0;
+  display: block;
+  clear: both;
+  margin-bottom: 70px;
 }
 .share ul .nav-list {
   padding-left: 4px;
@@ -2174,9 +2165,14 @@
   width: 200px;
 }
 
+.sidebar-heading.nav-list {
+  padding-left: 4px;
+}
+
 .sponsor-box {
   list-style-type: none;
   margin-left: 0;
+  text-align: center;
 }
 
 .sponsor-box li {
@@ -2185,11 +2181,29 @@
 }
 
 .sponsor-logo {
-  width: 100%;
-  border-bottom: 1px solid #454e59;
-  border-radius: 5px;
+  width: 80%;
 }
 
+@media screen and (min-width: 980px) and (max-width: 1200px) {
+  .sponsor-logo {
+    width: 90%;
+  }
+}
+@media screen and (min-width: 768px) and (max-width: 979px) {
+  .sponsor-logo {
+    width: 100%;
+  }
+}
+@media screen and (min-width: 600px) and (max-width: 767px) {
+  .sponsor-logo {
+    width: 33%;
+  }
+}
+@media screen and (max-width: 599px) {
+  .sponsor-logo {
+    width: 60%;
+  }
+}
 .defaultSkin table.mceLayout {
   border: 1px solid #454e59 !important;
 }
@@ -2274,7 +2288,7 @@
 /* Regular */
 body {
   background-color: #323a40;
-  background-image: url('../img/bg-noise.png?1374323245');
+  background-image: url('../img/bg-noise.png?1374669366');
   color: #bcc6cc;
 }
 
@@ -2641,7 +2655,7 @@ textarea {
     display: block;
   }
 }
-@media (min-width: 400px) and (max-width: 500px) {
+@media (min-width: 401px) and (max-width: 500px) {
   #page-header {
     height: 150px;
   }
