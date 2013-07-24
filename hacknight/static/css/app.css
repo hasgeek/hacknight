@@ -340,7 +340,7 @@
   border-top: 2px solid #0087cf;
 }
 
-@media (min-width: 980px) and (max-width: 1200px) {
+@media screen and (min-width: 980px) and (max-width: 1200px) {
   .cardset li, .userset li {
     height: 15em;
   }
@@ -360,7 +360,7 @@
     height: 8.6em;
   }
 }
-@media (min-width: 768px) and (max-width: 979px) {
+@media screen and (min-width: 768px) and (max-width: 979px) {
   .cardset li, .userset li {
     height: 17em;
   }
@@ -390,6 +390,11 @@
   }
   .cardset.past h3 {
     font-size: 12px;
+  }
+
+  .project-cards .cardset li .card-title h2, .project-cards .userset li .card-title h2 {
+    font-size: 13px;
+    line-height: 17px;
   }
 }
 @media screen and (max-width: 767px) {
@@ -2042,6 +2047,13 @@
   margin-bottom: 0;
 }
 
+.side-heading.nav-list {
+  padding-left: 4px;
+}
+
+.share {
+  margin-bottom: 70px;
+}
 .share ul {
   margin: 0;
 }
@@ -2164,6 +2176,7 @@
 
 .sponsor-box {
   list-style-type: none;
+  margin-left: 0;
 }
 
 .sponsor-box li {
@@ -2172,7 +2185,9 @@
 }
 
 .sponsor-logo {
-  width: 250px;
+  width: 100%;
+  border-bottom: 1px solid #454e59;
+  border-radius: 5px;
 }
 
 .defaultSkin table.mceLayout {
@@ -2349,6 +2364,10 @@ hr {
   border: 0;
   border-top: 1px solid #242930;
   border-bottom: 1px solid #454e59;
+}
+
+.clear-line {
+  clear: both;
 }
 
 .home-buttons .btn-primary {
