@@ -91,6 +91,10 @@ class Event(BaseScopedNameMixin, db.Model):
         p = Participant.get(user, self)
         return p and p.status == PARTICIPANT_STATUS.CONFIRMED
 
+    def confirmed_participants_count(self):
+        from hacknight.models.participant import Participant, PARTICIPANT_STATUS
+        return Participant.query.filter_by(status=PARTICIPANT_STATUS.CONFIRMED, event=self).count()
+
     def permissions(self, user, inherited=None):
         perms = super(Event, self).permissions(user, inherited)
         if user is not None and user.userid == self.profile.userid or self.status in [EVENT_STATUS.PUBLISHED,
