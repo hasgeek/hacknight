@@ -6,5 +6,5 @@ import hacknight.views.profile
 import hacknight.views.project
 import hacknight.views.venue
 import hacknight.views.event
-import hacknight.views.workflow
 import hacknight.views.sponsor
+import hacknight.views.workflow
