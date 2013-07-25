@@ -25,6 +25,9 @@ $background-color: rgba(0, 0, 0, 0.1)
 .share
   ul
     margin: 0
+    display: block
+    clear: both
+    margin-bottom: 70px
     .nav-list
       padding-left: 4px
   li
@@ -60,6 +63,7 @@ $background-color: rgba(0, 0, 0, 0.1)
   .btn
     color: #065EC1
     text-shadow: none
+
 .btn-dark.active
   color: #065EC1
 
@@ -120,13 +124,34 @@ $background-color: rgba(0, 0, 0, 0.1)
     margin-left: -1px
     width: 200px
 
+.sidebar-heading.nav-list
+  padding-left: 4px
+
 //Styles for sponsor logo
 .sponsor-box 
   list-style-type: none
+  margin-left: 0
+  text-align: center
 
 .sponsor-box li
   padding-top: 2em
   list-style-type: none
 
 .sponsor-logo
-  width: 250px
+  width: 80%
+
+@media screen and (min-width: 980px) and (max-width: 1200px)
+  .sponsor-logo
+    width: 90%
+
+@media screen and (min-width: 768px) and (max-width: 979px)
+  .sponsor-logo
+    width: 100%
+
+@media screen and (min-width: 600px) and (max-width: 767px)
+  .sponsor-logo
+    width: 33%
+
+@media screen and (max-width: 599px)
+  .sponsor-logo
+    width: 60%
