@@ -127,7 +127,10 @@
         </ul>
       </div>
       {% if event.sponsors %}
-        <h3>Sponsors</h3>
+        <hr class="clear-line">
+        <div class="sidebar-heading nav nav-list">
+          <h4 class="nav-header">Sponsors</h4>  
+        </div>        
         <ul class="sponsor-box">
           {% for sponsor in event.sponsors %}
             <li><a href="{{ sponsor.url_for() }}"><img src="{{ sponsor.image_url }}" class="sponsor-logo"></a></li>
