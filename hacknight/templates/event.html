@@ -53,7 +53,7 @@
     </div>
     <div class="span3">
       <ul class="well nav nav-list sidebar">
-        <li><span class="icon-calendar">{{ event.start_datetime | fulldate }} &mdash; {{ event.end_datetime | fulldate }}</span></li>
+        <li><span class="icon-calendar">{{ event.start_datetime | startdate }} &mdash; {{ event.end_datetime | enddate }}</span></li>
         {% if event.ticket_price -%}
           <li><span class="icon-money">Entry Fee: {{ event.ticket_price }}</span></li>
         {%- endif %}

@@ -15,19 +15,29 @@ def index():
     return render_template('index.html', upcoming_events=upcoming_events, past_events=past_events)
 
 
+@app.template_filter('startdate')
+def startdate(date):
+    return app.config['tz'].normalize(utc.localize(date).astimezone(app.config['tz'])).strftime("%a, %e %b %l:%M %p")
+
+
+@app.template_filter('enddate')
+def enddate(date):
+    return app.config['tz'].normalize(utc.localize(date).astimezone(app.config['tz'])).strftime("%l:%M %p %e %b %Y")
+
+
 @app.template_filter('shortdate')
 def shortdate(date):
-    return utc.localize(date).astimezone(app.config['tz']).strftime("%B %d, %Y")
+    return app.config['tz'].normalize(utc.localize(date).astimezone(app.config['tz'])).strftime("%B %d, %Y")
 
 
 @app.template_filter('fulldate')
 def fulldate(date):
-    return utc.localize(date).astimezone(app.config['tz']).strftime("%a, %b %e %l:%M %p")
+    return app.config['tz'].normalize(utc.localize(date).astimezone(app.config['tz'])).strftime("%a, %b %e %l:%M %p")
 
 
 @app.template_filter('weekdate')
 def weekdate(date):
-    return utc.localize(date).astimezone(app.config['tz']).strftime("%a, %b %e")
+    return app.config['tz'].normalize(utc.localize(date).astimezone(app.config['tz'])).strftime("%a, %b %e")
 
 
 @app.template_filter('cleanurl')
