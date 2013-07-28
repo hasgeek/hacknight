@@ -322,13 +322,20 @@ def event_delete(profile, event):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'), permission='send-email')
 def event_send_email(profile, event):
+    participants = Participant.query.filter_by(event=event).all()
+    participants_email_mapping = {participant.email: participant for participant in participants if participant.email}
     form = SendEmailForm()
     form.send_to.choices = [(-1, "All participants (confirmed or not)")] + \
-        [(item.value, item.title) for item in ParticipantWorkflow.states()]
+        [(item.value, item.title) for item in ParticipantWorkflow.states()] + \
+        [(-2, "Specific email ids from drop down box")]
+    try:
+        form.email_ids.choices = [(participant.email, participant_status_labels[participant.status] + " - " + participant.email) for participant in participants if participant.email]
+    except KeyError:
+        pass
     if form.validate_on_submit():
-        if form.send_to.data == -1:
-            participants = Participant.query.filter_by(event=event).all()
-        else:
+        if form.send_to.data == -2:
+            participants = [participants_email_mapping[email] for email in form.email_ids.data]
+        elif form.send_to.data != -1:
             participants = Participant.query.filter_by(event=event, status=form.send_to.data).all()
         subject = form.subject.data
         count = 0
