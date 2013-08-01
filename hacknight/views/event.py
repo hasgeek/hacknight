@@ -77,6 +77,7 @@ def event_new(profile):
         form.populate_obj(event)
         if not event.name:
             event.make_name()
+        event.description = Markup(event.description)
         db.session.add(event)
         participant = Participant(user=g.user, event=event)
         participant.status = PARTICIPANT_STATUS.CONFIRMED
@@ -101,6 +102,8 @@ def event_edit(profile, event):
     if form.validate_on_submit():
         old_name = event.name
         form.populate_obj(event)
+        event.description = event.description.replace("&lt;img", "<img")
+        event.description = event.description.replace("/&gt;", "/>")
         if not event.name:
             event.make_name()
         if event.name != old_name:

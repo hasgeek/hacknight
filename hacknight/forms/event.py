@@ -26,8 +26,24 @@ class EventForm(Form):
             AvailableName(u"There’s another event with the same name", scoped=True), wtf.validators.length(max=250)],
         description="URL identifier, leave blank to autogenerate")
     blurb = wtf.TextField("Blurb", description="Single line blurb introducing the event", validators=[wtf.validators.length(max=250)])
-    description = RichTextField("Description", description="Detailed description of the event",
-        content_css="/static/css/editor.css")
+    description = RichTextField("Description", description="Detailed description of the event", linkify=False,
+        content_css="/static/css/editor.css", tinymce_options = {"extended_valid_elements": "img[src]",
+        "theme_advanced_buttons1": "bold,italic,|,sup,sub,|,bullist,numlist,|,link,unlink,|,blockquote,|,removeformat,code,image", "theme": "advanced",
+        "sanitize_tags": ['p', 'br', 'strong', 'em', 'sup', 'sub', 'h3', 'h4', 'h5', 'h6',
+                'ul', 'ol', 'li', 'a', 'span', 'blockquote', 'pre', 'code', 'img',
+                'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td', 'iframe'],
+        "sanitize_attributes":  {'a': ['href', 'title', 'target', 'class'],
+                                'span': ['class'],
+                                'img': ['src', 'alt', 'class', 'width', 'height', 'align'],
+                                'table': ['class'],
+                                'thead': ['class'],
+                                'tbody': ['class'],
+                                'tfoot': ['class'],
+                                'tr': ['class'],
+                                'th': ['class', 'colspan', 'rowspan'],
+                                'td': ['class', 'colspan', 'rowspan'],
+                                'iframe': ['src', 'class', 'width', 'height', 'frameborder', 'allowfullscreen']}
+    })
     apply_instructions = RichTextField("Instructions for participants", description="This will be shown to participants on the hacknight joining form",
         content_css="/static/css/editor.css")
     venue = wtf.QuerySelectField("Venue",
