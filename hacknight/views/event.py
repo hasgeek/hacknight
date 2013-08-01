@@ -77,7 +77,6 @@ def event_new(profile):
         form.populate_obj(event)
         if not event.name:
             event.make_name()
-        event.description = Markup(event.description)
         db.session.add(event)
         participant = Participant(user=g.user, event=event)
         participant.status = PARTICIPANT_STATUS.CONFIRMED
