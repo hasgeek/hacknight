@@ -48,7 +48,9 @@
         <h1>{{ self.title() }}</h1>
       </div>
       <div class="event-description">
-        <span>{{ event.description|safe }}</span>
+        {% autoescape false %}
+          <span>{{ event.description|safe }}</span>
+        {% endautoescape %}
       </div>
     </div>
     <div class="span3">
