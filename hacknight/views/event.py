@@ -101,8 +101,6 @@ def event_edit(profile, event):
     if form.validate_on_submit():
         old_name = event.name
         form.populate_obj(event)
-        event.description = event.description.replace("&lt;img", "<img")
-        event.description = event.description.replace("/&gt;", "/>")
         if not event.name:
             event.make_name()
         if event.name != old_name:
