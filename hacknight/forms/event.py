@@ -29,14 +29,14 @@ class EventForm(Form):
     description = RichTextField("Description", description="Detailed description of the event", linkify=False,
         content_css="/static/css/editor.css", tinymce_options = {
         "valid_elements": "p,br,strong/b,em/i,sup,sub,h3,h4,h5,h6,ul,ol,li,a[!href|title|target|class],blockquote,pre,code,img[!src|alt|class|width|height|align]",
-        "theme_advanced_buttons1": "bold,italic,|,sup,sub,|,bullist,numlist,|,link,unlink,|,blockquote,|,removeformat,code,image", "theme": "advanced",
-        "sanitize_tags": ['p', 'br', 'strong', 'em', 'sup', 'sub', 'h3', 'h4', 'h5', 'h6',
+        "theme_advanced_buttons1": "bold,italic,|,sup,sub,|,bullist,numlist,|,link,unlink,|,blockquote,|,removeformat,code,image", "theme": "advanced"},
+        sanitize_tags=['p', 'br', 'strong', 'em', 'sup', 'sub', 'h3', 'h4', 'h5', 'h6',
                 'ul', 'ol', 'li', 'a', 'span', 'blockquote', 'pre', 'code', 'img',
                 'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td', 'iframe'],
-        "sanitize_attributes":  {'a': ['href', 'title', 'target', 'class'],
+        sanitize_attributes={'a': ['href', 'title', 'target', 'class'],
                                 'span': ['class'],
-                                'img': ['src', 'alt', 'class', 'width', 'height', 'align'],}
-    })
+                                'img': ['src', 'alt', 'class', 'width', 'height', 'align']},
+        )
     apply_instructions = RichTextField("Instructions for participants", description="This will be shown to participants on the hacknight joining form",
         content_css="/static/css/editor.css")
     venue = wtf.QuerySelectField("Venue",
