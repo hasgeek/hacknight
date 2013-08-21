@@ -2119,6 +2119,18 @@
 .nav-list > li {
   padding-right: 14px;
 }
+.nav-list > li i {
+  float: left;
+  width: 10px;
+}
+.nav-list > li span {
+  padding-left: 10px;
+  display: block;
+  margin-left: 10px;
+  white-space: wrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .nav-list > li > a, .nav-list .nav-header {
   margin-left: -14px;
