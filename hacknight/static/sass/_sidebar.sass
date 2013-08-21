@@ -89,6 +89,16 @@ $background-color: rgba(0, 0, 0, 0.1)
 
 .nav-list > li
   padding-right: 14px
+  i
+    float: left
+    width: 10px
+  span
+    padding-left: 10px
+    display: block
+    margin-left: 10px
+    white-space: wrap
+    overflow: hidden
+    text-overflow: ellipsis
 
 .nav-list > li > a, .nav-list .nav-header
   margin-left: -14px
@@ -100,7 +110,7 @@ $background-color: rgba(0, 0, 0, 0.1)
   padding-bottom: 2px
 
 .nav-list > li > a [class^="icon-"]::before, .nav-list > li > a [class*=" icon-"]::before
-  color: $font-color
+  color: $font-color 
 
 .nav > li > a:hover
   background-color: #0E0F11
