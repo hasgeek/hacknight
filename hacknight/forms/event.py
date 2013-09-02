@@ -64,7 +64,7 @@ class EmailEventParticipantsForm(Form):
     waitlisted_message = RichTextField("Waitlisted Message", description="Message to be sent for waitlisted participants. '*|FULLNAME|*' will be replaced with user's fullname.", validators=[wtforms.validators.Optional()], tinymce_options = {'convert_urls': False, 'remove_script_host': False})
 
 
-class ConfirmWithdrawForm(wtforms.Form):
+class ConfirmWithdrawForm(Form):
     """
     Confirm a delete operation
     """
