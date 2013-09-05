@@ -1,26 +1,32 @@
 # -*- coding: utf-8 -*-
 
+import operator
 from flask import render_template, g, abort, flash
 from coaster.views import load_model
 from baseframe.forms import render_redirect, render_form
 from hacknight import app
 from hacknight.models import db, Profile, User, Event
-from hacknight.models.event import profile_types
+from hacknight.models.event import profile_types, Event
 from hacknight.forms.profile import ProfileForm
 from hacknight.views.login import lastuser
 from hacknight.models.participant import Participant
+from datetime import datetime
+from pytz import utc
 
 
 @app.route('/<profile>')
 @load_model(Profile, {'name': 'profile'}, 'profile')
 def profile_view(profile):
-    events = Event.query.filter_by(profile_id=profile.id).order_by(Event.start_datetime.desc()).all()
+    events = Event.query.filter_by(profile_id=profile.id).order_by(Event.start_datetime.asc()).all()
+    upcoming_events, past_events = [], []
+    for event in events:
+        if event.end_datetime >= datetime.utcnow():
+            upcoming_events.append(event)
+        else:
+            past_events.append(event)
+    past_events = sorted(past_events, key=operator.attrgetter('end_datetime'), reverse=True)
     user = User.query.filter_by(userid=profile.userid).first()
-    if user is not None:
-        # User profile. Show all events this user owns or is participating in.
-        events = list(set(events + [p.event for p in Participant.query.filter_by(user=user).all()]))
-        events.sort(key=lambda item: item.start_datetime, reverse=True)
-    return render_template('profile.html', profile=profile, events=events, is_user=True if user else False)
+    return render_template('profile.html', profile=profile, events=events, upcoming_events=upcoming_events, past_events=past_events, is_user=True if user else False)
 
 
 @app.route('/<profile>/edit', methods=['GET', 'POST'])
