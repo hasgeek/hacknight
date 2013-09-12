@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, g, abort, flash, url_for
+from flask import render_template, g, abort, flash
 from coaster.views import load_models
 from baseframe.forms import render_form, render_redirect, render_delete_sqla
 from hacknight import app
@@ -12,9 +12,8 @@ from hacknight.forms.sponsor import SponsorForm
 @app.route('/<profile>/<event>/sponsors/new', methods=['GET', 'POST'])
 @lastuser.requires_login
 @load_models(
-    (Profile, {'name': 'profile'}, 'profile'),
-    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
-    )
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def sponsor_new(profile, event, form=None):
     if profile.userid not in g.user.user_organizations_owned_ids():
         abort(403)
@@ -32,8 +31,7 @@ def sponsor_new(profile, event, form=None):
         cancel_url=event.url_for(), ajax=False)
 
 
-@app.route('/<profile>/<event>/sponsors/<sponsor>/edit',
-    methods=['GET', 'POST'])
+@app.route('/<profile>/<event>/sponsors/<sponsor>/edit', methods=['GET', 'POST'])
 @lastuser.requires_login
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
@@ -73,7 +71,7 @@ def sponsor_delete(profile, event, sponsor):
          next=event.url_for())
 
 
-@app.route('/<profile>/<event>/sponsors/<sponsor>', methods=['GET', 'POST'])
+@app.route('/<profile>/<event>/sponsors/<sponsor>/view', methods=['GET', 'POST'])
 @load_models(
     (Profile, {'name': 'profile'}, 'profile'),
     (Event, {'name': 'event', 'profile': 'profile'}, 'event'),

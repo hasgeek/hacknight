@@ -1,0 +1,271 @@
+$font-size: 14px
+$line-height: 22px
+$class-slug: project-num !default
+
+.cardset, .userset
+  list-style: none
+  // margin-left: 0
+
+  li
+    +box-sizing(border-box)
+    text-align: left
+    position: relative
+    margin-bottom: $line-height
+    height: 200px
+
+    .card-badge
+      position: absolute
+      right: 4px
+      top: 1px
+      font-size: 10px
+      color: #171A1F
+      // width: 1em
+    &:hover
+      .card-badge
+        color: #596371
+
+    a
+      overflow: hidden
+      //border-color: #999
+      //border-bottom: 5px solid #2B4256
+      //border-top-right-radius: 1em
+      //border-bottom-left-radius: 1em 
+      +box-sizing(border-box)
+      border: 1px solid #181C21
+      border-top: 2px solid #0087cf
+      border-top: 2px solid #DF5E0E
+      display: block
+      //+box-shadow(0 1px 2px $background-color, 0 0 10px $background-color inset)
+      width: 100%
+      height: 100%
+      padding: 0 14px (($line-height / 2) - 2px)
+      background-color: #242930
+      //opacity: 0.6
+      //background-image: image-url('black_bg.png')
+      color: inherit
+      //+transition-property("background")
+      //+transition-duration(0.2s)
+
+      border-bottom: #181C21 2px solid
+      -moz-box-shadow: 0 2px 3px #1C2126
+      -webkit-box-shadow: 0 2px 3px #1C2126
+      box-shadow: 0 2px 3px #1F2124
+
+      &:hover
+        color: inherit
+        text-decoration: none
+        background-color: #242930
+        box-shadow: none
+        border-bottom-width: 1px
+        -moz-box-shadow: inset 0 2px 3px #1C2126
+        -webkit-box-shadow: inset 0 2px 3px #1C2126
+        box-shadow: inset 0 2px 3px #1F2124
+        +transition-property("box-shadow")
+        +transition-property("border-bottom")
+        +transition-property("background-color")
+        +transition-duration(0.9s)
+
+
+    .card-title, .card-body
+      text-overflow: ellipsis
+
+    .card-title
+      padding: (($line-height / 2) - 2px) 0 ($line-height / 2) 0
+      //margin-top: 5px
+      display: block
+      //border-bottom: 1px solid $border-color
+      h2
+        height: 67px
+        margin-top: 5px
+      h3
+        background-color: #171B21
+        display: block
+        margin-left: -15px
+        margin-right: -15px
+        padding: 1px
+        padding-left: 15px
+        padding-right: 15px
+
+    .card-body
+      //margin: ($line-height / 2) -14px 0
+      padding: (($line-height / 2) - 1px) 14px 0
+      //overflow: hidden
+      //text-overflow: ellipsis
+      //white-space: nowrap
+      border-top: 0
+      height: 63px
+      overflow: hidden
+      margin-top: 17px
+
+    .card-body.large-plus
+      text-align: center
+      font-size: 50px
+      line-height: 1
+
+    h2, h3
+      margin-top: 0
+    h3
+      font-size: $font-size
+      color: #205E7F
+    h2
+      color: #C4B1CC
+      //margin-top: 10px
+
+      //font-family: "Tertre-xbol"
+    @for $j from 1 through 60
+      .#{$class-slug}#{$j}
+        @if $j % 15 == 1
+          border-color: red
+        @else if $j % 15 == 2
+          border-color: #FF6600
+        @else if $j % 15 == 3
+          border-color: yellow
+        @else if $j % 15 == 4
+          border-color: green
+        @else if $j % 15 == 5
+          border-color: blue
+        @else if $j % 15 == 6
+          border-color: #856A91
+        @else if $j % 15 == 7
+          border-color: pink
+        @else if $j % 15 == 8
+          border-color: white
+        @else if $j % 15 == 9
+          border-color: #9CEF00
+        @else if $j % 15 == 10
+          border-color: #009999
+        @else if $j % 15 == 11
+          border-color: #CE0073
+        @else if $j % 15 == 12
+          border-color: #878787
+        @else if $j % 15 == 13
+          border-color: #143DAB
+        @else if $j % 15 == 14
+          border-color: #743D30
+        @else if $j % 15 == 15
+          border-color: brown
+  .card-title.new-project
+    height: 30px
+.project-cards
+  .cardset, .userset
+    li
+      float: left
+      height: 170px
+      margin-right: -1px
+
+      &:hover
+        border-bottom: 2px
+      .card-title
+        height: 50px
+        overflow: hidden
+        h2
+          font-size: 16px
+      .card-body
+        margin-top: 0
+        padding-top: 5px
+.light-bg
+  opacity: 0.7
+.userset
+  margin-top: 20px
+
+.userset li
+  height: 10em
+  text-align: center
+
+  [class^="icon-"], [class*=" icon-"]
+    font-size: 80px
+    line-height: 1
+
+.centered .cardset
+  &.row
+    margin-left: 0
+  li
+    +inline-block
+    float: none
+    margin: 10px
+
+.cardset.past
+  h2
+    font-size: 20px
+  li
+    height: 8.7em
+    //opacity: 0.7
+    a
+      border-top: 2px solid #0087cf
+
+@media (min-width: 980px) and (max-width: 1200px)
+  .cardset, .userset
+    li
+      height: 15em
+      h2
+        font-size: 1.2em
+  .userset li
+    height: 10em
+  .cardset.past
+    h2
+      font-size: 18px
+      line-height: 24px
+    li
+      height: 8.6em
+
+@media (min-width: 768px) and (max-width: 979px)
+  .cardset, .userset
+    li
+      height: 17em
+      .card-title
+        h2
+          padding-top: 5px
+          height: 95px
+          display: block
+          font-size: 16px
+        h3
+          font-size: 10px
+      .card-body
+        margin-top: 45px
+  .userset li
+    height: 10em
+  .cardset.past
+    li 
+      height: 11em
+    h2
+      font-size: 15px
+      line-height: 20px
+    h3
+      font-size: 12px
+@media screen and (max-width: 767px)
+  .userset li
+    height: 10em
+  .cardset.past
+    h2
+      font-size: 17px
+      line-height: 22px
+    h3
+      font-size: 13px
+    li
+      height: 8.5em
+  .cardset, .userset
+    li
+      height: 16em
+      a
+        width: 350px
+        height: 100%
+      .card-badge
+        position: relative
+        float: right
+        right: 0
+  .project-cards
+    float: none
+    .cardset, .userset
+      text-align: center
+      li
+        margin-right: 10px
+        .card-title
+          max-height: 30px
+@media (max-width: 400px)
+  .cardset, .userset
+    li
+      height: 16em
+      a
+        width: 280px
+        h2
+          font-size: 18px

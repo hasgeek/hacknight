@@ -1,0 +1,61 @@
+// TinyMCE theme
+.defaultSkin table.mceLayout
+  border: 1px solid $border-color !important
+
+.defaultSkin .mceIframeContainer
+  border-top: 1px solid $border-color !important
+  border-bottom: 1px solid $border-color !important
+
+.defaultSkin table.mceLayout.focus
+  border-color: #4a90c7 !important
+  border: 1px solid #4a90c7 !important
+
+.defaultSkin td.mceToolbar, .defaultSkin .mceStatusbar
+  background: #aaa !important
+
+.defaultSkin .mceButton
+  border-color: #aaa !important
+
+.defaultSkin a.mceButtonEnabled:hover
+  border-color: #0A246A !important
+
+
+// Leaflet map
+.leaflet-popup-content-wrapper
+  +border-radius(4px)
+
+.leaflet-popup-content
+  font: 14px/22px Lato, "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+  margin: 10px
+
+.leaflet-popup-close-button
+  top: 3px
+  right: 3px
+  background-color: #000 !important
+
+.leaflet-popup-content-wrapper, .leaflet-popup-tip
+  color: #fff
+  background: #000 !important
+  +box-shadow(0 0 10px #444)
+
+.leaflet-popup-close-button
+  background-color: transparent
+
+.leaflet-container .leaflet-control-attribution
+  color: $font-color
+  background-color: rgba(0, 0, 0, 0.7)
+  font: 12px/1.5 Lato, "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+  +box-shadow(0 0 7px #444)
+
+.disabled
+  color: $font-faint-color
+
+#map
+  //border: 3px solid #222426
+  //+border-radius(4px)
+  +box-sizing(border-box)
+  background: $background-color
+  // margin-bottom: $line-height
+
+.event-map
+  height: 200px

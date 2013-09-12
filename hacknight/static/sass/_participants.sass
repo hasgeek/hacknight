@@ -1,0 +1,149 @@
+/* project/participants list-tabs */
+.nav-tabs
+  border-bottom: 1px solid #454E59
+  &:after 
+    border-bottom: 1px solid #242930
+    width: 100%
+    display: block
+    content: ''
+.nav-tabs > li > a, .nav-tabs > li > a:hover
+  color: rgb(153, 153, 153)
+.nav-tabs > li > a:hover
+  border: 1px solid #242c33
+.nav-tabs > .active > a, .nav-tabs > .active > a:hover
+  background-color: #242930
+  color: rgb(153, 153, 153)
+  border: 1px solid #242c33
+  -moz-box-shadow: inset 0 2px 3px #1C2126
+  -webkit-box-shadow: inset 0 2px 3px #1C2126
+  box-shadow: inset 0 2px 3px #1F2124
+
+.participant
+  //opacity: 0.6
+  background-image: image-url('black_bg.png')
+  background-color: #000
+  margin-bottom: 10px
+  border-bottom: 1px solid #454E59
+  border-right: 1px solid #454E59
+  margin-right: -2px
+  overflow: hidden
+  display: box
+  .participant-img
+    background-color: #856A91
+    padding-left: 5px
+    width: 45px
+    height: 62px
+    float: left
+    color: #fff
+    margin-top: -11px
+  .participant-name
+    width: 180px
+    height: 50px
+    float: left
+    //background-color: white
+    b
+      padding-left: 10px
+    a
+      color: #999999
+  .participant-count
+    display: box
+    width: 20px
+    text-align: center
+    background: transparent
+    border: 5px solid #131418
+    border-radius: 15px
+    margin-top: 10px
+    float: left
+    color: #282828
+  .participating-project-header
+    font-size: 10px
+    color: #333
+    margin-left: 25px
+  .participating-projects
+    margin-left: -15px
+$class-slug: project-num !default
+@for $i from 1 through 60
+  .#{$class-slug}#{$i}
+    list-style-type: none
+    display: block
+    position: relative
+    margin: 1px
+    height: 8px
+    width: 15px
+    float: left
+    //background-color: #B0603D
+    a
+      color: #BB894D
+      display: block
+      position: absolute
+      top: 0
+      left: 0
+      right: 0
+      bottom: 0
+
+@for $j from 1 through 60
+  .#{$class-slug}#{$j}
+    @if $j % 15 == 1
+      background-color: red
+    @else if $j % 15 == 2
+      background-color: #FF6600
+    @else if $j % 15 == 3
+      background-color: yellow
+    @else if $j % 15 == 4
+      background-color: green
+    @else if $j % 15 == 5
+      background-color: blue
+    @else if $j % 15 == 6
+      background-color: #856A91
+    @else if $j % 15 == 7
+      background-color: pink
+    @else if $j % 15 == 8
+      background-color: white
+    @else if $j % 15 == 9
+      background-color: #9CEF00
+    @else if $j % 15 == 10
+      background-color: #009999
+    @else if $j % 15 == 11
+      background-color: #CE0073
+    @else if $j % 15 == 12
+      background-color: #878787
+    @else if $j % 15 == 13
+      background-color: #143DAB
+    @else if $j % 15 == 14
+      background-color: #743D30
+    @else if $j % 15 == 15
+      background-color: brown
+.member-count
+  color: #856A91
+  font-style: italic
+
+@media (min-width: 980px) and (max-width: 1200px)
+  .participant
+    .participant-img
+      width: 23px
+      height: 28px
+      margin-top: 0
+    .icon-4x
+      font-size: 22px
+    .participant-count
+      margin-top: -22px
+
+@media (min-width: 768px) and (max-width: 979px)
+  .participant
+    .participant-img
+      width: 20px
+      height: 28px
+      margin-left: 140px
+      display: inline-block
+      margin-left: 141px
+      margin-top: 30px
+      width: 20px
+    .icon-4x
+      font-size: 18px
+    .participant-count
+      margin-top: -30px
+      margin-left: 110px
+    .participant-name
+      margin-top: -55px
+  .project-color-tab
+    width: 8px

@@ -47,50 +47,55 @@
         <h3><a href="{{ profile.url_for() }}">{{ event.profile.title }}</a><i class="icon-caret-right"></i></h3>
         <h1>{{ self.title() }}</h1>
       </div>
-      {{ event.description|safe }}
+      <div class="event-description">
+        <span>{{ event.description|safe }}</span>
+      </div>
     </div>
     <div class="span3">
-      <ul class="well nav nav-list">
-        <li><span class="icon-calendar">{{ event.start_datetime | fulldate }} &mdash; {{ event.end_datetime | fulldate }}</span></li>
+      <ul class="well nav nav-list sidebar">
+        <li><i class="icon-calendar"></i><span>{{ event.start_datetime | startdate }} &mdash; {{ event.end_datetime | enddate }}</span></li>
         {% if event.ticket_price -%}
-          <li><span class="icon-money">Entry Fee: {{ event.ticket_price }}</span></li>
+          <li><i class="icon-money"></i><span>Entry Fee: {{ event.ticket_price }}</span></li>
         {%- endif %}
-        <li><a href="{{ event.venue.url_for() }}"><span class="icon-map-marker">{{ event.venue.title }}</span></a></li>
-        <li><span class="icon-blank">{{ event.venue.address1 }}</span></li>
+        <li><a href="{{ event.venue.url_for() }}"><i class="icon-map-marker"></i><span>{{ event.venue.title }}</span></a></li>
+        <li><i class="icon-blank"></i><span>{{ event.venue.address1 }}</span></li>
         {% if event.venue.address2 -%}
-          <li><span class="icon-blank">{{ event.venue.address2 }}</span></li>
+          <li><i class="icon-blank"></i><span>{{ event.venue.address2 }}</span></li>
         {%- endif %}
-        <li><span class="icon-blank">{{ event.venue.city }}, {{ event.venue.state }}{%- if event.venue.postcode %} &ndash; {{ event.venue.postcode }}{% endif %}, {{ event.venue.country }}</span></li>
+        <li><i class="icon-blank"></i><span>{{ event.venue.city }}, {{ event.venue.state }}{%- if event.venue.postcode %} &ndash; {{ event.venue.postcode }}{% endif %}, {{ event.venue.country }}</span></li>
         {% if event.website -%}
-          <li><a href="{{ event.website }}" target="_blank"><span class="icon-link">{{ event.website|cleanurl }}</span></a></li>
+          <li><a href="{{ event.website }}" target="_blank"><i class="icon-link"></i><span>{{ event.website|cleanurl }}</span></a></li>
         {%- endif %}
+
         {% if workflow.can_apply() %}
           <li class="nav-header">Your participation</li>
         {%- endif %}
         {% if workflow.can_apply() and (not current_participant or current_participant.status == 4) -%}
-          <li><a href="{{ event.url_for('apply') }}"><span class="icon-signin">Register now {%- if not g.user %} (login required) {%- endif %}...</span></a></li>
+          <li><a href="{{ event.url_for('apply') }}"><i class="icon-signin"></i><span>Register now {%- if not g.user %} (login required) {%- endif %}</span></a></li>
         {% else %}
           {% if event.owner_is(g.user) -%}
-            <li><span class="icon-user">You are an owner</span></li>
+            <li><i class="icon-user"></i><span>You are an owner</span></li>
           {%- else -%}
             {% if current_participant.status == 0 -%}
-              <li><span class="icon-user">Pending approval</span></li>
+              <li><i class="icon-user"></i><span>Pending approval</span></li>
             {%- elif current_participant.status == 2 -%}
-              <li><span class="icon-user">Confirmed</span></li>
+              <li><i class="icon-user"></i><span>Confirmed</span></li>
             {%- elif current_participant.status == 1 -%}
-              <li><span class="icon-user">Wait listed</span></li>
+              <li><i class="icon-user"></i><span>Wait listed</span></li>
             {%- elif current_participant.status == 3 -%}
-              <li><span class="icon-user">Rejected</span></li>
+              <li><i class="icon-user"></i><span>Rejected</span></li>
             {%- elif current_participant.status == 4 -%}
-              <li><span class="icon-user">Withdrawn</span></li>
+              <li><i class="icon-user"></i><span>Withdrawn</span></li>
             {%- endif -%}
           {%- endif %}
           {% if workflow.can_apply() -%}
-            <li><a href="{{ event.url_for('withdraw') }}"><span class="icon-signout">Withdraw registration...</span></a></li>
+            <li><a href="{{ event.url_for('withdraw') }}"><i class="icon-signout"></i><span>Withdraw registration</span></a></li>
           {%- endif %}
         {% endif %}
-        {%- if event.owner_is(g.user) %}
+
+      {%- if event.owner_is(g.user) %}
           <li class="nav-header">Manage event</li>
+<<<<<<< HEAD
           <li><a href="{{ event.url_for('open') }}"><span class="icon-wrench">Manage event</span></a></li>
           <li><a href="{{ event.url_for('export') }}"><span class="icon-wrench">Export participants list</span></a></li>
           <li><a href="{{ event.url_for('edit') }}"><span class="icon-pencil">Edit details...</span></a></li>
@@ -108,8 +113,44 @@
         <li><a target="_blank" href="http://www.facebook.com/sharer.php?u={{ request.url }}&amp;t={{ event.title }}" class="socialite facebook-share" data-href="{{ request.url }}"><span class="icon-facebook">Facebook</span></a></li>
         <li><a target="_blank" href="https://plus.google.com/share?url={{ request.url }}" class="socialite googleplus-share" data-href="{{ request.url }}" data-action="share"><span class="icon-google-plus">Google+</span></a></li>
       </ul>
+=======
+          <li><a href="{{ event.url_for('open') }}"><i class="icon-wrench"></i><span>Manage event</span></a></li>
+          <li><a href="{{ event.url_for('export') }}"><i class="icon-wrench"></i><span>Export participant list</span></a></li>
+          <li><a href="{{ event.url_for('edit') }}"><i class="icon-pencil"></i><span>Edit details</span></a></li>
+          <li><a href="{{ event.url_for('email_template') }}"><i class="icon-pencil"></i><span>Edit email templates</span></a></li>
+          <li><a href="{{ event.url_for('delete') }}"><i class="icon-trash"></i><span>Delete event</span></a></li>
+          <li><a href="{{ event.url_for('send_email') }}"><i class="icon-envelope"></i><span>Email participants</span></a></li>
+      {% endif -%}
+    </ul>
+      
+      <div class="share">
+        <ul>
+          <div class="nav nav-list">
+            <h4 class="nav-header">Share</h4>  
+          </div>
+          <li>
+            <a class="btn btn-dark" target="_blank" href="http://twitter.com/share?url={{ request.url }}&amp;via=HasGeek&amp;text={{ event.title }}" class="socialite twitter-share" data-url="{{ request.url }}" data-text="{{ event.title }}" data-via="HasGeek">
+              <span class="icon-twitter"></span>
+            </a>
+          </li>
+          <li>
+            <a class="btn btn-dark" target="_blank" href="http://www.facebook.com/sharer.php?u={{ request.url }}&amp;t={{ event.title }}" class="socialite facebook-share" data-href="{{ request.url }}">
+              <span class="icon-facebook"></span>
+            </a>
+          </li>
+          <li>
+            <a class="btn btn-dark" target="_blank" href="https://plus.google.com/share?url={{ request.url }}" class="socialite googleplus-share" data-href="{{ request.url }}" data-action="share">
+              <span class="icon-google-plus"></span>
+            </a>
+          </li>
+        </ul>
+      </div>
+>>>>>>> master
       {% if event.sponsors %}
-        <h3>Sponsors</h3>
+        <hr class="clear-line">
+        <div class="sidebar-heading nav nav-list">
+          <h4 class="nav-header">Sponsors</h4>  
+        </div>        
         <ul class="sponsor-box">
           {% for sponsor in event.sponsors %}
             <li><a href="{{ sponsor.url_for() }}"><img src="{{ sponsor.image_url }}" class="sponsor-logo"></a></li>
@@ -173,25 +214,22 @@
     </div>
   </div>
   {% if event.venue.latitude and event.venue.longitude %}
-    <div id="map" class="event-map"></div>
+    <div class="box-border"><div id="map" class="event-map"></div></div>
   {% endif %}
 
 {% endblock %}
 
 {% block footerscripts %}
 <script>
-if({{ applied }})
-{
-console.log({{ applied }});
+{% if applied %}
   $("#register").addClass("hidden");
   $("#withdraw").removeClass("hidden");
-};
+{% endif %}
 
-if("{{ event.profile.userid }}"=="{{ g.user.userid }}")
-{
+{% if event.profile.userid == g.user.userid %}
   $("#register").addClass("hidden");
   $("#withdraw").addClass("hidden");
-};
+{% endif %}
 
 </script>
 

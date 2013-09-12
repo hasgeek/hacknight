@@ -141,7 +141,7 @@ def event_open(profile, event):
         abort(403)
     participants = Participant.query.filter(
         Participant.status != PARTICIPANT_STATUS.WITHDRAWN,
-        Participant.event == event).order_by('created_at')
+        Participant.event == event).order_by(Participant.status).order_by(Participant.created_at)
     return render_template('manage_event.html', profile=profile, event=event,
         participants=participants, statuslabels=participant_status_labels, enumerate=enumerate)
 
@@ -158,24 +158,26 @@ def event_update_participant_status(profile, event):
         participantid = int(request.form['participantid'])
         status = int(request.form['status'])
         participant = Participant.query.get(participantid)
-
         if participant.event != event:
             abort(403)
         if participant.status == PARTICIPANT_STATUS.WITHDRAWN:
             abort(403)
         if participant.status != status:
-            participant.status = status
-            try:
-                text_message = unicode(getattr(event, (participants_email_attrs[status] + '_text')))
-                text_message = text_message.replace("*|FULLNAME|*", participant.user.fullname)
-                message = unicode(getattr(event, participants_email_attrs[status]))
-                message = message.replace("*|FULLNAME|*", participant.user.fullname)
-                if message and g.user.email:
-                    send_email(sender=(g.user.fullname, g.user.email), to=participant.email,
-                    subject="%s - Hacknight participation status" % event.title , body=text_message, html=message)
-            except KeyError:
-                pass
-            db.session.commit()
+            if event.confirmed_participants_count() < event.maximum_participants:
+                participant.status = status
+                try:
+                    text_message = unicode(getattr(event, (participants_email_attrs[status] + '_text')))
+                    text_message = text_message.replace("*|FULLNAME|*", participant.user.fullname)
+                    message = unicode(getattr(event, participants_email_attrs[status]))
+                    message = message.replace("*|FULLNAME|*", participant.user.fullname)
+                    if message and g.user.email:
+                        send_email(sender=(g.user.fullname, g.user.email), to=participant.email,
+                        subject="%s - Hacknight participation status" % event.title , body=text_message, html=message)
+                except KeyError:
+                    pass
+                db.session.commit()
+        else:
+            flash("Venue capacity is full", "error")
         return "Done"
     abort(403)
 
@@ -202,7 +204,7 @@ def event_apply(profile, event):
             participant = Participant(user=user, event=event)
             form.populate_obj(participant)
             participant.save_defaults()
-            participant.status = PARTICIPANT_STATUS.PENDING if event.maximum_participants < total_participants else PARTICIPANT_STATUS.WL
+            participant.status = PARTICIPANT_STATUS.PENDING if event.maximum_participants > total_participants else PARTICIPANT_STATUS.WL
             db.session.add(participant)
             db.session.commit()
             flash(u"Your request to participate has been recorded; you will be notified by the event manager", "success")
@@ -311,7 +313,7 @@ def event_delete(profile, event):
     return render_delete_sqla(event, db, title=u"Confirm delete",
         message=u"Delete Event '%s'? This cannot be undone." % event.title,
         success=u"You have deleted an event '%s'." % event.title,
-         next=profile.url_for())
+        next=profile.url_for())
 
 
 @app.route('/<profile>/<event>/send_email', methods=['GET', 'POST'])
@@ -368,14 +370,15 @@ def event_change(profile, event):
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'), permission='send-email')
 def email_template_form(profile, event):
     form = EmailEventParticipantsForm(obj=event)
-    if not form.confirmation_message.data:
-        form.confirmation_message.data = render_template('confirmed_participants_email.md', event=event)
-    if not form.waitlisted_message.data:
-        form.waitlisted_message.data = render_template('waitlisted_participants_email.md', event=event)
-    if not form.rejected_message.data:
-        form.rejected_message.data = render_template('rejected_participants_email.md', event=event)
-    if not form.pending_message.data:
-        form.pending_message.data = render_template('pending_participants_email.md', event=event)
+    if not (form.confirmation_message.data or form.waitlisted_message.data or form.rejected_message.data or form.pending_message.data):
+        if not form.confirmation_message.data:
+            form.confirmation_message.data = render_template('confirmed_participants_email.md', event=event)
+        if not form.waitlisted_message.data:
+            form.waitlisted_message.data = render_template('waitlisted_participants_email.md', event=event)
+        if not form.rejected_message.data:
+            form.rejected_message.data = render_template('rejected_participants_email.md', event=event)
+        if not form.pending_message.data:
+            form.pending_message.data = render_template('pending_participants_email.md', event=event)
     if form.validate_on_submit():
         form.populate_obj(event)
         event.confirmation_message_text = html2text(event.confirmation_message)

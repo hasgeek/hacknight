@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import url_for
+from flask.ext.lastuser.sqlalchemy import ProfileMixin
 from sqlalchemy.orm import deferred
 from hacknight.models import db, BaseNameMixin, BaseScopedNameMixin, BaseMixin
 
@@ -28,7 +29,7 @@ class EVENT_STATUS:
     CLOSED = 2
 
 
-class Profile(BaseNameMixin, db.Model):
+class Profile(ProfileMixin, BaseNameMixin, db.Model):
     __tablename__ = 'profile'
 
     userid = db.Column(db.Unicode(22), nullable=False, unique=True)
@@ -85,6 +86,10 @@ class Event(BaseScopedNameMixin, db.Model):
         p = Participant.get(user, self)
         return p and p.status == PARTICIPANT_STATUS.CONFIRMED
 
+    def confirmed_participants_count(self):
+        from hacknight.models.participant import Participant, PARTICIPANT_STATUS
+        return Participant.query.filter_by(status=PARTICIPANT_STATUS.CONFIRMED, event=self).count()
+
     def permissions(self, user, inherited=None):
         perms = super(Event, self).permissions(user, inherited)
         if user is not None and user.userid == self.profile.userid or self.status in [EVENT_STATUS.PUBLIC,
@@ -107,6 +112,8 @@ class Event(BaseScopedNameMixin, db.Model):
             return url_for('project_new', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'apply':
             return url_for('event_apply', profile=self.profile.name, event=self.name, _external=_external)
+        elif action == 'update':
+            return url_for('event_update_participant_status', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'withdraw':
             return url_for('event_withdraw', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'open':

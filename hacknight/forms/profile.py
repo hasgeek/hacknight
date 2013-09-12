@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import flask.ext.wtf as wtf
+import wtforms
 from baseframe.forms import Form, RichTextField
 
 __all__ = ['ProfileForm']
 
 
 class ProfileForm(Form):
-    type = wtf.SelectField(u"Profile type", coerce=int, validators=[wtf.Required()])
+    type = wtforms.SelectField(u"Profile type", coerce=int, validators=[wtforms.validators.Required()])
     description = RichTextField(u"Description/Bio",
         content_css="/static/css/editor.css")
