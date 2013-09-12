@@ -99,7 +99,7 @@ class EventWorkflow(DocumentWorkflow):
     published = WorkflowState(EVENT_STATUS.PUBLISHED, title=u"Public")
 
      #: States in which an owner can edit
-    editable = WorkflowStateGroup([draft, active, closed, completed, cancelled, rejected, withdrawn], title=u"Editable")
+    editable = WorkflowStateGroup([draft, active, closed, completed, cancelled, rejected, withdrawn, published], title=u"Editable")
     public = WorkflowStateGroup([active, closed], title=u"Public")
     appliable = WorkflowStateGroup([active, published], title="User can apply for an event")
     openit = WorkflowStateGroup([draft], title=u"Open it")

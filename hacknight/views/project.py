@@ -110,6 +110,10 @@ def project_delete(profile, project, event):
 
 
 @app.route('/<profile>/<event>/projects', methods=["GET", "POST"])
+@load_models(
+    (Profile, {'name': 'profile'}, 'profile'),
+    (Event, {'name': 'event', 'profile': 'profile'}, 'event'),
+)
 def projects(profile, event):
     return redirect(event.url_for())
 
@@ -144,6 +148,7 @@ def project_view(profile, event, project):
     commentform = CommentForm()
     delcommentform = DeleteCommentForm()
     commentspace = project.comments
+    send_email_info = []
     if request.method == 'POST':
         if request.form.get('form.id') == 'newcomment' and commentform.validate():
             if commentform.edit_id.data:
@@ -160,7 +165,6 @@ def project_view(profile, event, project):
                     flash("No such comment", "error")
             else:
                 comment = Comment(user=g.user, commentspace=project.comments, message=commentform.message.data)
-                send_email_info = []
                 if commentform.reply_to_id.data:
                     reply_to = commentspace.get_comment(int(commentform.reply_to_id.data))
                     if reply_to and reply_to.commentspace == project.comments:

@@ -1,13 +1,20 @@
 # -*- coding: utf-8 -*-
 
 from flask import url_for
+from flask.ext.lastuser.sqlalchemy import ProfileMixin
 from sqlalchemy.orm import deferred
+<<<<<<< HEAD
 from hacknight.models import db, BaseScopedNameMixin
 from hacknight.models.profile import Profile
 from hacknight.models.comment import CommentSpace
 
 
 __all__ = ['Event', 'EVENT_STATUS']
+=======
+from hacknight.models import db, BaseNameMixin, BaseScopedNameMixin, BaseMixin
+
+__all__ = ['Profile', 'Event', 'EVENT_STATUS', 'PROFILE_TYPE', 'EventRedirect']
+>>>>>>> master
 #need to add EventTurnOut, EventPayment later
 
 
@@ -36,6 +43,26 @@ class EVENT_STATUS:
     WITHDRAWN = 7
 
 
+<<<<<<< HEAD
+=======
+class Profile(ProfileMixin, BaseNameMixin, db.Model):
+    __tablename__ = 'profile'
+
+    userid = db.Column(db.Unicode(22), nullable=False, unique=True)
+    description = db.Column(db.UnicodeText, default=u'', nullable=False)
+    type = db.Column(db.Integer, default=PROFILE_TYPE.UNDEFINED, nullable=False)
+
+    def type_label(self):
+        return profile_types.get(self.type, profile_types[0])
+
+    def url_for(self, action='view', _external=True):
+        if action == 'view':
+            return url_for('profile_view', profile=self.name, _external=_external)
+        elif action == 'new-event':
+            return url_for('event_new', profile=self.name, _external=_external)
+
+
+>>>>>>> master
 class Event(BaseScopedNameMixin, db.Model):
     __tablename__ = 'event'
 
@@ -86,6 +113,10 @@ class Event(BaseScopedNameMixin, db.Model):
         p = Participant.get(user, self)
         return p and p.status == PARTICIPANT_STATUS.CONFIRMED
 
+    def confirmed_participants_count(self):
+        from hacknight.models.participant import Participant, PARTICIPANT_STATUS
+        return Participant.query.filter_by(status=PARTICIPANT_STATUS.CONFIRMED, event=self).count()
+
     def permissions(self, user, inherited=None):
         perms = super(Event, self).permissions(user, inherited)
         if user is not None and user.userid == self.profile.userid or self.status in [EVENT_STATUS.PUBLISHED,
@@ -109,6 +140,8 @@ class Event(BaseScopedNameMixin, db.Model):
             return url_for('project_new', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'apply':
             return url_for('event_apply', profile=self.profile.name, event=self.name, _external=_external)
+        elif action == 'update':
+            return url_for('event_update_participant_status', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'withdraw':
             return url_for('event_withdraw', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'open':
@@ -119,3 +152,16 @@ class Event(BaseScopedNameMixin, db.Model):
             return url_for('event_send_email', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'email_template':
             return url_for('email_template_form', profile=self.profile.name, event=self.name, _external=_external)
+
+
+class EventRedirect(BaseMixin, db.Model):
+    __tablename__ = "event_redirect"
+
+    profile_id = db.Column(db.Integer, db.ForeignKey('profile.id'), nullable=False)
+    profile = db.relationship(Profile)
+
+    name = db.Column(db.Unicode(250), nullable=False)
+    event_id = db.Column(None, db.ForeignKey('event.id'), nullable=False)
+    event = db.relationship(Event, backref=db.backref('redirects', cascade='all, delete-orphan'))
+
+    __table_args__ = (db.UniqueConstraint(profile_id, name),)

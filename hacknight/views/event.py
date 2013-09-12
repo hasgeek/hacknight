@@ -9,7 +9,7 @@ from flask import render_template, abort, flash, url_for, g, request, Markup, re
 from coaster.views import load_model, load_models, jsonp
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app, mail
-from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS, Comment
+from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS, EventRedirect, Comment
 from hacknight.forms.event import EventForm, ConfirmWithdrawForm, SendEmailForm, EmailEventParticipantsForm
 from hacknight.forms.participant import ParticipantForm
 from hacknight.forms.comment import CommentForm, DeleteCommentForm
@@ -35,7 +35,8 @@ def send_email(sender, to, subject, body, html=None):
     msg.body = body
     if html:
         msg.html = html
-    mail.send(msg)
+    if to:
+        mail.send(msg)
 
 
 @app.route('/<profile>/<event>', methods=["GET", "POST"])
@@ -202,9 +203,17 @@ def event_edit(profile, event):
         abort(403)
     form = EventForm(obj=event)
     if form.validate_on_submit():
+        old_name = event.name
         form.populate_obj(event)
-        event.make_name()
-        event.profile_id = profile.id
+        if not event.name:
+            event.make_name()
+        if event.name != old_name:
+            redirect_to = EventRedirect.query.filter_by(name=old_name, profile=profile).first()
+            if redirect_to:
+                redirect_to.event = event
+            else:
+                redirect_to = EventRedirect(name=old_name, profile=profile, event=event)
+                db.session.add(redirect_to)
         db.session.commit()
         flash(u"Your edits to %s are saved" % event.title, "success")
         return render_redirect(event.url_for(), code=303)
@@ -236,7 +245,7 @@ def event_open(profile, event):
         abort(403)
     participants = Participant.query.filter(
         Participant.status != PARTICIPANT_STATUS.WITHDRAWN,
-        Participant.event == event).order_by('created_at')
+        Participant.event == event).order_by(Participant.status).order_by(Participant.created_at)
     return render_template('manage_event.html', profile=profile, event=event,
         participants=participants, statuslabels=participant_status_labels, enumerate=enumerate)
 
@@ -253,12 +262,12 @@ def event_update_participant_status(profile, event):
         participantid = int(request.form['participantid'])
         status = int(request.form['status'])
         participant = Participant.query.get(participantid)
-
         if participant.event != event:
             abort(403)
         if participant.status == PARTICIPANT_STATUS.WITHDRAWN:
             abort(403)
         if participant.status != status:
+<<<<<<< HEAD
             participant.status = status
             try:
                 text_message = getattr(event, (participants_email_attrs[status] + '_text'))
@@ -271,6 +280,23 @@ def event_update_participant_status(profile, event):
             except KeyError:
                 pass
             db.session.commit()
+=======
+            if event.confirmed_participants_count() < event.maximum_participants:
+                participant.status = status
+                try:
+                    text_message = unicode(getattr(event, (participants_email_attrs[status] + '_text')))
+                    text_message = text_message.replace("*|FULLNAME|*", participant.user.fullname)
+                    message = unicode(getattr(event, participants_email_attrs[status]))
+                    message = message.replace("*|FULLNAME|*", participant.user.fullname)
+                    if message and g.user.email:
+                        send_email(sender=(g.user.fullname, g.user.email), to=participant.email,
+                        subject="%s - Hacknight participation status" % event.title , body=text_message, html=message)
+                except KeyError:
+                    pass
+                db.session.commit()
+        else:
+            flash("Venue capacity is full", "error")
+>>>>>>> master
         return "Done"
     abort(403)
 
@@ -297,7 +323,7 @@ def event_apply(profile, event):
             participant = Participant(user=user, event=event)
             form.populate_obj(participant)
             participant.save_defaults()
-            participant.status = PARTICIPANT_STATUS.PENDING if event.maximum_participants < total_participants else PARTICIPANT_STATUS.WL
+            participant.status = PARTICIPANT_STATUS.PENDING if event.maximum_participants > total_participants else PARTICIPANT_STATUS.WL
             db.session.add(participant)
             db.session.commit()
             flash(u"Your request to participate has been recorded; you will be notified by the event manager", "success")
@@ -406,7 +432,7 @@ def event_delete(profile, event):
     return render_delete_sqla(event, db, title=u"Confirm delete",
         message=u"Delete Event '%s'? This cannot be undone." % event.title,
         success=u"You have deleted an event '%s'." % event.title,
-         next=profile.url_for())
+        next=profile.url_for())
 
 
 @app.route('/<profile>/<event>/send_email', methods=['GET', 'POST'])
@@ -429,7 +455,8 @@ def event_send_email(profile, event):
             if participant.email:
                 message = form.message.data.replace("*|FULLNAME|*", participant.user.fullname)
                 text_message = html2text(message)
-                send_email(sender=(g.user.fullname, g.user.email), to=participant.email, subject=subject, body=text_message, html=message)
+                if g.user.email:
+                    send_email(sender=(g.user.fullname, g.user.email), to=participant.email, subject=subject, body=text_message, html=message)
                 count += 1
         flash("Your message was sent to %d participant(s)." % count)
         return render_redirect(event.url_for())
@@ -444,20 +471,21 @@ def event_send_email(profile, event):
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'), permission='send-email')
 def email_template_form(profile, event):
     form = EmailEventParticipantsForm(obj=event)
-    if not form.confirmation_message.data:
-        form.confirmation_message.data = render_template('confirmed_participants_email.md', event=event)
-    if not form.waitlisted_message.data:
-        form.waitlisted_message.data = render_template('waitlisted_participants_email.md', event=event)
-    if not form.rejected_message.data:
-        form.rejected_message.data = render_template('rejected_participants_email.md', event=event)
-    if not form.pending_message.data:
-        form.pending_message.data = render_template('pending_participants_email.md', event=event)
+    if not (form.confirmation_message.data or form.waitlisted_message.data or form.rejected_message.data or form.pending_message.data):
+        if not form.confirmation_message.data:
+            form.confirmation_message.data = render_template('confirmed_participants_email.md', event=event)
+        if not form.waitlisted_message.data:
+            form.waitlisted_message.data = render_template('waitlisted_participants_email.md', event=event)
+        if not form.rejected_message.data:
+            form.rejected_message.data = render_template('rejected_participants_email.md', event=event)
+        if not form.pending_message.data:
+            form.pending_message.data = render_template('pending_participants_email.md', event=event)
     if form.validate_on_submit():
         form.populate_obj(event)
-        event.confirmation_message_text = html2text(form.confirmation_message.data)
-        event.pending_message_text = html2text(form.pending_message.data)
-        event.waitlisted_message_text = html2text(form.waitlisted_message.data)
-        event.rejected_message_text = html2text(form.rejected_message.data)
+        event.confirmation_message_text = html2text(event.confirmation_message)
+        event.pending_message_text = html2text(event.pending_message)
+        event.waitlisted_message_text = html2text(event.waitlisted_message)
+        event.rejected_message_text = html2text(event.rejected_message)
         db.session.commit()
         flash(u"Participants Email template for %s is saved" % event.title, "success")
         return render_redirect(event.url_for(), code=303)

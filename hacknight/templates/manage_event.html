@@ -4,6 +4,7 @@
 {% block baseheadline -%}
   {% block headline -%}
     <div class="page-header">
+      <h3><a href="{{ profile.url_for() }}">{{ event.profile.title }}</a><i class="icon-caret-right"></i></h3>
       <h1><a href="{{ event.url_for() }}">{{ self.title()|e }}</a></h1>
     </div>
   {%- endblock %}
@@ -44,19 +45,57 @@
 {% block footerscripts %}
   <script type="text/javascript">
     $(function() {
+      var updateParticipantsStatus = function(){
+        var all_participants = $(".participant-status-label").toArray();
+        var counts = {};
+        for (var index in all_participants){
+          var status = $(all_participants[index]).html();
+          if (status in counts){
+            counts[status] += 1;
+          } else {
+            counts[status] = 1;
+          }
+        }
+        var string = "Participants (Maximum Participants: " + "{{ event.maximum_participants }}, ";
+        for (var key in counts){
+          string += key + ": " + counts[key] + ", ";
+        }
+        string += ")";
+        $(".h3-title").text(string);
+      }
+      //get all participants status label
+      $(document).ready(function(){
+        updateParticipantsStatus();
+      });
       $('.update-participant-status').click(function(e) {
         var el = $(this),
             id = el.attr('data-id'),
             participantEl = $('.participant-list .participant-'+id),
             currentStatus = participantEl.attr('data-status'),
             newStatus = el.attr('data-status'),
-            statusLabels = {{statuslabels | tojson | safe}};
-            if (newStatus == 2)
-              $('div#contact-info').html("");
-        e.stopPropagation();
-        participantEl.children('.participant-status-label').text(statusLabels[newStatus]);
-        $.post('manage/update', {participantid: id, status: newStatus})
-          .error( function(){ location.reload(); } );
+            statusLabels = {{statuslabels | tojson | safe}},
+            isFull = "{{ event.confirmed_participants_count() < event.maximum_participants }}";
+        if (newStatus == 2){ //if the new status is confirmed 
+          if (isFull === "True") {
+            $('div#contact-info').html("");  
+          }
+        } else {
+          e.stopPropagation();
+          participantEl.children('.participant-status-label').text(statusLabels[newStatus]);
+        }
+        if (isFull === "True" || (isFull === "False" && newStatus != 2)){ 
+        //Send Ajax request to accept participant incase of vacancy.
+          $.ajax({
+            type: "POST",
+            url: "{{ event.url_for('update') }}",
+            data: {participantid: id, status: newStatus},
+            success: function(){ window.location.reload(true);},
+            error: function(msg){ toastr.error("Unable to send request");} 
+          });
+        } else {
+          toastr.error("Venue capacity is full.");
+        }
+        updateParticipantsStatus();
         return false;
       });
     });
