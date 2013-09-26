@@ -47,7 +47,11 @@
     {% block content %}
       
       <div class="row">
-        <div class="centered upcoming">{{ cardset(upcoming_events, type = 'upcoming') }}</div><hr/>
+        {% if upcoming_events %}
+        <h1 class="centered">Upcoming Events</h1><br />
+          <div class="centered upcoming">{{ cardset(upcoming_events, type = 'upcoming') }}</div><hr/>
+        {% endif %}
+        <h1 class="centered">Past Events</h1>
         <div class="centered">{{ cardset(past_events, type = 'past') }}</div>
       </div>
     {% endblock %}
