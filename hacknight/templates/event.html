@@ -126,9 +126,11 @@
           </li>
         </ul>
       </div>
-      <div>
-        <a href="irc://irc.freenode.net/#hasgeek">Collaborate in IRC Channel</a>
-      </div>
+      {%- if event.irc_channel_url -%}
+        <div>
+          <a href="{{event.irc_channel_url}}" class="irc">Collaborate in IRC Channel</a>
+        </div>
+      {%- endif -%}
       {% if event.sponsors %}
         <hr class="clear-line">
         <div class="sidebar-heading nav nav-list">
@@ -240,11 +242,13 @@
       };
     {% endif %}
     //Scrollback
-    $("a[href='irc://irc.freenode.net/#hasgeek']").click(function(e) {
+    $(".irc").click(function(e) {
       if(window.scrollback) return true;
-      
+
+      var channel = "{{ event.irc_channel_url }}".split("#");
+      channel_name = channel[channel.length - 1];
       window.scrollback = {    
-        streams:['hasgeek'], theme: 'light', ticker: true, minimized: false
+        streams:[channel_name], theme: 'light', ticker: true, minimized: false
       };
       /***** don't edit below *****/
       (function(d, s, h, e){e=d.createElement(s);e.async=1;
@@ -255,6 +259,9 @@
       e.preventDefault();
       return false;
     });
+    /*$(".irc").click(function(e){
+      console.log(window.scrollback);
+    });*/
   });
   </script>
 

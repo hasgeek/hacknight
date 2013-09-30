@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import re
 from flask import Markup
 import wtforms
 import wtforms.fields.html5
@@ -50,11 +51,25 @@ class EventForm(Form):
     ticket_price = wtforms.TextField("Ticket price", description="Entry fee, if any, to be paid at the venue", validators=[wtforms.validators.length(max=250)])
     maximum_participants = wtforms.IntegerField("Venue capacity", description="The number of people this venue can accommodate.", default=50, validators=[wtforms.validators.Required()])
     website = wtforms.fields.html5.URLField("Website", description="Related Website (Optional)", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=250), wtforms.validators.URL()])
+    irc_channel_url = wtforms.fields.html5.URLField("IRC Channel URL", description="IRC Channel for participants collaboration (Optional). E.G: irc://irc.freenode.net/#hasgeek", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=250)])
     status = wtforms.SelectField("Event status", description="Current status of this hacknight", coerce=int, choices=STATUS_CHOICES)
 
     def validate_end_datetime(self, field):
         if field.data < self.start_datetime.data:
             raise wtforms.ValidationError(u"Your event can’t end before it starts.")
+
+    def validate_irc_channel_url(self, field):
+        pattern = "irc://irc\.([a-zA-Z0-9_-]{4,20})\.([a-zA-Z]{2,7})/([#a-zA-Z-_0-9]{2,20})"
+        """
+        Above pattern will match following 
+        irc://irc.freenode.net/#hasgeek
+        irc://irc.freenode.net/##hasgeek
+        irc://irc.freenode.net/##linux-india
+        irc://irc.free.net/##linux-india
+        irc://irc.fre23.net/##linux-india
+        """
+        if not re.match(pattern, field.data):
+            raise wtforms.ValidationError(u"Invalid IRC Channel URL. E.G: irc://irc.freenode.net/#hasgeek")
 
 
 class EmailEventParticipantsForm(Form):
