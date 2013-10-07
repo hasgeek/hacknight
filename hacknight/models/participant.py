@@ -13,6 +13,7 @@ class PARTICIPANT_STATUS:
     CONFIRMED = 2
     REJECTED = 3
     WITHDRAWN = 4
+    ATTENDED = 5
 
 
 class Participant(BaseMixin, db.Model):
