@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import requests
+from socket import gaierror
 from flask import url_for
 from flask.ext.lastuser.sqlalchemy import ProfileMixin
 from sqlalchemy.orm import deferred
@@ -75,12 +77,34 @@ class Event(BaseScopedNameMixin, db.Model):
     rejected_message_text = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
     pending_message = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
     pending_message_text = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
+    # Sync details
+    doattend_api_key = db.Column(db.Unicode(250), nullable=False, default=u'')
+    doattend_event_id = db.Column(db.Integer, nullable=False, default=0)
 
     __table_args__ = (db.UniqueConstraint('name', 'profile_id'),)
 
     def owner_is(self, user):
         """Check if a user is an owner of this event"""
         return user is not None and self.profile.userid in user.user_organizations_owned_ids()
+
+    def check_participant_in_doattend(self, email):
+        if self.doattend_api_key and self.doattend_event_id:
+            data_url = 'http://doattend.com/api/events/%s/participants_list.json?api_key=%s' % (self.doattend_event_id, self.doattend_api_key)
+            try:
+                r = requests.get(data_url)
+            except gaierror:
+                # Network connection issue. TODO: Write to logger.
+                # Since we can't do much in this situation, say False.
+                return False
+            # For non 200 code we should write to logger and email admin.
+            if r.status_code == 200:
+                data = r.json() if callable(r.json) else r.json
+                for participant in data.get('participants'):
+                    if email == participant.get('Email'):
+                        return True
+                return False
+            return False
+        return False
 
     def participant_is(self, user):
         from hacknight.models.participant import Participant
