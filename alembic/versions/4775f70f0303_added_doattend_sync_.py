@@ -15,7 +15,7 @@ import sqlalchemy as sa
 
 
 def upgrade():
-    op.add_column('event', sa.Column('doattend_api_key', sa.Unicode(250), nullable=False, server_default=sa.text(u"''")))
+    op.add_column('event', sa.Column('doattend_api_key', sa.Unicode(100), nullable=False, server_default=sa.text(u"''")))
     op.add_column('event', sa.Column('doattend_event_id', sa.Integer, nullable=False, server_default=sa.text('0')))
     # Alter column
     op.alter_column('event', 'doattend_api_key', server_default=None)

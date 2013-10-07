@@ -78,7 +78,7 @@ class Event(BaseScopedNameMixin, db.Model):
     pending_message = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
     pending_message_text = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
     # Sync details
-    doattend_api_key = db.Column(db.Unicode(250), nullable=False, default=u'')
+    doattend_api_key = db.Column(db.Unicode(100), nullable=False, default=u'')
     doattend_event_id = db.Column(db.Integer, nullable=False, default=0)
 
     __table_args__ = (db.UniqueConstraint('name', 'profile_id'),)

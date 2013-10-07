@@ -53,7 +53,7 @@ class EventForm(Form):
     website = wtforms.fields.html5.URLField("Website", description="Related Website (Optional)", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=250), wtforms.validators.URL()])
     status = wtforms.SelectField("Event status", description="Current status of this hacknight", coerce=int, choices=STATUS_CHOICES)
     doattend_event_id = wtforms.IntegerField("DoAttend Event ID", description="DoAttend Event ID", validators=[wtforms.validators.Optional()])
-    doattend_api_key = wtforms.TextField("DoAttend API Key", description="DoAttend API Key for the event", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=250)])
+    doattend_api_key = wtforms.TextField("DoAttend API Key", description="DoAttend API Key for the event", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     
     def validate_end_datetime(self, field):
         if field.data < self.start_datetime.data:
