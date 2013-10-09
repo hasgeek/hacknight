@@ -78,8 +78,9 @@ class Event(BaseScopedNameMixin, db.Model):
     pending_message = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
     pending_message_text = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
     # Sync details
-    doattend_api_key = db.Column(db.Unicode(100), nullable=False, default=u'')
-    doattend_event_id = db.Column(db.Integer, nullable=False, default=0)
+    sync_service = db.Column(db.Unicode(100), nullable=True)
+    sync_credentials = db.Column(db.Unicode(100), nullable=True)
+    sync_eventid = db.Column(db.Integer, nullable=True)
 
     __table_args__ = (db.UniqueConstraint('name', 'profile_id'),)
 
@@ -87,24 +88,26 @@ class Event(BaseScopedNameMixin, db.Model):
         """Check if a user is an owner of this event"""
         return user is not None and self.profile.userid in user.user_organizations_owned_ids()
 
-    def check_participant_in_doattend(self, email):
-        if self.doattend_api_key and self.doattend_event_id:
-            data_url = 'http://doattend.com/api/events/%s/participants_list.json?api_key=%s' % (self.doattend_event_id, self.doattend_api_key)
-            try:
-                r = requests.get(data_url)
-            except gaierror:
-                # Network connection issue. TODO: Write to logger.
-                # Since we can't do much in this situation, say False.
-                return False
-            # For non 200 code we should write to logger and email admin.
-            if r.status_code == 200:
-                data = r.json() if callable(r.json) else r.json
-                for participant in data.get('participants'):
-                    if email == participant.get('Email'):
-                        return True
-                return False
-            return False
-        return False
+    def check_participants_in_doattend(self, participants):
+        if self.sync_service and self.sync_service.strip().lower() == u'doattend':
+            if self.sync_eventid and self.sync_credentials:
+                data_url = 'http://doattend.com/api/events/%s/participants_list.json?api_key=%s' % (self.sync_eventid, self.sync_credentials)
+                try:
+                    r = requests.get(data_url)
+                except requests.ConnectionError:
+                    # Network connection issue. TODO: Write to logger.
+                    # Since we can't do much in this situation, say False.
+                    raise requests.ConnectionError("Unable to connect to internet")
+                # For non 200 code we should write to logger and email admin.
+                if r.status_code == 200:
+                    data = r.json() if callable(r.json) else r.json
+                    emails = set([p.get('Email') for p in data['participants']])
+                    count = 0
+                    for participant in participants:
+                        if participant.email in emails:
+                            participant.confirm()
+                            count += 1
+                    return count
 
     def participant_is(self, user):
         from hacknight.models.participant import Participant
@@ -154,6 +157,8 @@ class Event(BaseScopedNameMixin, db.Model):
             return url_for('event_send_email', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'email_template':
             return url_for('email_template_form', profile=self.profile.name, event=self.name, _external=_external)
+        elif action == 'sync':
+            return url_for('event_sync', profile=self.profile.name, event=self.name, _external=_external)
 
 
 class EventRedirect(BaseMixin, db.Model):

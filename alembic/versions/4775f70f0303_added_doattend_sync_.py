@@ -15,13 +15,12 @@ import sqlalchemy as sa
 
 
 def upgrade():
-    op.add_column('event', sa.Column('doattend_api_key', sa.Unicode(100), nullable=False, server_default=sa.text(u"''")))
-    op.add_column('event', sa.Column('doattend_event_id', sa.Integer, nullable=False, server_default=sa.text('0')))
-    # Alter column
-    op.alter_column('event', 'doattend_api_key', server_default=None)
-    op.alter_column('event', 'doattend_event_id', server_default=None)
+    op.add_column('event', sa.Column('sync_credentials', sa.Unicode(100), nullable=True))
+    op.add_column('event', sa.Column('sync_service', sa.Unicode(100), nullable=True))
+    op.add_column('event', sa.Column('sync_eventid', sa.Integer, nullable=True))
 
 
 def downgrade():
-    op.drop_column('event', 'doattend_api_key')
-    op.drop_column('event', 'doattend_event_id')
+    op.drop_column('event', 'sync_credentials')
+    op.drop_column('event', 'sync_service')
+    op.drop_column('event', 'sync_eventid')

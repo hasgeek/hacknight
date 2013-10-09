@@ -36,6 +36,9 @@ class Participant(BaseMixin, db.Model):
         user.job_title = self.job_title
         user.company = self.company
 
+    def confirm(self):
+        self.status = PARTICIPANT_STATUS.CONFIRMED
+
     @classmethod
     def get(cls, user, event):
         return cls.query.filter_by(user=user).filter_by(event=event).first()

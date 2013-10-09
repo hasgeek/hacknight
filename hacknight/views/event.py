@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import requests
 from sqlalchemy.orm import joinedload
 from sqlalchemy import func
 from html2text import html2text
@@ -144,6 +145,29 @@ def event_open(profile, event):
         Participant.event == event).order_by(Participant.status).order_by(Participant.created_at)
     return render_template('manage_event.html', profile=profile, event=event,
         participants=participants, statuslabels=participant_status_labels, enumerate=enumerate)
+
+
+@app.route('/<profile>/<event>/sync', methods=['GET'])
+@lastuser.requires_login
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
+def event_sync(profile, event):
+    if profile.userid not in g.user.user_organizations_owned_ids():
+        abort(403)
+    participants = Participant.query.filter(
+        Participant.status.in_([PARTICIPANT_STATUS.PENDING, PARTICIPANT_STATUS.WL]),
+        Participant.event == event).all()
+    try:
+        count = event.check_participants_in_doattend(participants)
+        db.session.commit()
+        if isinstance(count, int):
+            flash(u"Synced %d participants" % count, u"success")
+        elif isinstance(count, type(None)):
+            flash(u"Sync details unavailable", u"success")
+    except requests.ConnectionError:
+        flash(u"Failed to sync participants", u"error")
+    return render_redirect(event.url_for(), code=303)
 
 
 @app.route('/<profile>/<event>/manage/update', methods=['POST'])
