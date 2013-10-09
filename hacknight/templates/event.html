@@ -101,7 +101,7 @@
           <li><a href="{{ event.url_for('email_template') }}"><i class="icon-pencil"></i><span>Edit email templates</span></a></li>
           <li><a href="{{ event.url_for('delete') }}"><i class="icon-trash"></i><span>Delete event</span></a></li>
           <li><a href="{{ event.url_for('send_email') }}"><i class="icon-envelope"></i><span>Email participants</span></a></li>
-          {%- if event.sync_service and event.sync_credentials %}
+          {%- if event.sync_service and event.sync_credentials and event.sync_eventid %}
               <li><a href="{{ event.url_for('sync') }}"><i class="icon-refresh"></i><span>Sync</span></a></li>
           {% endif -%}
       {% endif -%}
