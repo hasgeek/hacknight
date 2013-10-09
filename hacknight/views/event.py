@@ -228,7 +228,7 @@ def event_apply(profile, event):
             participant = Participant(user=user, event=event)
             form.populate_obj(participant)
             participant.save_defaults()
-            participant.status = PARTICIPANT_STATUS.PENDING if event.maximum_participants > total_participants else PARTICIPANT_STATUS.WL        
+            participant.status = PARTICIPANT_STATUS.PENDING if event.maximum_participants > total_participants else PARTICIPANT_STATUS.WL
             db.session.add(participant)
             db.session.commit()
             flash(u"Your request to participate has been recorded; you will be notified by the event manager", "success")
