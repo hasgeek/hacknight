@@ -229,15 +229,7 @@ def event_apply(profile, event):
             form.populate_obj(participant)
             participant.save_defaults()
             participant.status = PARTICIPANT_STATUS.PENDING if event.maximum_participants > total_participants else PARTICIPANT_STATUS.WL        
-            if event.doattend_api_key and event.doattend_event_id:
-                if event.check_participant_in_doattend(participant.email):
-                    participant.status = PARTICIPANT_STATUS.CONFIRMED
-                    flash(u"Your request to participate has been confirmed", "success")
-                else:
-                    participant.status = PARTICIPANT_STATUS.PENDING
-                    flash(u"Your request to participate has been recorded; you will be notified by the event manager", "success")
-            else:
-                flash(u"Your request to participate has been recorded; you will be notified by the event manager", "success")
+            flash(u"Your request to participate has been recorded; you will be notified by the event manager", "success")
             db.session.add(participant)
             db.session.commit()
         else:

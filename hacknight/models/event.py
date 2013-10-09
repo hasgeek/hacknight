@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import requests
-from socket import gaierror
 from flask import url_for
 from flask.ext.lastuser.sqlalchemy import ProfileMixin
 from sqlalchemy.orm import deferred
