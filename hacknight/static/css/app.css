@@ -474,7 +474,7 @@
 }
 
 .participant {
-  background-image: url('../img/black_bg.png?1366267473');
+  background-image: url('../img/black_bg.png?1379502300');
   background-color: black;
   margin-bottom: 10px;
   border-bottom: 1px solid #454e59;
@@ -2119,6 +2119,18 @@
 .nav-list > li {
   padding-right: 14px;
 }
+.nav-list > li i {
+  float: left;
+  width: 10px;
+}
+.nav-list > li span {
+  padding-left: 10px;
+  display: block;
+  margin-left: 10px;
+  white-space: wrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .nav-list > li > a, .nav-list .nav-header {
   margin-left: -14px;
@@ -2144,7 +2156,7 @@
 .source-files {
   width: 100%;
   height: auto;
-  background-image: url('../img/black_bg.png?1366267473');
+  background-image: url('../img/black_bg.png?1379502300');
   margin-top: 30px;
 }
 .source-files .nav > li > a {
@@ -2288,7 +2300,7 @@
 /* Regular */
 body {
   background-color: #323a40;
-  background-image: url('../img/bg-noise.png?1374669366');
+  background-image: url('../img/bg-noise.png?1379502300');
   color: #bcc6cc;
 }
 
