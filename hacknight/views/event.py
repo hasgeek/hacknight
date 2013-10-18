@@ -44,7 +44,7 @@ def event_view(profile, event):
         (User, Participant.user)).options(
             joinedload(User.project_memberships)).order_by(func.lower(User.fullname)).all()]
 
-    accepted_participants = [p for p in participants if p.status == PARTICIPANT_STATUS.CONFIRMED or p.status == PARTICIPANT_STATUS.ATTENDED]
+    accepted_participants = [p for p in participants if p.status in (PARTICIPANT_STATUS.CONFIRMED, PARTICIPANT_STATUS.ATTENDED)]
     rest_participants = [p for p in participants if p.status not in (PARTICIPANT_STATUS.CONFIRMED, PARTICIPANT_STATUS.ATTENDED)]
 
     applied = False
