@@ -161,7 +161,7 @@ def event_update_participant_status(profile, event):
         participant = Participant.query.get(participantid)
         if participant.event != event:
             abort(403)
-        if participant.status == PARTICIPANT_STATUS.WITHDRAWN:
+        if not participant.is_participating:
             abort(403)
         if participant.status != status:
             if event.confirmed_participants_count() < event.maximum_participants:
