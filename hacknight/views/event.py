@@ -44,8 +44,8 @@ def event_view(profile, event):
         (User, Participant.user)).options(
             joinedload(User.project_memberships)).order_by(func.lower(User.fullname)).all()]
 
-    accepted_participants = [p for p in participants if p.status in (PARTICIPANT_STATUS.CONFIRMED, PARTICIPANT_STATUS.ATTENDED)]
-    rest_participants = [p for p in participants if p.status not in (PARTICIPANT_STATUS.CONFIRMED, PARTICIPANT_STATUS.ATTENDED)]
+    accepted_participants = [p for p in participants if p.is_participating]
+    rest_participants = [p for p in participants if not p.is_participating]
 
     applied = False
     for p in participants:
@@ -161,7 +161,7 @@ def event_update_participant_status(profile, event):
         participant = Participant.query.get(participantid)
         if participant.event != event:
             abort(403)
-        if not participant.is_participating:
+        if participant.status == PARTICIPANT_STATUS.WITHDRAWN:
             abort(403)
         if participant.status != status:
             if event.confirmed_participants_count() < event.maximum_participants:

@@ -43,4 +43,4 @@ class Participant(BaseMixin, db.Model):
 
     @property
     def is_participating(self):
-        return self.status in (PARTICIPANT_STATUS.PENDING, PARTICIPANT_STATUS.WL, PARTICIPANT_STATUS.CONFIRMED, PARTICIPANT_STATUS.ATTENDED, PARTICIPANT_STATUS.REJECTED)
+        return self.status in (PARTICIPANT_STATUS.CONFIRMED, PARTICIPANT_STATUS.ATTENDED)
