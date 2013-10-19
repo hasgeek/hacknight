@@ -13,6 +13,7 @@ class PARTICIPANT_STATUS:
     CONFIRMED = 2
     REJECTED = 3
     WITHDRAWN = 4
+    ATTENDED = 5
 
 
 class Participant(BaseMixin, db.Model):
@@ -39,3 +40,7 @@ class Participant(BaseMixin, db.Model):
     @classmethod
     def get(cls, user, event):
         return cls.query.filter_by(user=user).filter_by(event=event).first()
+
+    @property
+    def is_participating(self):
+        return self.status in (PARTICIPANT_STATUS.CONFIRMED, PARTICIPANT_STATUS.ATTENDED)

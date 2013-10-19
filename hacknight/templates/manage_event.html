@@ -31,7 +31,8 @@
       <div class="span2 participant-status-label">{{ participant.status | show_participant_status}}</div>
       <div class="span3">{{ participant.email }}</div>
       <div class="span3">{{ participant.phone_no }}</div>
-      <div class="span2">
+      <div class="span3">
+      <a href="#" class="update-participant-status" data-id="{{ participant.id }}" data-status="5" title="Attended">attended</a> |
       <a href="#" class="update-participant-status" data-id="{{ participant.id }}" data-status="2" title="Accept">accept</a> |
       <a href="#" class="update-participant-status" data-id="{{ participant.id }}" data-status="3" title="Reject">reject</a> |
       <a href="#" class="update-participant-status" data-id="{{ participant.id }}" data-status="1" title="Wait-list">wait-list</a>

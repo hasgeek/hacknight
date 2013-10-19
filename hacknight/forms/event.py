@@ -5,7 +5,8 @@ from flask import Markup
 import wtforms
 import wtforms.fields.html5
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
-from baseframe.forms import Form, RichTextField, DateTimeField, ValidName, AvailableName
+from baseframe.forms import Form, RichTextField, DateTimeField, ValidName
+from baseframe.forms.sqlalchemy import AvailableName
 from hacknight.models import Venue, EVENT_STATUS
 
 __all__ = ['EventForm', 'ConfirmWithdrawForm', 'SendEmailForm']
