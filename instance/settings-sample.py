@@ -4,7 +4,7 @@ SITE_TITLE = 'HasGeek App'
 #: Site id (for network bar)
 SITE_ID = ''
 #: Database backend
-SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
+SQLALCHEMY_DATABASE_URI = 'postgresql://hasgeek:hasgeek@localhost:5432/hacknight'
 #: Secret key
 SECRET_KEY = 'make this something random'
 #: Timezone
