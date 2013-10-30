@@ -75,7 +75,7 @@ class Event(BaseScopedNameMixin, db.Model):
     rejected_message_text = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
     pending_message = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
     pending_message_text = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
-    irc_channel_url = db.Column(db.Unicode(250), default=u'', nullable=False)
+    irc_channel_url = db.Column(db.Unicode(250), nullable=True)
 
     __table_args__ = (db.UniqueConstraint('name', 'profile_id'),)
 
