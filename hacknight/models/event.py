@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import requests
-from flask import url_for
+from flask import url_for, Markup
 from flask.ext.lastuser.sqlalchemy import ProfileMixin
 from sqlalchemy.orm import deferred
 from hacknight.models import db, BaseNameMixin, BaseScopedNameMixin, BaseMixin
@@ -33,6 +33,11 @@ class EVENT_STATUS:
     CLOSED = 5
     REJECTED = 6
     WITHDRAWN = 7
+
+
+class HTTPException(Exception):
+    def __init__(self, msg):
+        self.msg = msg
 
 
 class Profile(ProfileMixin, BaseNameMixin, db.Model):
@@ -79,7 +84,7 @@ class Event(BaseScopedNameMixin, db.Model):
     # Sync details
     sync_service = db.Column(db.Unicode(100), nullable=True)
     sync_credentials = db.Column(db.Unicode(100), nullable=True)
-    sync_eventid = db.Column(db.Integer, nullable=True)
+    sync_eventsid = db.Column(db.Unicode(100), nullable=True)
 
     __table_args__ = (db.UniqueConstraint('name', 'profile_id'),)
 
@@ -87,26 +92,42 @@ class Event(BaseScopedNameMixin, db.Model):
         """Check if a user is an owner of this event"""
         return user is not None and self.profile.userid in user.user_organizations_owned_ids()
 
-    def check_participants_in_doattend(self, participants):
-        if self.sync_service and self.sync_service.strip().lower() == u'doattend':
-            if self.sync_eventid and self.sync_credentials:
-                data_url = 'http://doattend.com/api/events/%s/participants_list.json?api_key=%s' % (self.sync_eventid, self.sync_credentials)
+    def has_sync(self):
+        return self.sync_service and self.sync_credentials and self.sync_eventsid
+
+    def _fetch_data(self, event_id):
+        """Fetch data from external service like doattend"""
+        if self.sync_service == u'doattend':
+            data_url = 'http://doattend.com/api/events/%s/participants_list.json?api_key=%s' % (event_id, self.sync_credentials)
+            try:
+                r = requests.get(data_url)
+            except requests.ConnectionError:
+                raise HTTPException("Unable to connect to internet.")
+            if r.status_code == 200:
+                return r.json() if callable(r.json) else r.json
+            else:
+                raise HTTPException("Sync service failed with status code %s." % r.status_code)
+        return None
+
+    def sync_participants(self, participants):
+        final_msg = "<a href='%s'>Click here for hacknight page.</a>\n" % self.url_for()
+        if self.has_sync():
+            for event_id in self.sync_eventsid.split(','):
                 try:
-                    r = requests.get(data_url)
-                except requests.ConnectionError:
-                    # Network connection issue. TODO: Write to logger.
-                    # Since we can't do much in this situation, say False.
-                    raise requests.ConnectionError("Unable to connect to internet")
-                # For non 200 code we should write to logger and email admin.
-                if r.status_code == 200:
-                    data = r.json() if callable(r.json) else r.json
-                    emails = set([p.get('Email') for p in data['participants']])
-                    count = 0
+                    registered_participants = self._fetch_data(event_id)
+                    emails = set([p.get('Email') for p in registered_participants['participants']])
                     for participant in participants:
                         if participant.email in emails:
                             participant.confirm()
-                            count += 1
-                    return count
+                            yield "%s is confirmed.\n" % participant.email
+                    yield "Synced all participant.\n"
+                except HTTPException, e:
+                    yield "\n%s" % e.msg
+            db.session.commit()
+            yield Markup(final_msg)
+        else:
+            yield "Sync credentials missing.\n"
+            yield Markup(final_msg)
 
     def participant_is(self, user):
         from hacknight.models.participant import Participant

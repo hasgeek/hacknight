@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import re
 from flask import Markup
 import wtforms
 import wtforms.fields.html5
@@ -52,13 +53,35 @@ class EventForm(Form):
     maximum_participants = wtforms.IntegerField("Venue capacity", description="The number of people this venue can accommodate.", default=50, validators=[wtforms.validators.Required()])
     website = wtforms.fields.html5.URLField("Website", description="Related Website (Optional)", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=250), wtforms.validators.URL()])
     status = wtforms.SelectField("Event status", description="Current status of this hacknight", coerce=int, choices=STATUS_CHOICES)
-    sync_service = wtforms.TextField("Sync service name", description="Name of the ticket sync service like doattend", validators=[wtforms.validators.Optional()])
-    sync_eventid = wtforms.IntegerField("Sync event ID", description="Sync event id like DoAttend event ID", validators=[wtforms.validators.Optional()])
+    sync_service = wtforms.TextField("Sync service name", description="Name of the ticket sync service like doattend", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
+    sync_eventsid = wtforms.TextField("Sync event ID", description="Sync events id like DoAttend event ID. More than one event ID is allowed separated by ,.", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     sync_credentials = wtforms.TextField("Sync credentials", description="Sync credentials like API Key for the event", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     
     def validate_end_datetime(self, field):
         if field.data < self.start_datetime.data:
             raise wtforms.ValidationError(u"Your event can’t end before it starts.")
+
+    def validate_sync_service(self, field):
+        if not self.sync_service.data.lower().strip() in [u'doattend']:
+            raise wtforms.ValidationError(u"Currently doattend service is only supported.")
+        # Remove extra spaces.
+        self.sync_service.data = self.sync_service.data.lower().strip()
+
+    def validate_sync_credentials(self, field):
+        # Remove extra space in front and end.
+        # TODO: Find better way to do it, because this code doesn't validate rather sanitizes.
+        self.sync_credentials.data = self.sync_credentials.data.lower().strip()
+
+    def validate_sync_eventsid(self, field):
+        if self.sync_service.data.lower().strip() == u'doattend':
+            #Event id in doattend is 5 digit integer, in future it may increase or change.
+            event_id_pattern = r'\d{5,}'
+            events_id = field.data.strip().split(',')
+            for event_id in events_id:
+                if not re.match(event_id_pattern, event_id.strip()):
+                    raise wtforms.ValidationError(u"Event id %s is invalid." % event_id)
+            if events_id:
+                field.data = ','.join(events_id)
 
 
 class EmailEventParticipantsForm(Form):

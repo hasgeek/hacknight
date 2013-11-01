@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import requests
 from sqlalchemy.orm import joinedload
 from sqlalchemy import func
 from html2text import html2text
 from flask.ext.mail import Message
-from flask import render_template, abort, flash, url_for, g, request, Markup
+from flask import render_template, abort, flash, url_for, g, request, Markup, current_app, Response, stream_with_context
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app, mail
@@ -32,6 +31,14 @@ def send_email(sender, to, subject, body, html=None):
         msg.html = html
     if to:
         mail.send(msg)
+
+
+def stream_template(template_name, **context):
+    current_app.update_template_context(context)
+    t = current_app.jinja_env.get_template(template_name)
+    rv = t.stream(context)
+    rv.disable_buffering()
+    return rv
 
 
 @app.route('/<profile>/<event>', methods=["GET"])
@@ -147,27 +154,18 @@ def event_open(profile, event):
         participants=participants, statuslabels=participant_status_labels, enumerate=enumerate)
 
 
-@app.route('/<profile>/<event>/sync', methods=['GET'])
+@app.route('/<profile>/<event>/sync', methods=['POST'])
 @lastuser.requires_login
 @load_models(
   (Profile, {'name': 'profile'}, 'profile'),
-  (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'), permission='edit')
 def event_sync(profile, event):
-    if profile.userid not in g.user.user_organizations_owned_ids():
-        abort(403)
     participants = Participant.query.filter(
         Participant.status.in_([PARTICIPANT_STATUS.PENDING, PARTICIPANT_STATUS.WL]),
         Participant.event == event).all()
-    try:
-        count = event.check_participants_in_doattend(participants)
-        db.session.commit()
-        if isinstance(count, int):
-            flash(u"Synced %d participants" % count, u"success")
-        elif isinstance(count, type(None)):
-            flash(u"Sync details unavailable", u"success")
-    except requests.ConnectionError:
-        flash(u"Failed to sync participants", u"error")
-    return render_redirect(event.url_for(), code=303)
+    return Response(stream_template('stream.html',
+            stream=stream_with_context(event.sync_participants(participants)),
+            title="Syncing participants..."))
 
 
 @app.route('/<profile>/<event>/manage/update', methods=['POST'])

@@ -17,10 +17,10 @@ import sqlalchemy as sa
 def upgrade():
     op.add_column('event', sa.Column('sync_credentials', sa.Unicode(100), nullable=True))
     op.add_column('event', sa.Column('sync_service', sa.Unicode(100), nullable=True))
-    op.add_column('event', sa.Column('sync_eventid', sa.Integer, nullable=True))
+    op.add_column('event', sa.Column('sync_eventsid', sa.Unicode(100), nullable=True))
 
 
 def downgrade():
     op.drop_column('event', 'sync_credentials')
     op.drop_column('event', 'sync_service')
-    op.drop_column('event', 'sync_eventid')
+    op.drop_column('event', 'sync_eventsid')

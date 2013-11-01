@@ -101,8 +101,12 @@
           <li><a href="{{ event.url_for('email_template') }}"><i class="icon-pencil"></i><span>Edit email templates</span></a></li>
           <li><a href="{{ event.url_for('delete') }}"><i class="icon-trash"></i><span>Delete event</span></a></li>
           <li><a href="{{ event.url_for('send_email') }}"><i class="icon-envelope"></i><span>Email participants</span></a></li>
-          {%- if event.sync_service and event.sync_credentials and event.sync_eventid %}
-              <li><a href="{{ event.url_for('sync') }}"><i class="icon-refresh"></i><span>Sync</span></a></li>
+          {%- if event.has_sync() %}
+            <li><a href="{{ event.url_for('sync') }}" class="sync"><i class="icon-refresh"></i><span>Sync</span></a></li>
+            <li>
+              <!-- Dummy Form to submit when sync link is clicked -->
+              <form id="sync_form" action="{{ event.url_for('sync') }}" method="POST"></form>
+            </li>
           {% endif -%}
       {% endif -%}
     </ul>
@@ -238,7 +242,12 @@
       function onZoomend(){
           map.setView(venue, map.getZoom());
       };
-    {% endif %} 
+    {% endif %}
+    // When admin clicks on sync, do POST.
+    $(".sync").on('click', function(e){
+      e.preventDefault();
+      $("#sync_form").submit();
+    }); 
   });
   </script>
 
