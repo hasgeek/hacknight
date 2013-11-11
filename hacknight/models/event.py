@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
+
 from flask import url_for
 from flask.ext.lastuser.sqlalchemy import ProfileMixin
 from sqlalchemy.orm import deferred
+from sqlalchemy import not_
 from hacknight.models import db, BaseNameMixin, BaseScopedNameMixin, BaseMixin
 
 __all__ = ['Profile', 'Event', 'EVENT_STATUS', 'PROFILE_TYPE', 'EventRedirect']
@@ -32,6 +35,7 @@ class EVENT_STATUS:
     CLOSED = 5
     REJECTED = 6
     WITHDRAWN = 7
+    PRIVATE = 8
 
 
 class Profile(ProfileMixin, BaseNameMixin, db.Model):
@@ -78,6 +82,17 @@ class Event(BaseScopedNameMixin, db.Model):
 
     __table_args__ = (db.UniqueConstraint('name', 'profile_id'),)
 
+    # List of statuses which are not allowed to be displayed in index page.
+    DISPLAYABLE_STATUSES = (EVENT_STATUS.DRAFT, EVENT_STATUS.CANCELLED, EVENT_STATUS.PRIVATE)
+
+    @classmethod
+    def upcoming_events(self):
+        return self.query.filter(self.end_datetime > datetime.utcnow(), not_(self.status.in_(self.DISPLAYABLE_STATUSES))).order_by(self.start_datetime.asc()).all()
+
+    @classmethod
+    def past_events(self):
+        return self.query.filter(self.end_datetime < datetime.utcnow(), not_(self.status.in_(self.DISPLAYABLE_STATUSES))).order_by(self.end_datetime.desc()).all()
+
     def owner_is(self, user):
         """Check if a user is an owner of this event"""
         return user is not None and self.profile.userid in user.user_organizations_owned_ids()
@@ -99,7 +114,7 @@ class Event(BaseScopedNameMixin, db.Model):
         perms = super(Event, self).permissions(user, inherited)
         if user is not None and user.userid == self.profile.userid or self.status in [EVENT_STATUS.PUBLISHED,
             EVENT_STATUS.ACTIVE, EVENT_STATUS.COMPLETED, EVENT_STATUS.CANCELLED,
-            EVENT_STATUS.CLOSED]:
+            EVENT_STATUS.CLOSED, EVENT_STATUS.PRIVATE]:
             perms.add('view')
         if user is not None and self.profile.userid in user.user_organizations_owned_ids():
             perms.add('edit')
