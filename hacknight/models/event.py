@@ -83,15 +83,15 @@ class Event(BaseScopedNameMixin, db.Model):
     __table_args__ = (db.UniqueConstraint('name', 'profile_id'),)
 
     # List of statuses which are not allowed to be displayed in index page.
-    DISPLAYABLE_STATUSES = (EVENT_STATUS.DRAFT, EVENT_STATUS.CANCELLED, EVENT_STATUS.PRIVATE)
+    NON_DISPLAYABLE_STATUSES = (EVENT_STATUS.DRAFT, EVENT_STATUS.CANCELLED, EVENT_STATUS.PRIVATE)
 
     @classmethod
     def upcoming_events(self):
-        return self.query.filter(self.end_datetime > datetime.utcnow(), not_(self.status.in_(self.DISPLAYABLE_STATUSES))).order_by(self.start_datetime.asc()).all()
+        return self.query.filter(self.end_datetime > datetime.utcnow(), not_(self.status.in_(self.NON_DISPLAYABLE_STATUSES))).order_by(self.start_datetime.asc()).all()
 
     @classmethod
     def past_events(self):
-        return self.query.filter(self.end_datetime < datetime.utcnow(), not_(self.status.in_(self.DISPLAYABLE_STATUSES))).order_by(self.end_datetime.desc()).all()
+        return self.query.filter(self.end_datetime < datetime.utcnow(), not_(self.status.in_(self.NON_DISPLAYABLE_STATUSES))).order_by(self.end_datetime.desc()).all()
 
     def owner_is(self, user):
         """Check if a user is an owner of this event"""
