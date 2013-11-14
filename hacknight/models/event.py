@@ -35,7 +35,7 @@ class EVENT_STATUS:
     CLOSED = 5
     REJECTED = 6
     WITHDRAWN = 7
-    PRIVATE = 8
+    UNLISTED = 8
 
 
 class Profile(ProfileMixin, BaseNameMixin, db.Model):
@@ -83,15 +83,15 @@ class Event(BaseScopedNameMixin, db.Model):
     __table_args__ = (db.UniqueConstraint('name', 'profile_id'),)
 
     # List of statuses which are not allowed to be displayed in index page.
-    NON_DISPLAYABLE_STATUSES = (EVENT_STATUS.DRAFT, EVENT_STATUS.CANCELLED, EVENT_STATUS.PRIVATE)
+    NON_DISPLAYABLE_STATUSES = (EVENT_STATUS.DRAFT, EVENT_STATUS.CANCELLED, EVENT_STATUS.UNLISTED)
 
     @classmethod
-    def upcoming_events(self):
-        return self.query.filter(self.end_datetime > datetime.utcnow(), not_(self.status.in_(self.NON_DISPLAYABLE_STATUSES))).order_by(self.start_datetime.asc()).all()
+    def upcoming_events(cls):
+        return cls.query.filter(cls.end_datetime > datetime.utcnow(), not_(cls.status.in_(cls.NON_DISPLAYABLE_STATUSES))).order_by(cls.start_datetime.asc()).all()
 
     @classmethod
-    def past_events(self):
-        return self.query.filter(self.end_datetime < datetime.utcnow(), not_(self.status.in_(self.NON_DISPLAYABLE_STATUSES))).order_by(self.end_datetime.desc()).all()
+    def past_events(cls):
+        return cls.query.filter(cls.end_datetime < datetime.utcnow(), not_(cls.status.in_(cls.NON_DISPLAYABLE_STATUSES))).order_by(cls.end_datetime.desc()).all()
 
     def owner_is(self, user):
         """Check if a user is an owner of this event"""
@@ -114,7 +114,7 @@ class Event(BaseScopedNameMixin, db.Model):
         perms = super(Event, self).permissions(user, inherited)
         if user is not None and user.userid == self.profile.userid or self.status in [EVENT_STATUS.PUBLISHED,
             EVENT_STATUS.ACTIVE, EVENT_STATUS.COMPLETED, EVENT_STATUS.CANCELLED,
-            EVENT_STATUS.CLOSED, EVENT_STATUS.PRIVATE]:
+            EVENT_STATUS.CLOSED, EVENT_STATUS.UNLISTED]:
             perms.add('view')
         if user is not None and self.profile.userid in user.user_organizations_owned_ids():
             perms.add('edit')
