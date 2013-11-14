@@ -104,11 +104,12 @@ class EventWorkflow(DocumentWorkflow):
     rejected = WorkflowState(EVENT_STATUS.REJECTED, title=u"Rejected")
     withdrawn = WorkflowState(EVENT_STATUS.WITHDRAWN, title=u"Withdrawn")
     published = WorkflowState(EVENT_STATUS.PUBLISHED, title=u"Public")
+    unlisted = WorkflowState(EVENT_STATUS.UNLISTED, title=u"Unlisted")
 
      #: States in which an owner can edit
-    editable = WorkflowStateGroup([draft, active, closed, completed, cancelled, rejected, withdrawn, published], title=u"Editable")
+    editable = WorkflowStateGroup([draft, active, closed, completed, cancelled, rejected, withdrawn, published, unlisted], title=u"Editable")
     public = WorkflowStateGroup([active, closed], title=u"Public")
-    appliable = WorkflowStateGroup([active, published], title="User can apply for an event")
+    appliable = WorkflowStateGroup([active, published, unlisted], title="User can apply for an event")
     openit = WorkflowStateGroup([draft], title=u"Open it")
     #: States in which a reviewer can view
     reviewable = WorkflowStateGroup([draft, active, closed, rejected, completed],

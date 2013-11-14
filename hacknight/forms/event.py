@@ -15,11 +15,12 @@ STATUS_CHOICES = [
     (EVENT_STATUS.DRAFT, 'Draft'),
     (EVENT_STATUS.PUBLISHED, 'Published'),
     (EVENT_STATUS.ACTIVE, 'Active'),
+    (EVENT_STATUS.UNLISTED, 'Unlisted'),
     (EVENT_STATUS.COMPLETED, 'Completed'),
     (EVENT_STATUS.CANCELLED, 'Cancelled'),
     (EVENT_STATUS.CLOSED, 'Closed'),
     (EVENT_STATUS.REJECTED, 'Rejected'),
-    (EVENT_STATUS.WITHDRAWN, 'Withdrawn')
+    (EVENT_STATUS.WITHDRAWN, 'Withdrawn'),
 ]
 
 
