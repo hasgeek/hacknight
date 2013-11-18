@@ -63,7 +63,7 @@ class EventForm(Form):
 
     def validate_sync_service(self, field):
         if not self.sync_service.data.lower().strip() in [u'doattend']:
-            raise wtforms.ValidationError(u"Currently doattend service is only supported.")
+            raise wtforms.ValidationError(u"Currently doattend service is only supported")
         # Remove extra spaces.
         self.sync_service.data = self.sync_service.data.lower().strip()
 
@@ -73,13 +73,13 @@ class EventForm(Form):
         self.sync_credentials.data = self.sync_credentials.data.lower().strip()
 
     def validate_sync_eventsid(self, field):
-        if self.sync_service.data.lower().strip() == u'doattend':
+        if self.sync_service.data == u'doattend':
             #Event id in doattend is 5 digit integer, in future it may increase or change.
             event_id_pattern = r'\d{5,}'
             events_id = field.data.strip().split(',')
             for event_id in events_id:
                 if not re.match(event_id_pattern, event_id.strip()):
-                    raise wtforms.ValidationError(u"Event id %s is invalid." % event_id)
+                    raise wtforms.ValidationError(u"Event id %s is invalid" % event_id)
             if events_id:
                 field.data = ','.join(events_id)
 

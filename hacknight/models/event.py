@@ -98,19 +98,19 @@ class Event(BaseScopedNameMixin, db.Model):
     def _fetch_data(self, event_id):
         """Fetch data from external service like doattend"""
         if self.sync_service == u'doattend':
-            data_url = 'http://doattend.com/api/events/%s/participants_list.json?api_key=%s' % (event_id, self.sync_credentials)
+            data_url = 'http://doattend.com/api/events/{event_id}/participants_list.json?api_key={credentials}'.format(event_id=event_id, credentials=self.sync_credentials)
             try:
                 r = requests.get(data_url)
             except requests.ConnectionError:
-                raise HTTPException("Unable to connect to internet.")
+                raise HTTPException("Unable to connect to internet")
             if r.status_code == 200:
                 return r.json() if callable(r.json) else r.json
             else:
-                raise HTTPException("Sync service failed with status code %s." % r.status_code)
+                raise HTTPException("Sync service failed with status code %s" % r.status_code)
         return None
 
     def sync_participants(self, participants):
-        final_msg = "<a href='%s'>Click here for hacknight page.</a>\n" % self.url_for()
+        final_msg = "<a href='{url}'>Click here for hacknight page.</a>\n".format(url=self.url_for())
         if self.has_sync():
             for event_id in self.sync_eventsid.split(','):
                 try:
