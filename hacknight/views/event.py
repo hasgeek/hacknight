@@ -52,8 +52,8 @@ def event_view(profile, event):
         (User, Participant.user)).options(
             joinedload(User.project_memberships)).order_by(func.lower(User.fullname)).all()]
 
-    accepted_participants = [p for p in participants if p.status == PARTICIPANT_STATUS.CONFIRMED]
-    rest_participants = [p for p in participants if p.status != PARTICIPANT_STATUS.CONFIRMED]
+    accepted_participants = [p for p in participants if p.is_participating]
+    rest_participants = [p for p in participants if not p.is_participating]
 
     applied = False
     for p in participants:
@@ -130,7 +130,8 @@ participant_status_labels = {
     PARTICIPANT_STATUS.WL: "Waiting List",
     PARTICIPANT_STATUS.CONFIRMED: "Confirmed",
     PARTICIPANT_STATUS.REJECTED: "Rejected",
-    PARTICIPANT_STATUS.WITHDRAWN: "Withdrawn"
+    PARTICIPANT_STATUS.WITHDRAWN: "Withdrawn",
+    PARTICIPANT_STATUS.ATTENDED: "Attended",
 }
 
 

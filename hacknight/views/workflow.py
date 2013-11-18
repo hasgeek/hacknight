@@ -23,6 +23,8 @@ class ParticipantWorkflow(DocumentWorkflow):
         description=u'State for participants who are rejected by event owner')
     withdrawn = WorkflowState(PARTICIPANT_STATUS.WITHDRAWN, title=u'Withdrawn list',
         description=u'State for participants who are uninterested due to several reason')
+    attended = WorkflowState(PARTICIPANT_STATUS.ATTENDED, title=u'Attended list',
+        description=u'State for confirmed participants who attended hacknight')
     #States how to become hacknight member
     #Yes it is very vague name, I need to comeup with very nice name
     path_to_hacknight = WorkflowStateGroup([pending, waiting_list], title=u'Path to hacknight',
@@ -56,10 +58,15 @@ class ParticipantWorkflow(DocumentWorkflow):
     def pending_to_confirm(self):
         pass
 
-    @confirmed.transition(withdrawn, 'participant', title=u'withdrawn from confimed',
+    @confirmed.transition(withdrawn, 'participant', title=u'withdrawn from confirmed',
        description=u"Withdraw from hacknight", view="withdraw_confirm")
     def withdraw_confirmed(self):
         self.document.status = PARTICIPANT_STATUS.WITHDRAWN
+        
+    @confirmed.transition(attended, 'participant', title=u'confirmed participants who attended hacknight',
+       description=u"Attended hacknight", view="attend_confirmed")
+    def attend_confirmed(self):
+        self.document.status = PARTICIPANT_STATUS.ATTENDED
 
     @pending.transition(withdrawn, 'participant', title=u'withdrawnfrom pending',
        description=u"Withdraw from hacknight", view="withdraw_pending")
@@ -97,11 +104,12 @@ class EventWorkflow(DocumentWorkflow):
     rejected = WorkflowState(EVENT_STATUS.REJECTED, title=u"Rejected")
     withdrawn = WorkflowState(EVENT_STATUS.WITHDRAWN, title=u"Withdrawn")
     published = WorkflowState(EVENT_STATUS.PUBLISHED, title=u"Public")
+    unlisted = WorkflowState(EVENT_STATUS.UNLISTED, title=u"Unlisted")
 
      #: States in which an owner can edit
-    editable = WorkflowStateGroup([draft, active, closed, completed, cancelled, rejected, withdrawn, published], title=u"Editable")
+    editable = WorkflowStateGroup([draft, active, closed, completed, cancelled, rejected, withdrawn, published, unlisted], title=u"Editable")
     public = WorkflowStateGroup([active, closed], title=u"Public")
-    appliable = WorkflowStateGroup([active, published], title="User can apply for an event")
+    appliable = WorkflowStateGroup([active, published, unlisted], title="User can apply for an event")
     openit = WorkflowStateGroup([draft], title=u"Open it")
     #: States in which a reviewer can view
     reviewable = WorkflowStateGroup([draft, active, closed, rejected, completed],

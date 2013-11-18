@@ -2,16 +2,15 @@
 
 from flask import render_template, request, redirect
 from hacknight import app, baseframe
-from hacknight.models.event import Event, EVENT_STATUS, EventRedirect, Profile
-from datetime import datetime
+from hacknight.models.event import Event, EventRedirect, Profile
 from pytz import utc
 
 
 @app.route('/')
 def index():
     # TODO: Filter events by status
-    upcoming_events = Event.query.filter(Event.end_datetime > datetime.utcnow(), Event.status != EVENT_STATUS.DRAFT, Event.status != EVENT_STATUS.CANCELLED).order_by(Event.start_datetime.asc()).all()
-    past_events = Event.query.filter(Event.end_datetime < datetime.utcnow(), Event.status != EVENT_STATUS.DRAFT, Event.status != EVENT_STATUS.CANCELLED).order_by(Event.end_datetime.desc()).all()
+    upcoming_events = Event.upcoming_events()
+    past_events = Event.past_events()
     return render_template('index.html', upcoming_events=upcoming_events, past_events=past_events)
 
 
