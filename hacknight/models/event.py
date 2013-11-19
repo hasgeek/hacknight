@@ -40,9 +40,12 @@ class EVENT_STATUS:
     UNLISTED = 8
 
 
-class HTTPException(Exception):
-    def __init__(self, msg):
-        self.msg = msg
+class SYNC_SERVICE:
+    DOATTEND = u"doattend"
+
+
+class SyncException(Exception):
+    pass
 
 
 class Profile(ProfileMixin, BaseNameMixin, db.Model):
@@ -111,38 +114,38 @@ class Event(BaseScopedNameMixin, db.Model):
     def has_sync(self):
         return self.sync_service and self.sync_credentials and self.sync_eventsid
 
-    def _fetch_data(self, event_id):
+    def _fetch_and_sync(self, event_id, participants):
         """Fetch data from external service like doattend"""
-        if self.sync_service == u'doattend':
-            data_url = 'http://doattend.com/api/events/{event_id}/participants_list.json?api_key={credentials}'.format(event_id=event_id, credentials=self.sync_credentials)
+        if self.sync_service == SYNC_SERVICE.DOATTEND:
+            data_url = u"http://doattend.com/api/events/{event_id}/participants_list.json?api_key={credentials}".format(event_id=event_id, credentials=self.sync_credentials)
             try:
                 r = requests.get(data_url)
             except requests.ConnectionError:
-                raise HTTPException("Unable to connect to internet")
+                raise SyncException(u"Unable to connect to internet")
             if r.status_code == 200:
-                return r.json() if callable(r.json) else r.json
+                registered_participants = r.json() if callable(r.json) else r.json
+                emails = set([p.get('Email') for p in registered_participants['participants']])
+                for participant in participants:
+                    if participant.email in emails:
+                        participant.confirm()
+                        yield u"{email} is confirmed.\n".format(email=participant.email)
+                yield u"Synced all participants.\n"
             else:
-                raise HTTPException("Sync service failed with status code %s" % r.status_code)
-        return None
+                raise SyncException(u"Sync service failed with status code {code}".format(code=r.status_code))
 
     def sync_participants(self, participants):
-        final_msg = "<a href='{url}'>Click here for hacknight page.</a>\n".format(url=self.url_for())
+        final_msg = u"<a href=\"{url}\">Click here for hacknight page.</a>\n".format(url=self.url_for())
         if self.has_sync():
             for event_id in self.sync_eventsid.split(','):
                 try:
-                    registered_participants = self._fetch_data(event_id)
-                    emails = set([p.get('Email') for p in registered_participants['participants']])
-                    for participant in participants:
-                        if participant.email in emails:
-                            participant.confirm()
-                            yield "%s is confirmed.\n" % participant.email
-                    yield "Synced all participant.\n"
-                except HTTPException, e:
-                    yield "\n%s" % e.msg
+                    for msg in self._fetch_and_sync(event_id.strip(), participants):
+                        yield msg
+                except SyncException, e:
+                    yield unicode(e)
             db.session.commit()
             yield Markup(final_msg)
         else:
-            yield "Sync credentials missing.\n"
+            yield u"Sync credentials missing.\n"
             yield Markup(final_msg)
 
     def participant_is(self, user):

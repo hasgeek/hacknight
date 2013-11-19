@@ -31,6 +31,12 @@ class Participant(BaseMixin, db.Model):
     company = db.Column(db.Unicode(1200), default=u'', nullable=False)
     skill_level = db.Column(db.Unicode(120), default=u'', nullable=False)
 
+    NON_CONFIRMED_STATUSES = (PARTICIPANT_STATUS.PENDING, PARTICIPANT_STATUS.WL)
+
+    @classmethod
+    def unconfirmed_participants(cls, event):
+        return cls.query.filter(cls.status.in_([PARTICIPANT_STATUS.PENDING, PARTICIPANT_STATUS.WL]), cls.event == event).all()
+
     def save_defaults(self):
         user = self.user
         user.phone_no = self.phone_no
