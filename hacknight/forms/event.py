@@ -26,6 +26,7 @@ STATUS_CHOICES = [
 
 
 SYNC_CHOICES = [
+    # Empty value for opting out.
     (u"", u""),
     (SYNC_SERVICE.DOATTEND, u"DoAttend"),
 ]
