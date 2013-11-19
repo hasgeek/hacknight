@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 from sqlalchemy.orm import joinedload
 from sqlalchemy import func
 from html2text import html2text
 from flask.ext.mail import Message
-from flask import render_template, abort, flash, url_for, g, request, Markup
+from flask import render_template, abort, flash, url_for, g, request, Markup, Response
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app, mail
-from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS, EventRedirect
+from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS, EventRedirect, EVENT_STATUS
 from hacknight.forms.event import EventForm, ConfirmWithdrawForm, SendEmailForm, EmailEventParticipantsForm
 from hacknight.forms.participant import ParticipantForm
 from hacknight.views.login import lastuser
@@ -344,6 +345,31 @@ def event_send_email(profile, event):
         return render_redirect(event.url_for())
     return render_form(form=form, title="Send email to participants",
             submit=u"Send", cancel_url=event.url_for(), ajax=False)
+
+
+@app.route('/feed')
+def feed(event=None, title=None):
+    if not title:
+        title = "Hacknight"
+    if event:
+        events = [event]
+    else:
+        events = Event.query.filter(Event.status == EVENT_STATUS.PUBLIC).all()
+    if events:
+        updated = events[0].updated_at.isoformat() + 'Z'
+    else:
+        updated = datetime.utcnow().isoformat() + 'Z'
+    return Response(render_template('feed.xml', events=events, updated=updated, title=title),
+        content_type='application/atom+xml; charset=utf-8')
+
+
+@app.route('/<profile>/<event>/feed')
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
+def event_feed(profile, event):
+    title = event.title
+    return feed(event=event, title=title)
 
 
 @app.route('/<profile>/<event>/email_template', methods=['GET', 'POST'])

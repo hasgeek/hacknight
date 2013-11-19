@@ -1,0 +1,59 @@
+{% from "macros/comment.html" import commentfeed %}
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>{{ title|e }} – {{ config['SITE_TITLE']|e }}</title>
+  <link href="{{ url_for('index', _external=True) }}"/>
+  <link rel="self" href="{{ request.base_url }}"/>
+  <updated>{{ updated }}</updated>
+  <id>{{ url_for('index', _external=True) }}</id>
+  <icon>{{ url_for('static', filename='img/hacknightlogo.png', _external=True) }}</icon>
+  <author><name>{{ config['SITE_TITLE']|e }}</name></author>
+
+  {% for event in events -%}
+  <entry>
+    <title type="text">{{ event.title|e }}</title>
+    <id>{{ event.url_for('view', _external=True) }}</id>
+    <link href="{{ event.url_for('view', _external=True) }}"/>
+    <updated>{{ event.updated_at.isoformat() }}Z</updated>
+    <published>{{ event.updated_at.isoformat() }}Z</published>
+    <content type="html">
+      {{ event.description|forceescape }}
+      {%- if event.start_datetime %}
+        Start DateTime: {{ event.start_datetime | fulldate}}
+        End DateTime: {{ event.end_datetime | fulldate}}
+      {% endif -%}
+      {% if event.ticket_price -%}
+          Ticketprice: {{ event.ticket_price }} Rs
+      {%- endif %}
+      &lt;p&gt;
+      {% if event.venue -%}
+        &lt;b&gt;Venue&lt;/b&gt;
+          &lt;a href="{{ event.venue.url_for(_external=True) }}" &gt;{{ event.venue.title }}&lt;/a&gt;
+          &lt;b&gt;Address: &lt;/b&gt;{{ event.venue.address1 }}&lt;br&gt;
+          {% if event.venue.address2 -%}
+            {{ event.venue.address2 }}&lt;br&gt;
+          {%- endif %}
+          {{ event.venue.city }}, {{ event.venue.state }}{%- if event.venue.postcode %} &ndash; {{ event.venue.postcode }}{% endif %}, {{ event.venue.country }}&lt;br&gt;
+          {% if event.website -%}
+            Website: &lt;a href="{{ event.website }}" target="_blank"&gt;{{ event.website|cleanurl }}&lt;/a&gt;&lt;br&gt;
+          {%- endif %}
+      {% endif -%}
+      &lt;/p&gt;
+      &lt;p&gt;
+      {% if event.projects -%}
+        &lt;b&gt;Projects&lt;/b&gt;
+      {% endif -%}
+      {% for project in event.projects %}
+        &lt;a href="{{project.url_for(_external=True)}}" &gt; {{project.title}} &lt;/a&gt;
+          {{ project.description }}
+        Total participants: {{ project.users|length }}
+            {% if project.comments -%}
+              &lt;h2&gt;Comments&lt;/h2&gt;
+            {% endif -%}
+            {{ commentfeed(project.get_comments()) }}
+      {% endfor %}
+      &lt;/p&gt;
+    </content>
+  </entry>
+  {% endfor %}
+</feed>

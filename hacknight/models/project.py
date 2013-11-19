@@ -5,7 +5,7 @@ from hacknight.models import db
 from hacknight.models.event import Event
 from hacknight.models.user import User
 from hacknight.models.vote import VoteSpace
-from hacknight.models.comment import CommentSpace
+from hacknight.models.comment import CommentSpace, Comment
 from flask import url_for
 
 __all__ = ['Project', 'ProjectMember']
@@ -63,6 +63,10 @@ class Project(BaseScopedIdNameMixin, db.Model):
         return Project.query.filter(Project.event == self.event).filter(
             Project.id != self.id).filter(
             Project.created_at > self.created_at).order_by('created_at').first()
+
+    def get_comments(self, reverse=True):
+        return sorted(Comment.query.filter_by(commentspace=self.comments, reply_to=None).order_by('created_at').all(),
+            key=lambda c: c.votes.count, reverse=reverse)
 
     def url_for(self, action='view', _external=False):
         if action == 'view':
