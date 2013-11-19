@@ -126,6 +126,9 @@
           </li>
         </ul>
       </div>
+      <div>
+        <a href="irc://irc.freenode.net/#hasgeek">Collaborate in IRC Channel</a>
+      </div>
       {% if event.sponsors %}
         <hr class="clear-line">
         <div class="sidebar-heading nav nav-list">
@@ -235,7 +238,23 @@
       function onZoomend(){
           map.setView(venue, map.getZoom());
       };
-    {% endif %} 
+    {% endif %}
+    //Scrollback
+    $("a[href='irc://irc.freenode.net/#hasgeek']").click(function(e) {
+      if(window.scrollback) return true;
+      
+      window.scrollback = {    
+        streams:['hasgeek'], theme: 'light', ticker: true, minimized: false
+      };
+      /***** don't edit below *****/
+      (function(d, s, h, e){e=d.createElement(s);e.async=1;
+      e.src=h+'/client.min.js';scrollback.host=h;
+      d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
+      (document,'script',location.protocol+'//scrollback.io'));
+
+      e.preventDefault();
+      return false;
+    });
   });
   </script>
 
