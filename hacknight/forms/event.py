@@ -68,10 +68,6 @@ class EventForm(Form):
         if field.data < self.start_datetime.data:
             raise wtforms.ValidationError(u"Your event can’t end before it starts.")
 
-    def validate_sync_service(self, field):
-        if not field.data == SYNC_SERVICE.DOATTEND:
-            raise wtforms.ValidationError(u"Currently doattend service is only supported")
-
     def validate_sync_credentials(self, field):
         # Remove extra space in front and end.
         # TODO: Find better way to do it, because this code doesn't validate rather sanitizes.

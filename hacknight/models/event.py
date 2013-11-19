@@ -10,7 +10,7 @@ from sqlalchemy.orm import deferred
 from sqlalchemy import not_
 from hacknight.models import db, BaseNameMixin, BaseScopedNameMixin, BaseMixin
 
-__all__ = ['Profile', 'Event', 'EVENT_STATUS', 'PROFILE_TYPE', 'EventRedirect']
+__all__ = ['Profile', 'Event', 'EVENT_STATUS', 'SYNC_SERVICE', 'PROFILE_TYPE', 'EventRedirect']
 #need to add EventTurnOut, EventPayment later
 
 
