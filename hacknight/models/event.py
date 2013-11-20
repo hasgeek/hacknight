@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 
+import requests
+
 from datetime import datetime
 
-from flask import url_for
+from flask import url_for, Markup
 from flask.ext.lastuser.sqlalchemy import ProfileMixin
 from sqlalchemy.orm import deferred
 from sqlalchemy import not_
 from hacknight.models import db, BaseNameMixin, BaseScopedNameMixin, BaseMixin
 
-__all__ = ['Profile', 'Event', 'EVENT_STATUS', 'PROFILE_TYPE', 'EventRedirect']
+__all__ = ['Profile', 'Event', 'EVENT_STATUS', 'SYNC_SERVICE', 'PROFILE_TYPE', 'EventRedirect']
 #need to add EventTurnOut, EventPayment later
 
 
@@ -36,6 +38,14 @@ class EVENT_STATUS:
     REJECTED = 6
     WITHDRAWN = 7
     UNLISTED = 8
+
+
+class SYNC_SERVICE:
+    DOATTEND = u"doattend"
+
+
+class SyncException(Exception):
+    pass
 
 
 class Profile(ProfileMixin, BaseNameMixin, db.Model):
@@ -79,6 +89,10 @@ class Event(BaseScopedNameMixin, db.Model):
     rejected_message_text = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
     pending_message = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
     pending_message_text = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
+    # Sync details
+    sync_service = db.Column(db.Unicode(100), nullable=True)
+    sync_credentials = db.Column(db.Unicode(100), nullable=True)
+    sync_eventsid = db.Column(db.Unicode(100), nullable=True)
 
     __table_args__ = (db.UniqueConstraint('name', 'profile_id'),)
 
@@ -96,6 +110,43 @@ class Event(BaseScopedNameMixin, db.Model):
     def owner_is(self, user):
         """Check if a user is an owner of this event"""
         return user is not None and self.profile.userid in user.user_organizations_owned_ids()
+
+    def has_sync(self):
+        return self.sync_service and self.sync_credentials and self.sync_eventsid
+
+    def _fetch_and_sync(self, event_id, participants):
+        """Fetch data from external service like doattend"""
+        if self.sync_service == SYNC_SERVICE.DOATTEND:
+            data_url = u"http://doattend.com/api/events/{event_id}/participants_list.json?api_key={credentials}".format(event_id=event_id, credentials=self.sync_credentials)
+            try:
+                r = requests.get(data_url)
+            except requests.ConnectionError:
+                raise SyncException(u"Unable to connect to internet")
+            if r.status_code == 200:
+                registered_participants = r.json() if callable(r.json) else r.json
+                emails = set([p.get('Email') for p in registered_participants['participants']])
+                for participant in participants:
+                    if participant.email in emails:
+                        participant.confirm()
+                        yield u"{email} is confirmed.\n".format(email=participant.email)
+                yield u"Synced all participants.\n"
+            else:
+                raise SyncException(u"Sync service failed with status code {code}".format(code=r.status_code))
+
+    def sync_participants(self, participants):
+        final_msg = u"<a href=\"{url}\">Click here for hacknight page.</a>\n".format(url=self.url_for())
+        if self.has_sync():
+            for event_id in self.sync_eventsid.split(','):
+                try:
+                    for msg in self._fetch_and_sync(event_id.strip(), participants):
+                        yield msg
+                except SyncException, e:
+                    yield unicode(e)
+            db.session.commit()
+            yield Markup(final_msg)
+        else:
+            yield u"Sync credentials missing.\n"
+            yield Markup(final_msg)
 
     def participant_is(self, user):
         from hacknight.models.participant import Participant
@@ -145,6 +196,8 @@ class Event(BaseScopedNameMixin, db.Model):
             return url_for('event_send_email', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'email_template':
             return url_for('email_template_form', profile=self.profile.name, event=self.name, _external=_external)
+        elif action == 'sync':
+            return url_for('event_sync', profile=self.profile.name, event=self.name, _external=_external)
 
 
 class EventRedirect(BaseMixin, db.Model):

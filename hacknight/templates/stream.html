@@ -1,0 +1,7 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <pre>{% for line in stream -%}
+    {{ line }}
+  {%- endfor %}</pre>
+{% endblock %}
