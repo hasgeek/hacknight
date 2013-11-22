@@ -161,7 +161,7 @@ def event_open(profile, event):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'), permission='edit')
 def event_sync(profile, event):
-    participants = Participant.unconfirmed_participants(event)
+    participants = Participant.unconfirmed_for(event)
     return Response(stream_template('stream.html',
             stream=stream_with_context(event.sync_participants(participants)),
             title="Syncing participants..."))
