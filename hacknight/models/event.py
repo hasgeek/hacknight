@@ -117,7 +117,7 @@ class Event(BaseScopedNameMixin, db.Model):
 
     def _fetch_and_sync(self, event_id, participants):
         """Fetch data from external service like doattend"""
-        from hacknight.views.login import lastuser
+        from hacknight import lastuser
         if self.sync_service == SYNC_SERVICE.DOATTEND:
             data_url = u"http://doattend.com/api/events/{event_id}/participants_list.json?api_key={credentials}".format(event_id=event_id, credentials=self.sync_credentials)
             try:
@@ -128,7 +128,9 @@ class Event(BaseScopedNameMixin, db.Model):
                 registered_participants = r.json() if callable(r.json) else r.json
                 emails = set([p.get('Email') for p in registered_participants['participants']])
                 for participant in participants:
-                    if participant.email in emails or participant.email in lastuser.user_emails(participant.user):
+                    p_emails = set(lastuser.user_emails(participant.user))
+                    p_emails.add(participant.email)
+                    if emails.intersection(p_emails):
                         participant.confirm()
                         yield u"{email} is confirmed.\n".format(email=participant.email)
                 yield u"Synced all participants.\n"
