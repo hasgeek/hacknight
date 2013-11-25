@@ -128,9 +128,7 @@ class Event(BaseScopedNameMixin, db.Model):
                 registered_participants = r.json() if callable(r.json) else r.json
                 emails = set([p.get('Email') for p in registered_participants['participants']])
                 for participant in participants:
-                    p_emails = set(lastuser.user_emails(participant.user))
-                    p_emails.add(participant.email)
-                    if emails.intersection(p_emails):
+                    if participant.email in emails or emails.intersection(set(lastuser.user_emails(participant.user))):
                         participant.confirm()
                         yield u"{email} is confirmed.\n".format(email=participant.email)
                 yield u"Synced all participants.\n"
