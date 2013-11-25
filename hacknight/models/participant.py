@@ -4,6 +4,7 @@ from hacknight.models import db, BaseMixin
 from hacknight.models.user import User
 from hacknight.models.event import Event
 
+
 __all__ = ['Participant', 'PARTICIPANT_STATUS']
 
 
@@ -34,7 +35,7 @@ class Participant(BaseMixin, db.Model):
     NON_CONFIRMED_STATUSES = (PARTICIPANT_STATUS.PENDING, PARTICIPANT_STATUS.WL)
 
     @classmethod
-    def unconfirmed_participants(cls, event):
+    def unconfirmed_for(cls, event):
         return cls.query.filter(cls.status.in_([PARTICIPANT_STATUS.PENDING, PARTICIPANT_STATUS.WL]), cls.event == event).all()
 
     def save_defaults(self):
