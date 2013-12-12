@@ -12,15 +12,21 @@
           {%- with vote = project.votes.getvote(g.user) %}
           {%- if not vote -%}
             <a class="votechoice" title="Vote up" href="{{ project.url_for('voteup') }}"><i class="icon-caret-up"></i></a>
+
             <div class="votecount">{% if project.votes.count > 0 %}+{% endif %}{{ project.votes.count }}</div>
+
             <a class="votechoice" title="Vote down" href="{{ project.url_for('votedown') }}"><i class="icon-caret-down"></i></a>
+
           {%- elif vote.votedown -%}
             <a class="votechoice" title="Vote up" href="{{ project.url_for('voteup') }}"><i class="icon-caret-up"></i></a>
             <div class="votecount">{% if project.votes.count > 0 %}+{% endif %}{{ project.votes.count }}</div>
+
             <a class="votechoice selected" title="Vote down" href="{{ project.url_for('cancelvote') }}"><i class="icon-caret-down"></i></a>
+
           {%- else -%}
             <a class="votechoice selected" title="Vote up" href="{{ project.url_for('cancelvote') }}"><i class="icon-caret-up"></i></a>
             <div class="votecount">{% if project.votes.count > 0 %}+{% endif %}{{ project.votes.count }}</div>
+
             <a class="votechoice" title="Vote down" href="{{ project.url_for('votedown') }}"><i class="icon-caret-down"></i></a>
           {%- endif -%}
           {% endwith %}
@@ -132,6 +138,7 @@
         <li class="nav-header">Project Created by</li>
         <li><a href="{{ url_for('profile_view', profile=project.user.profile.name) }}"><span class="icon-user">{{ project.user.fullname }}</span></a></li>
       </ul>
+
       <!--<div class="source-files">
         <div class="row">
           <div class="span1">
