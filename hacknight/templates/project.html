@@ -26,7 +26,7 @@
             <a class="votechoice selected" title="Vote up" href="{{ project.url_for('cancelvote') }}"><i class="icon-caret-up"></i></a>
 
             <div class="votecount">{% if project.votes.count > 0 %}+{% endif %}{{ project.votes.count }}</div>
-            
+
             <a class="votechoice" title="Vote down" href="{{ project.url_for('votedown') }}"><i class="icon-caret-down"></i></a>
           {%- endif -%}
           {% endwith %}
@@ -46,7 +46,7 @@
           <ul class="userset row">
             {% for user in project.users %}
               <li class="span2">
-                <a href="{{ profile.url_for() }}"><i class="icon-user"></i><br>{{ user.fullname }}</a>
+                <a href="{{ user.profile_url }}"><i class="icon-user"></i><br>{{ user.fullname }}</a>
               </li>
             {% endfor %}
           </ul>
@@ -118,7 +118,7 @@
           {%- endif -%}
         </div>
       </div>
-      
+
       <ul class="sidebar nav nav-list">
 
         {% if project.owner_is(g.user) %}
@@ -153,7 +153,7 @@
         </div>
       </div>-->
     </div>
-    
+
   </div>
 
 {% endblock %}
