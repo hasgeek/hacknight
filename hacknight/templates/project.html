@@ -19,6 +19,7 @@
 
           {%- elif vote.votedown -%}
             <a class="votechoice" title="Vote up" href="{{ project.url_for('voteup') }}"><i class="icon-caret-up"></i></a>
+
             <div class="votecount">{% if project.votes.count > 0 %}+{% endif %}{{ project.votes.count }}</div>
 
             <a class="votechoice selected" title="Vote down" href="{{ project.url_for('cancelvote') }}"><i class="icon-caret-down"></i></a>
