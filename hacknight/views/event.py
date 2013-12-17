@@ -6,7 +6,8 @@ from html2text import html2text
 from flask.ext.mail import Message
 from flask import render_template, abort, flash, url_for, g, request, Markup, current_app, Response, stream_with_context
 from coaster.views import load_model, load_models
-from baseframe.forms import render_redirect, render_form, render_delete_sqla
+from baseframe.forms import DateTimeField, render_redirect, render_form, render_delete_sqla
+import wtforms
 from hacknight import app, mail
 from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS, EventRedirect
 from hacknight.forms.event import EventForm, ConfirmWithdrawForm, SendEmailForm, EmailEventParticipantsForm
@@ -39,6 +40,13 @@ def stream_template(template_name, **context):
     rv = t.stream(context)
     rv.disable_buffering()
     return rv
+
+
+def replace_datetime_field(form):
+    # TODO: figure out a better way to do this via Baseframe
+    if hasattr(form, 'start_datetime') and hasattr(form, 'end_datetime'):
+        form.start_datetime = DateTimeField("Start date/time", description="The date and time at which this event begins", timezone=app.config.get('TIMEZONE'), validators=[wtforms.validators.Required()])
+        form.end_datetime = DateTimeField("End date/time", description="The date and time at which this event ends", timezone=app.config.get('TIMEZONE'), validators=[wtforms.validators.Required()])
 
 
 @app.route('/<profile>/<event>', methods=["GET"])
@@ -77,9 +85,8 @@ def event_view(profile, event):
 def event_new(profile):
     if profile.userid not in g.user.user_organizations_owned_ids():
         abort(403)
+    replace_datetime_field(EventForm)
     form = EventForm(parent=profile, model=Event)
-    form.start_datetime.timezone = app.config['tz']
-    form.end_datetime.timezone = app.config['tz']
     if form.validate_on_submit():
         event = Event(profile=profile)
         form.populate_obj(event)
@@ -105,6 +112,7 @@ def event_edit(profile, event):
     workflow = event.workflow()
     if not workflow.can_edit():
         abort(403)
+    replace_datetime_field(EventForm)
     form = EventForm(obj=event)
     if form.validate_on_submit():
         old_name = event.name
