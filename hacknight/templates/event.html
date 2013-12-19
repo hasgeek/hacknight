@@ -53,7 +53,7 @@
     </div>
     <div class="span3">
       <ul class="well nav nav-list sidebar">
-        <li><i class="icon-calendar"></i><span>{{ event.start_datetime | startdate }} &mdash; {{ event.end_datetime | enddate }}</span></li>
+        <li><i class="icon-calendar"></i><span>{{ event.start_datetime | startdate(event.venue.timezone) }} &mdash; {{ event.end_datetime | enddate(event.venue.timezone) }}</span></li>
         {% if event.ticket_price -%}
           <li><i class="icon-money"></i><span>Entry Fee: {{ event.ticket_price }}</span></li>
         {%- endif %}
@@ -113,9 +113,6 @@
       
       <div class="share">
         <ul>
-          <div class="nav nav-list">
-            <h4 class="nav-header">Share</h4>  
-          </div>
           <li>
             <a class="btn btn-dark" target="_blank" href="http://twitter.com/share?url={{ request.url }}&amp;via=HasGeek&amp;text={{ event.title }}" class="socialite twitter-share" data-url="{{ request.url }}" data-text="{{ event.title }}" data-via="HasGeek">
               <span class="icon-twitter"></span>

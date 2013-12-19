@@ -474,7 +474,7 @@
 }
 
 .participant {
-  background-image: url('black_bg.png?1360494213');
+  background-image: url('../img/black_bg.png?1360494213');
   background-color: black;
   margin-bottom: 10px;
   border-bottom: 1px solid #454e59;
@@ -2046,7 +2046,6 @@
   margin: 0;
   display: block;
   clear: both;
-  margin-bottom: 70px;
 }
 .share ul .nav-list {
   padding-left: 4px;
@@ -2156,7 +2155,7 @@
 .source-files {
   width: 100%;
   height: auto;
-  background-image: url('black_bg.png?1360494213');
+  background-image: url('../img/black_bg.png?1360494213');
   margin-top: 30px;
 }
 .source-files .nav > li > a {
