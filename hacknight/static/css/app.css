@@ -474,7 +474,7 @@
 }
 
 .participant {
-  background-image: url('../img/black_bg.png?1379502300');
+  background-image: url('black_bg.png?1360494213');
   background-color: black;
   margin-bottom: 10px;
   border-bottom: 1px solid #454e59;
@@ -2156,7 +2156,7 @@
 .source-files {
   width: 100%;
   height: auto;
-  background-image: url('../img/black_bg.png?1379502300');
+  background-image: url('black_bg.png?1360494213');
   margin-top: 30px;
 }
 .source-files .nav > li > a {
@@ -2251,7 +2251,7 @@
 }
 
 .leaflet-popup-content {
-  font: 14px/22px Lato, "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font: 14px/22px "Source Sans Pro", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   margin: 10px;
 }
 
@@ -2276,7 +2276,7 @@
 .leaflet-container .leaflet-control-attribution {
   color: #bcc6cc;
   background-color: rgba(0, 0, 0, 0.7);
-  font: 12px/1.5 Lato, "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font: 12px/1.5 "Source Sans Pro", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   -webkit-box-shadow: 0 0 7px #444444;
   -moz-box-shadow: 0 0 7px #444444;
   box-shadow: 0 0 7px #444444;
@@ -2300,7 +2300,7 @@
 /* Regular */
 body {
   background-color: #323a40;
-  background-image: url('../img/bg-noise.png?1379502300');
+  background-image: url('../img/bg-noise.png?1374925532');
   color: #bcc6cc;
 }
 

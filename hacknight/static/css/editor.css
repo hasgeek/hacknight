@@ -1,6 +1,6 @@
-@import url("//fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic");
+@import url("//fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic");
 body {
-  font-family: Lato, "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-family: "Source Sans Pro", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-size: 14px;
   line-height: 22px;
   color: #aaa;
