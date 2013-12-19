@@ -3,7 +3,7 @@
 from flask import render_template, request, redirect
 from hacknight import app, baseframe
 from hacknight.models.event import Event, EventRedirect, Profile
-from pytz import utc
+from pytz import utc, timezone as pytz_timezone
 
 
 @app.route('/')
@@ -15,28 +15,48 @@ def index():
 
 
 @app.template_filter('startdate')
-def startdate(date):
-    return app.config['tz'].normalize(utc.localize(date).astimezone(app.config['tz'])).strftime("%a, %e %b %l:%M %p")
+def startdate(date, timezone=None):
+    if timezone:
+        tz = pytz_timezone(timezone)
+    else:
+        tz = app.config['tz']
+    return tz.normalize(utc.localize(date).astimezone(tz)).strftime("%a, %e %b %l:%M %p")
 
 
 @app.template_filter('enddate')
-def enddate(date):
-    return app.config['tz'].normalize(utc.localize(date).astimezone(app.config['tz'])).strftime("%l:%M %p %e %b %Y")
+def enddate(date, timezone=None):
+    if timezone:
+        tz = pytz_timezone(timezone)
+    else:
+        tz = app.config['tz']
+    return tz.normalize(utc.localize(date).astimezone(tz)).strftime("%l:%M %p %e %b %Y")
 
 
 @app.template_filter('shortdate')
-def shortdate(date):
-    return app.config['tz'].normalize(utc.localize(date).astimezone(app.config['tz'])).strftime("%B %d, %Y")
+def shortdate(date, timezone=None):
+    if timezone:
+        tz = pytz_timezone(timezone)
+    else:
+        tz = app.config['tz']
+    return tz.normalize(utc.localize(date).astimezone(tz)).strftime("%B %d, %Y")
 
 
 @app.template_filter('fulldate')
-def fulldate(date):
-    return app.config['tz'].normalize(utc.localize(date).astimezone(app.config['tz'])).strftime("%a, %b %e %l:%M %p")
+def fulldate(date, timezone=None):
+    if timezone:
+        tz = pytz_timezone(timezone)
+    else:
+        tz = app.config['tz']
+    return tz.normalize(utc.localize(date).astimezone(tz)).strftime("%a, %b %e %l:%M %p")
 
 
 @app.template_filter('weekdate')
-def weekdate(date):
-    return app.config['tz'].normalize(utc.localize(date).astimezone(app.config['tz'])).strftime("%a, %b %e")
+def weekdate(date, timezone=None):
+    if timezone:
+        tz = pytz_timezone(timezone)
+    else:
+        tz = app.config['tz']
+    return tz.normalize(utc.localize(date).astimezone(tz)).strftime("%a, %b %e")
 
 
 @app.template_filter('cleanurl')

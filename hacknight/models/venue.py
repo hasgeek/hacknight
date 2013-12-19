@@ -21,6 +21,7 @@ class Venue(BaseNameMixin, db.Model):
     country = db.Column(db.Unicode(2), default=u'', nullable=False)
     latitude = db.Column(db.Numeric(8, 5), nullable=True)
     longitude = db.Column(db.Numeric(8, 5), nullable=True)
+    timezone = db.Column(db.Unicode(40), nullable=False)
 
     def url_for(self, action='view', _external=False):
         if action == 'view':

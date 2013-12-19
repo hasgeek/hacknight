@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, url_for, flash, abort, g
+from flask import render_template, url_for, flash, abort, g, request
 from coaster.views import load_model
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 
@@ -27,6 +27,8 @@ def venue_view(venue):
 def venue_new():
     form = VenueForm()
     form.profile_id.choices = [(p.id, p.title) for p in g.user.profiles]
+    if request.method == 'GET':
+        form.timezone.data = app.config.get('TIMEZONE')
     if form.validate_on_submit():
         venue = Venue()
         form.populate_obj(venue)

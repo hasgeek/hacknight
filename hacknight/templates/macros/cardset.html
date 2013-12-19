@@ -18,9 +18,9 @@
             </div>
             <div class="card-title">
               <h2>{{ e.title }}</h2>
-              <h3>{{ e.start_datetime|weekdate }} 
+              <h3>{{ e.start_datetime|weekdate(e.venue.timezone) }} 
                 {%- if e.end_datetime.day != e.start_datetime.day %}
-                - {{ e.end_datetime|weekdate }}
+                - {{ e.end_datetime|weekdate(e.venue.timezone) }}
                 {%- endif -%}, {{ e.venue.city }}</h3>
             </div>
             <div class="card-body">
