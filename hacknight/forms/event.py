@@ -7,7 +7,7 @@ import wtforms.fields.html5
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from baseframe.forms import Form, RichTextField, DateTimeField, ValidName
 from baseframe.forms.sqlalchemy import AvailableName
-from hacknight.models import Venue, EVENT_STATUS, SYNC_SERVICE
+from hacknight.models import Venue, EVENT_STATUS, SYNC_SERVICE, PAYMENT_GATEWAY
 
 __all__ = ['EventForm', 'ConfirmWithdrawForm', 'SendEmailForm']
 
@@ -29,6 +29,12 @@ SYNC_CHOICES = [
     # Empty value for opting out.
     (u"", u""),
     (SYNC_SERVICE.DOATTEND, u"DoAttend"),
+]
+
+PAYMENT_GATEWAY_CHOICES = [
+    # Empty value for opting out.
+    (u"", u""),
+    (PAYMENT_GATEWAY.EXPLARA, u"Explara"),
 ]
 
 
@@ -64,7 +70,7 @@ class EventForm(Form):
     sync_service = wtforms.SelectField("Sync service name", description="Name of the ticket sync service like doattend", choices= SYNC_CHOICES, validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     sync_eventsid = wtforms.TextField("Sync event ID", description="Sync events id like DoAttend event ID. More than one event ID is allowed separated by ,.", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     sync_credentials = wtforms.TextField("Sync credentials", description="Sync credentials like API Key for the event", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
-    
+
     def validate_end_datetime(self, field):
         if field.data < self.start_datetime.data:
             raise wtforms.ValidationError(u"Your event can’t end before it starts.")

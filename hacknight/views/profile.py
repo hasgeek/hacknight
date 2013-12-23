@@ -46,3 +46,4 @@ def profile_edit(profile):
         return render_redirect(profile.url_for(), code=303)
     return render_form(form=form, title=u"Edit profile", submit=u"Save",
         cancel_url=profile.url_for(), ajax=True)
+

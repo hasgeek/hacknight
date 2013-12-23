@@ -11,7 +11,7 @@ from sqlalchemy import not_
 from hacknight.models import db, BaseNameMixin, BaseScopedNameMixin, BaseMixin
 
 
-__all__ = ['Profile', 'Event', 'EVENT_STATUS', 'SYNC_SERVICE', 'PROFILE_TYPE', 'EventRedirect']
+__all__ = ['Profile', 'Event', 'EVENT_STATUS', 'SYNC_SERVICE', 'PROFILE_TYPE', 'EventRedirect', 'PAYMENT_GATEWAY']
 #need to add EventTurnOut, EventPayment later
 
 
@@ -43,6 +43,10 @@ class EVENT_STATUS:
 
 class SYNC_SERVICE:
     DOATTEND = u"doattend"
+
+
+class PAYMENT_GATEWAY:
+    EXPLARA = u"Explara"
 
 
 class SyncException(Exception):
@@ -94,6 +98,11 @@ class Event(BaseScopedNameMixin, db.Model):
     sync_service = db.Column(db.Unicode(100), nullable=True)
     sync_credentials = db.Column(db.Unicode(100), nullable=True)
     sync_eventsid = db.Column(db.Unicode(100), nullable=True)
+
+    # Payment gateway details
+    payment_service = db.Column(db.Unicode(100), nullable=True)
+    payment_credentials = db.Column(db.Unicode(100), nullable=True)
+    currency = db.Column(db.Unicode(3), nullable=True)
 
     __table_args__ = (db.UniqueConstraint('name', 'profile_id'),)
 
