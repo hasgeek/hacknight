@@ -20,7 +20,7 @@ def upgrade():
 
     op.alter_column('user', 'send_newsletter', server_default=None)
 
-    # Create a new table email_campaign
+    # Create a new table for email_campaign
     op.create_table('email_campaign',
         sa.Column('id', sa.Integer, nullable=False, primary_key=True),
         sa.Column('event_id', sa.Integer, nullable=False),
@@ -33,7 +33,7 @@ def upgrade():
     )
     op.create_foreign_key("fk_email_campaign_event_id", "email_campaign", "event", ["event_id"], ["id"], ondelete="CASCADE")
 
-    # Create a new table email_campaign_user
+    # Create a new table for email_campaign_user
     op.create_table('email_campaign_user',
         sa.Column('id', sa.Integer, nullable=False, primary_key=True),
         sa.Column('user_id', sa.Integer, nullable=False),
