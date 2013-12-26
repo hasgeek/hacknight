@@ -22,8 +22,8 @@ def upgrade():
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('event_id', sa.Integer(), nullable=False),
-    sa.column('status', sa.Integer, nullable=False),
-    sa.column('order_no', sa.Unicode(20), nullable=False),
+    sa.Column('status', sa.Integer(), nullable=False),
+    sa.Column('order_no', sa.Unicode(20), nullable=False),
     sa.Column('server_response', sa.UnicodeText(), nullable=True),
     sa.Column('start_datetime', sa.DateTime(), nullable=False),
     sa.Column('end_datetime', sa.DateTime(), nullable=True),
@@ -38,6 +38,8 @@ def upgrade():
 
     op.add_column(u'participant', sa.Column('purchased_ticket', sa.Boolean(), nullable=False, server_default=sa.text(u"'f'")))
     op.alter_column(u'participant', 'purchased_ticket', server_default=None)
+    conn = op.get_bind()
+    conn.execute("update participant set purchased_ticket='t' where status=2")
     ### end Alembic commands ###
 
 
@@ -46,5 +48,6 @@ def downgrade():
     op.drop_column(u'event', 'payment_service')
     op.drop_column(u'event', 'payment_credentials')
     op.drop_column(u'event', 'currency')
+    op.drop_column(u'participant', 'purchased_ticket')
     op.drop_table('payment_gateway_log')
     ### end Alembic commands ###

@@ -107,7 +107,7 @@ class EventForm(Form):
     def validate_payment_credentials(self, field):
         if self.payment_service.data == PAYMENT_GATEWAY.EXPLARA:
             if len(field.data) < 10:
-                raise wtforms.ValidationError(u"Payment credentials is more than 10 characters")
+                raise wtforms.ValidationError(u"Payment credentials must be more than 10 characters")
 
     def validate_ticket_price(self, field):
         if self.payment_service.data == PAYMENT_GATEWAY.EXPLARA:
