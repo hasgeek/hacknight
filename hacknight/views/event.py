@@ -415,16 +415,17 @@ def email_template_form(profile, event):
 @load_models(
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'), permission='buy-ticket')
-def explara_purchase_ticket(profile, event):
+def purchase_ticket_explara(profile, event):
     user = g.user
     participant = Participant.query.filter_by(event=event, user=user).first()
     if not participant.purchased_ticket:
         form = ExplaraForm(obj=participant)
         if form.validate_on_submit():
-            try:
-                country = filter(lambda x: x[0] == form.country.data, country_codes)[0][1]
-            except IndexError:
-                country = u'India'
+            country = u'India'
+            for name in country_codes:
+                if name[0] == form.country.data:
+                    country = name[1]
+                    break
             data = {
                 'amount': float(event.ticket_price),
                 'orderNo': int(time.time() * 1000000),
@@ -461,7 +462,7 @@ def explara_purchase_ticket(profile, event):
 @load_models(
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
-def explara_payment_redirect(profile, event):
+def payment_redirect_explara(profile, event):
     if request.method == "POST":
         user = g.user
         form = request.form

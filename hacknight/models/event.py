@@ -222,9 +222,9 @@ class Event(BaseScopedNameMixin, db.Model):
         elif action == 'sync':
             return url_for('event_sync', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'purchase_ticket':
-            return url_for('explara_purchase_ticket', profile=self.profile.name, event=self.name, _external=_external)
+            return url_for('purchase_ticket_explara', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'payment_redirect':
-            return url_for('explara_payment_redirect', profile=self.profile.name, event=self.name, _external=_external)
+            return url_for('payment_redirect_explara', profile=self.profile.name, event=self.name, _external=_external)
 
 
 class EventRedirect(BaseMixin, db.Model):
