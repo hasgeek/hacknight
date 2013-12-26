@@ -81,7 +81,7 @@ class EventForm(Form):
     sync_eventsid = wtforms.TextField("Sync event ID", description="Sync events id like DoAttend event ID. More than one event ID is allowed separated by ,.", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     sync_credentials = wtforms.TextField("Sync credentials", description="Sync credentials like API Key for the event", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     payment_service = wtforms.SelectField("Payment gateway service name", description="Name of the payment gateway service like explara", choices= PAYMENT_GATEWAY_CHOICES, validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
-    payment_credentials = wtforms.TextField("Payment gateway credentials", description="Payment gateway credentials like API Key for the event", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
+    payment_credentials = wtforms.TextField("Payment gateway credentials", description="Payment gateway credentials like API Key", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     currency = wtforms.SelectField("Currency", description="Currency in which participant should pay", choices= CURRENCY_CHOICES, validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
 
     def validate_end_datetime(self, field):
@@ -107,7 +107,7 @@ class EventForm(Form):
     def validate_payment_credentials(self, field):
         if self.payment_service.data == PAYMENT_GATEWAY.EXPLARA:
             if len(field.data) < 10:
-                raise wtforms.ValidationError(u"Payment credentials missing")
+                raise wtforms.ValidationError(u"Payment credentials is more than 10 characters")
 
     def validate_ticket_price(self, field):
         if self.payment_service.data == PAYMENT_GATEWAY.EXPLARA:

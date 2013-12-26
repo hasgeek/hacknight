@@ -411,7 +411,8 @@ def email_template_form(profile, event):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'), permission='buy-ticket')
 def explara_purchase_ticket(profile, event):
-    participant = Participant.query.filter_by(event=event, user=g.user).first()
+    user = g.user
+    participant = Participant.query.filter_by(event=event, user=user).first()
     if not participant.purchased_ticket:
         form = ExplaraForm(obj=participant)
         if form.validate_on_submit():
@@ -431,7 +432,7 @@ def explara_purchase_ticket(profile, event):
                 'currency': event.currency,
                 'pg': 'pg2', # find a way to choose between 'pg1' or 'pg2'.
             }
-            log = PaymentGatewayLog(order_no=data.get('orderNo'), user=g.user, event=event, status=ticket_status.get('pending'))
+            log = PaymentGatewayLog(order_no=data.get('orderNo'), user=user, event=event, status=ticket_status.get('pending'))
             db.session.add(log)
             db.session.commit()
             try:
@@ -439,6 +440,7 @@ def explara_purchase_ticket(profile, event):
                 return r.content
             except requests.ConnectionError:
                 flash(u"Oops, something went wrong, please try after sometime", 'error')
+                return render_redirect(event.url_for())
         return render_form(form=form, title="Buy ticket", submit=u"Buy",
             cancel_url=event.url_for(), ajax=False)
     else:
@@ -454,26 +456,29 @@ def explara_payment_redirect(profile, event):
     if request.method == "POST":
         user = g.user
         form = request.form
+        if form:
+            participant = Participant.query.filter_by(event=event, user=user).first()
+            log = PaymentGatewayLog.get_recent_transaction(user=user)
 
-        participant = Participant.query.filter_by(event=event, user=user).first()
-        log = PaymentGatewayLog.get_recent_transaction(user=user)
+            # Decode base64 response
+            import base64
+            resp = base64.b64decode(form.get('response'))
 
-        # Decode base64 response
-        import base64
-        resp = base64.b64decode(form.get('response'))
+            try:
+                status = ticket_status[form.get('status')]
+            except ValueError:
+                status = ticket_status.get('failure')
 
-        try:
-            status = ticket_status[form.get('status')]
-        except ValueError:
-            status = ticket_status.get('failure')
+            if status == TICKET_STATUS.SUCCESS:
+                participant.confirm()
 
-        if status == TICKET_STATUS.SUCCESS:
-            participant.confirm()
+            log.status = status
+            log.server_response = resp
 
-        log.status = status
-        log.server_response = resp
+            db.session.commit()
 
-        db.session.commit()
-
-        flash(u"Ticket purchase is successful", 'success')
-        return render_redirect(event.url_for())
+            flash(u"Ticket purchase is successful", 'success')
+            return render_redirect(event.url_for())
+        else:
+            flash(u"Surprisingly new problem occured. Try after sometime", 'error')
+            return render_redirect(event.url_for())

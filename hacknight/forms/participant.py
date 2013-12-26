@@ -42,7 +42,6 @@ class ExplaraForm(Form):
          validators=[wtforms.validators.Required(), wtforms.validators.length(max=200)])
     phone_no = wtforms.TextField("Telephone No", description="Telephone No",
         validators=[wtforms.validators.Required(), wtforms.validators.length(max=15)])
-    # sync_service = wtforms.SelectField("Sync service name", description="Name of the ticket sync service like doattend", choices= SYNC_CHOICES, validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     country = wtforms.SelectField("Country", description="Country", choices=country_codes, validators=[wtforms.validators.Required()])
     """ Longest state name
     Taumatawhakatangihangakoauauotamateahaumaitawhitiurehaeaturipuk-
