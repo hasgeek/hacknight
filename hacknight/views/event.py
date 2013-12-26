@@ -8,6 +8,7 @@ from html2text import html2text
 from flask.ext.mail import Message
 from flask import render_template, abort, flash, url_for, g, request, Markup, current_app, Response, stream_with_context
 from coaster.views import load_model, load_models
+from baseframe.staticdata import country_codes
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app, mail
 from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS, EventRedirect, PaymentGatewayLog, TRANSACTION_STATUS, transaction_status
@@ -420,6 +421,10 @@ def explara_purchase_ticket(profile, event):
     if not participant.purchased_ticket:
         form = ExplaraForm(obj=participant)
         if form.validate_on_submit():
+            try:
+                country = filter(lambda x: x[0] == form.country.data, country_codes)[0][1]
+            except IndexError:
+                country = u'India'
             data = {
                 'amount': float(event.ticket_price),
                 'orderNo': int(time.time() * 1000000),
@@ -428,7 +433,7 @@ def explara_purchase_ticket(profile, event):
                 'name': form.name.data,
                 'emailId': form.email.data,
                 'phoneNo': form.phone_no.data,
-                'country': form.country.data,
+                'country': country,
                 'state': form.state.data,
                 'city': form.city.data,
                 'address': form.address.data,
