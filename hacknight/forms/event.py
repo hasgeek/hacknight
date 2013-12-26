@@ -80,7 +80,7 @@ class EventForm(Form):
     sync_service = wtforms.SelectField("Sync service name", description="Name of the ticket sync service like doattend", choices=SYNC_CHOICES, validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     sync_eventsid = wtforms.TextField("Sync event ID", description="Sync events id like DoAttend event ID. More than one event ID is allowed separated by ,.", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     sync_credentials = wtforms.TextField("Sync credentials", description="Sync credentials like API Key for the event", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
-    payment_service = wtforms.SelectField("Payment gateway service name", description="Name of the payment gateway service like explara", choices= PAYMENT_GATEWAY_CHOICES, validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
+    payment_service = wtforms.SelectField("Payment gateway service name", description="Name of the payment gateway service like explara", choices=PAYMENT_GATEWAY_CHOICES, validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     payment_credentials = wtforms.TextField("Payment gateway credentials", description="Payment gateway credentials like API Key", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     currency = wtforms.SelectField("Currency", description="Currency in which participant should pay", choices=CURRENCY_CHOICES, validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
 
