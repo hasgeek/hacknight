@@ -77,12 +77,12 @@ class EventForm(Form):
     maximum_participants = wtforms.IntegerField("Venue capacity", description="The number of people this venue can accommodate.", default=50, validators=[wtforms.validators.Required()])
     website = wtforms.fields.html5.URLField("Website", description="Related Website (Optional)", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=250), wtforms.validators.URL()])
     status = wtforms.SelectField("Event status", description="Current status of this hacknight", coerce=int, choices=STATUS_CHOICES)
-    sync_service = wtforms.SelectField("Sync service name", description="Name of the ticket sync service like doattend", choices= SYNC_CHOICES, validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
+    sync_service = wtforms.SelectField("Sync service name", description="Name of the ticket sync service like doattend", choices=SYNC_CHOICES, validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     sync_eventsid = wtforms.TextField("Sync event ID", description="Sync events id like DoAttend event ID. More than one event ID is allowed separated by ,.", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     sync_credentials = wtforms.TextField("Sync credentials", description="Sync credentials like API Key for the event", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     payment_service = wtforms.SelectField("Payment gateway service name", description="Name of the payment gateway service like explara", choices= PAYMENT_GATEWAY_CHOICES, validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     payment_credentials = wtforms.TextField("Payment gateway credentials", description="Payment gateway credentials like API Key", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
-    currency = wtforms.SelectField("Currency", description="Currency in which participant should pay", choices= CURRENCY_CHOICES, validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
+    currency = wtforms.SelectField("Currency", description="Currency in which participant should pay", choices=CURRENCY_CHOICES, validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
 
     def validate_end_datetime(self, field):
         if field.data < self.start_datetime.data:
@@ -112,9 +112,12 @@ class EventForm(Form):
     def validate_ticket_price(self, field):
         if self.payment_service.data == PAYMENT_GATEWAY.EXPLARA:
             try:
-                float(field.data)
+                data = field.data.strip()
+                if data[0] == '-':
+                    raise wtforms.ValidationError(u"Event price must be positive number")
+                float(data)
             except ValueError:
-                raise wtforms.ValidationError(u"Event price must be number")
+                raise wtforms.ValidationError(u"Event price must be positive number. E.G: 500.00")
 
 
 class EmailEventParticipantsForm(Form):
