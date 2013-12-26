@@ -37,6 +37,16 @@ PAYMENT_GATEWAY_CHOICES = [
     (PAYMENT_GATEWAY.EXPLARA, u"Explara"),
 ]
 
+CURRENCY_CHOICES = [
+    #INR, USD, GBP, EUR, PHP, ZAR
+    (u"INR", u"INR"),
+    (u"USD", u"USD"),
+    (u"GBP", u"GBP"),
+    (u"EUR", u"EUR"),
+    (u"PHP", u"PHP"),
+    (u"ZAR", u"ZAR"),
+]
+
 
 class EventForm(Form):
     title = wtforms.TextField("Title", description="Name of the Event", validators=[wtforms.validators.Required(), wtforms.validators.NoneOf(values=["new"]), wtforms.validators.length(max=250)])
@@ -70,6 +80,9 @@ class EventForm(Form):
     sync_service = wtforms.SelectField("Sync service name", description="Name of the ticket sync service like doattend", choices= SYNC_CHOICES, validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     sync_eventsid = wtforms.TextField("Sync event ID", description="Sync events id like DoAttend event ID. More than one event ID is allowed separated by ,.", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     sync_credentials = wtforms.TextField("Sync credentials", description="Sync credentials like API Key for the event", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
+    payment_service = wtforms.SelectField("Payment gateway service name", description="Name of the payment gateway service like explara", choices= PAYMENT_GATEWAY_CHOICES, validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
+    payment_credentials = wtforms.TextField("Payment gateway credentials", description="Payment gateway credentials like API Key for the event", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
+    currency = wtforms.SelectField("Currency", description="Currency in which participant should pay", choices= CURRENCY_CHOICES, validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
 
     def validate_end_datetime(self, field):
         if field.data < self.start_datetime.data:
@@ -90,6 +103,18 @@ class EventForm(Form):
                     raise wtforms.ValidationError(u"Event id {event_id} is invalid".format(event_id=event_id))
             if events_id:
                 field.data = ",".join(events_id)
+
+    def validate_payment_credentials(self, field):
+        if self.payment_service.data == PAYMENT_GATEWAY.EXPLARA:
+            if len(field.data) < 10:
+                raise wtforms.ValidationError(u"Payment credentials missing")
+
+    def validate_ticket_price(self, field):
+        if self.payment_service.data == PAYMENT_GATEWAY.EXPLARA:
+            try:
+                float(field.data)
+            except ValueError:
+                raise wtforms.ValidationError(u"Event price must be number")
 
 
 class EmailEventParticipantsForm(Form):

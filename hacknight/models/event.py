@@ -121,6 +121,9 @@ class Event(BaseScopedNameMixin, db.Model):
         """Check if a user is an owner of this event"""
         return user is not None and self.profile.userid in user.user_organizations_owned_ids()
 
+    def has_payment_gateway(self):
+        return self.payment_service and self.payment_credentials and self.currency
+
     def has_sync(self):
         return self.sync_service and self.sync_credentials and self.sync_eventsid
 
@@ -182,6 +185,8 @@ class Event(BaseScopedNameMixin, db.Model):
             perms.add('edit')
             perms.add('delete')
             perms.add('send-email')
+        if self.has_payment_gateway():
+            perms.add('buy-ticket')
         return perms
 
     def url_for(self, action='view', _external=False):
@@ -209,6 +214,10 @@ class Event(BaseScopedNameMixin, db.Model):
             return url_for('email_template_form', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'sync':
             return url_for('event_sync', profile=self.profile.name, event=self.name, _external=_external)
+        elif action == 'purchase_ticket':
+            return url_for('explara_purchase_ticket', profile=self.profile.name, event=self.name, _external=_external)
+        elif action == 'payment_redirect':
+            return url_for('explara_payment_redirect', profile=self.profile.name, event=self.name, _external=_external)
 
 
 class EventRedirect(BaseMixin, db.Model):

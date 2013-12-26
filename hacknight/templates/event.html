@@ -8,7 +8,7 @@
         <a href="{{ p.user.profile_url }}"><div class="participant-img"><i class="icon-user icon-4x"></i></div></a>
         <div class="participant-name">
           <b><a href="{{ p.user.profile_url }}">{{ p.user.fullname }}</a></b>
-        
+
           <div class="participating-projects">
             {% with projects = p.user.projects_in(event) %}
               {%- if projects %}
@@ -87,11 +87,18 @@
             {%- elif current_participant.status == 4 -%}
               <li><i class="icon-user"></i><span>Withdrawn</span></li>
             {%- endif -%}
+
+            {% if workflow.can_apply() -%}
+              {% if event.has_payment_gateway() and current_participant.purchased_ticket -%}
+                <li><a href="{{ event.url_for('withdraw') }}"><i class="icon-signout"></i><span>Withdraw registration</span></a></li>
+              {% else %}
+                <li><a href="{{ event.url_for('purchase_ticket') }}">Purchase Ticket</a></li>
+              {%- endif %}
+            {%- endif %}
           {%- endif %}
-          {% if workflow.can_apply() -%}
-            <li><a href="{{ event.url_for('withdraw') }}"><i class="icon-signout"></i><span>Withdraw registration</span></a></li>
-          {%- endif %}
-        {% endif %}
+
+        {%- endif %}
+
 
       {%- if event.owner_is(g.user) %}
           <li class="nav-header">Manage event</li>
@@ -110,7 +117,7 @@
           {% endif -%}
       {% endif -%}
     </ul>
-      
+
       <div class="share">
         <ul>
           <li>
@@ -133,8 +140,8 @@
       {% if event.sponsors %}
         <hr class="clear-line">
         <div class="sidebar-heading nav nav-list">
-          <h4 class="nav-header">Sponsors</h4>  
-        </div>        
+          <h4 class="nav-header">Sponsors</h4>
+        </div>
         <ul class="sponsor-box">
           {% for sponsor in event.sponsors %}
             <li><a href="{{ sponsor.url_for() }}"><img src="{{ sponsor.image_url }}" class="sponsor-logo"></a></li>
@@ -244,7 +251,7 @@
     $(".sync").on('click', function(e){
       e.preventDefault();
       $("#sync_form").submit();
-    }); 
+    });
   });
   </script>
 

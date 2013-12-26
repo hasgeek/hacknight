@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import requests
+import time
 from sqlalchemy.orm import joinedload
 from sqlalchemy import func
 from html2text import html2text
@@ -8,9 +10,9 @@ from flask import render_template, abort, flash, url_for, g, request, Markup, cu
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app, mail
-from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS, EventRedirect
+from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS, EventRedirect, PaymentGatewayLog, TICKET_STATUS, ticket_status
 from hacknight.forms.event import EventForm, ConfirmWithdrawForm, SendEmailForm, EmailEventParticipantsForm
-from hacknight.forms.participant import ParticipantForm
+from hacknight.forms.participant import ParticipantForm, ExplaraForm
 from hacknight.views.login import lastuser
 from hacknight.views.workflow import ParticipantWorkflow
 
@@ -234,6 +236,8 @@ def event_apply(profile, event):
             participant.status = PARTICIPANT_STATUS.PENDING if event.maximum_participants > total_participants else PARTICIPANT_STATUS.WL
             db.session.add(participant)
             db.session.commit()
+            if event.has_payment_gateway():
+                return render_redirect(event.url_for('purchase_ticket'), code=303)
             flash(u"Your request to participate has been recorded; you will be notified by the event manager", "success")
         else:
             return render_form(form=form, message=Markup(event.apply_instructions) if event.apply_instructions else "",
@@ -399,3 +403,77 @@ def email_template_form(profile, event):
         return render_redirect(event.url_for(), code=303)
     return render_form(form=form, title="Email Participants form", submit=u"Save",
         cancel_url=event.url_for(), ajax=False)
+
+
+@app.route('/<profile>/<event>/purchase_ticket/explara', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'), permission='buy-ticket')
+def explara_purchase_ticket(profile, event):
+    participant = Participant.query.filter_by(event=event, user=g.user).first()
+    if not participant.purchased_ticket:
+        form = ExplaraForm(obj=participant)
+        if form.validate_on_submit():
+            data = {
+                'amount': float(event.ticket_price),
+                'orderNo': int(time.time() * 1000000),
+                'bookingKey': event.payment_credentials,
+                'callbackUrl': event.url_for('payment_redirect', _external=True),
+                'name': form.name.data,
+                'emailId': form.email.data,
+                'phoneNo': form.phone_no.data,
+                'country': form.country.data,
+                'state': form.state.data,
+                'city': form.city.data,
+                'address': form.address.data,
+                'zipcode': form.zip_code.data,
+                'currency': event.currency,
+                'pg': 'pg2', # find a way to choose between 'pg1' or 'pg2'.
+            }
+            log = PaymentGatewayLog(order_no=data.get('orderNo'), user=g.user, event=event, status=ticket_status.get('pending'))
+            db.session.add(log)
+            db.session.commit()
+            try:
+                r = requests.post("https://em.explara.com/booking", data=data)
+                return r.content
+            except requests.ConnectionError:
+                flash(u"Oops, something went wrong, please try after sometime", 'error')
+        return render_form(form=form, title="Buy ticket", submit=u"Buy",
+            cancel_url=event.url_for(), ajax=False)
+    else:
+        flash(u"You have already purchased ticket", u'success')
+        return render_redirect(event.url_for())
+
+
+@app.route('/<profile>/<event>/payment/redirect/explara', methods=['POST'])
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
+def explara_payment_redirect(profile, event):
+    if request.method == "POST":
+        user = g.user
+        form = request.form
+
+        participant = Participant.query.filter_by(event=event, user=user).first()
+        log = PaymentGatewayLog.get_recent_transaction(user=user)
+
+        # Decode base64 response
+        import base64
+        resp = base64.b64decode(form.get('response'))
+
+        try:
+            status = ticket_status[form.get('status')]
+        except ValueError:
+            status = ticket_status.get('failure')
+
+        if status == TICKET_STATUS.SUCCESS:
+            participant.confirm()
+
+        log.status = status
+        log.server_response = resp
+
+        db.session.commit()
+
+        flash(u"Ticket purchase is successful", 'success')
+        return render_redirect(event.url_for())

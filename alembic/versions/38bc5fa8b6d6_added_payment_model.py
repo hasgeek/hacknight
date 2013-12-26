@@ -23,7 +23,9 @@ def upgrade():
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('event_id', sa.Integer(), nullable=False),
-    sa.Column('server_response', JsonDict(), nullable=True),
+    sa.column('status', sa.Integer, nullable=False),
+    sa.column('order_no', sa.Unicode(20), nullable=False),
+    sa.Column('server_response', sa.UnicodeText(), nullable=True),
     sa.Column('start_datetime', sa.DateTime(), nullable=False),
     sa.Column('end_datetime', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['event_id'], ['event.id'], ),
@@ -35,8 +37,8 @@ def upgrade():
     op.add_column(u'event', sa.Column('payment_credentials', sa.Unicode(length=100), nullable=True))
     op.add_column(u'event', sa.Column('payment_service', sa.Unicode(length=100), nullable=True))
 
-    op.add_column(u'event', sa.Column('purchased_ticket', sa.Boolean(), nullable=False, server_default=sa.text(u"'f'")))
-    op.alter_column(u'event', 'purchased_ticket', server_default=None)
+    op.add_column(u'participant', sa.Column('purchased_ticket', sa.Boolean(), nullable=False, server_default=sa.text(u"'f'")))
+    op.alter_column(u'participant', 'purchased_ticket', server_default=None)
     ### end Alembic commands ###
 
 

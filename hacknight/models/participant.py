@@ -47,6 +47,7 @@ class Participant(BaseMixin, db.Model):
 
     def confirm(self):
         self.status = PARTICIPANT_STATUS.CONFIRMED
+        self.purchased_ticket = True
 
     @classmethod
     def get(cls, user, event):
