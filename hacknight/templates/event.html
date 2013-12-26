@@ -89,14 +89,17 @@
             {%- endif -%}
 
             {% if workflow.can_apply() -%}
-              {% if event.has_payment_gateway() and current_participant.purchased_ticket -%}
-                <li><a href="{{ event.url_for('withdraw') }}"><i class="icon-signout"></i><span>Withdraw registration</span></a></li>
+              {% if event.is_tickets_available() -%}
+                {% if not current_participant.purchased_ticket -%}
+                  <li><a href="{{ event.url_for('purchase_ticket') }}"><i class="icon-money"></i><span>Purchase Ticket</span></a></li>
+                {% else %}
+                  <li><a href="{{ event.url_for('withdraw') }}"><i class="icon-signout"></i><span>Withdraw registration</span></a></li>
+                {%- endif %}
               {% else %}
-                <li><a href="{{ event.url_for('purchase_ticket') }}">Purchase Ticket</a></li>
+                <li><a href="{{ event.url_for('withdraw') }}"><i class="icon-signout"></i><span>Withdraw registration</span></a></li>
               {%- endif %}
             {%- endif %}
           {%- endif %}
-
         {%- endif %}
 
 

@@ -162,6 +162,13 @@ class Event(BaseScopedNameMixin, db.Model):
             yield u"Sync credentials missing.\n"
             yield Markup(final_msg)
 
+    def is_tickets_available(self):
+        if self.has_payment_gateway():
+            if self.confirmed_participants_count() < self.maximum_participants:
+                return True
+            return False
+        return False
+
     def participant_is(self, user):
         from hacknight.models.participant import Participant
         return Participant.get(user, self) is not None
@@ -173,7 +180,7 @@ class Event(BaseScopedNameMixin, db.Model):
 
     def confirmed_participants_count(self):
         from hacknight.models.participant import Participant, PARTICIPANT_STATUS
-        return Participant.query.filter_by(status=PARTICIPANT_STATUS.CONFIRMED, event=self).count()
+        return Participant.query.filter_by(status=PARTICIPANT_STATUS.CONFIRMED, event=self, purchased_ticket=True).count()
 
     def permissions(self, user, inherited=None):
         perms = super(Event, self).permissions(user, inherited)

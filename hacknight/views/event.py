@@ -10,7 +10,7 @@ from flask import render_template, abort, flash, url_for, g, request, Markup, cu
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app, mail
-from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS, EventRedirect, PaymentGatewayLog, TICKET_STATUS, ticket_status
+from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS, EventRedirect, PaymentGatewayLog, TRANSACTION_STATUS, transaction_status
 from hacknight.forms.event import EventForm, ConfirmWithdrawForm, SendEmailForm, EmailEventParticipantsForm
 from hacknight.forms.participant import ParticipantForm, ExplaraForm
 from hacknight.views.login import lastuser
@@ -194,6 +194,10 @@ def event_update_participant_status(profile, event):
         if participant.status != status:
             if event.confirmed_participants_count() < event.maximum_participants:
                 participant.status = status
+                if status == PARTICIPANT_STATUS.CONFIRMED:
+                    participant.purchased_ticket = True
+                else:
+                    participant.purchased_ticket = False
                 try:
                     text_message = unicode(getattr(event, (participants_email_attrs[status] + '_text')))
                     text_message = text_message.replace("*|FULLNAME|*", participant.user.fullname)
@@ -432,7 +436,7 @@ def explara_purchase_ticket(profile, event):
                 'currency': event.currency,
                 'pg': 'pg2', # find a way to choose between 'pg1' or 'pg2'.
             }
-            log = PaymentGatewayLog(order_no=data.get('orderNo'), user=user, event=event, status=ticket_status.get('pending'))
+            log = PaymentGatewayLog(order_no=data.get('orderNo'), user=user, event=event, status=transaction_status.get('pending'))
             db.session.add(log)
             db.session.commit()
             try:
@@ -465,11 +469,11 @@ def explara_payment_redirect(profile, event):
             resp = base64.b64decode(form.get('response'))
 
             try:
-                status = ticket_status[form.get('status')]
+                status = transaction_status[form.get('status')]
             except ValueError:
-                status = ticket_status.get('failure')
+                status = transaction_status.get('failure')
 
-            if status == TICKET_STATUS.SUCCESS:
+            if status == TRANSACTION_STATUS.SUCCESS:
                 participant.confirm()
 
             log.status = status
