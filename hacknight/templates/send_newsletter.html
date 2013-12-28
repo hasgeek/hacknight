@@ -1,0 +1,7 @@
+<p>
+  You are receiving this mail because you registered for Hacknight newsletter.
+  <a href="{{user.profile.url_for('unsubscribe')}}">Unsubscribe</a><br/>
+  <h3> {{ event.title }} </h3>
+  {{ event.description|safe }}<br/>
+  <a href="{{ event.url_for('apply', _external=True) }}"> Join Hacknight </a>
+</p>
