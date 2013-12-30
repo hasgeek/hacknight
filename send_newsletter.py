@@ -33,7 +33,7 @@ def get_template(name='send_newsletter.html'):
         return template
     except TemplateNotFound, e:
         logger.error(e)
-        return u''
+        return None
 
 
 def send_emails(event, email_campaign):
