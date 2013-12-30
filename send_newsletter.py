@@ -22,6 +22,7 @@ fh.setLevel(logging.INFO)
 fh.setFormatter(formatter)
 logger.addHandler(fh)
 
+
 # Jinja2 template for newsletter
 env = Environment(loader=PackageLoader('hacknight', 'templates'))
 
