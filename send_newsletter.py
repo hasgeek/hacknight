@@ -43,7 +43,7 @@ def send_emails(event, email_campaign):
     ctx.push()
     count = 0
     for user in email_campaign.yet_to_send():
-        if user.send_newsletter and user.email and user.email != sender.email:
+        if user.email:
             subject = u"New Hacknight {0}".format(event.title)
             template = get_template()
             html = template.render(user=user, event=event)
@@ -88,4 +88,4 @@ if __name__ == "__main__":
         main()
     else:
         print("Missing parameter")
-        print("python send_newsletter.py [development|production]")
+        print("Syntax: python send_newsletter.py [development|production]")

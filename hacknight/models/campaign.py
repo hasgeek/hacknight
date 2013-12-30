@@ -28,7 +28,6 @@ class EmailCampaign(BaseNameMixin, db.Model):
         if email_campaign:
             if email_campaign.status == EMAIL_CAMPAIGN_STATUS.COMPLETED:
                 return True
-            return False
         return False
 
     def yet_to_send(self):
