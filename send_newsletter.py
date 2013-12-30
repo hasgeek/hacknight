@@ -59,6 +59,7 @@ def send_emails(event, email_campaign):
                 logger.error(u"No HMTL found for {title}.".format(event.title))
                 break
     logger.info(u"Email campaign completed for {0} users.".format(count))
+    ctx.pop()
 
 
 def main():
