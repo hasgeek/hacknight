@@ -12,7 +12,7 @@ from hacknight.models import EmailCampaign, EmailCampaignUser, EMAIL_CAMPAIGN_ST
 from hacknight.views.event import send_email
 
 
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter(u'%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 logger = logging.getLogger('send_newsletter')
 logger.setLevel(logging.INFO)
