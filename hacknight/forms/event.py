@@ -27,24 +27,23 @@ STATUS_CHOICES = [
 
 SYNC_CHOICES = [
     # Empty value for opting out.
-    (u"", u""),
+    (u"N/A", u""),
     (SYNC_SERVICE.DOATTEND, u"DoAttend"),
 ]
 
 PAYMENT_GATEWAY_CHOICES = [
     # Empty value for opting out.
-    (u"", u""),
+    (u"N/A", u""),
     (PAYMENT_GATEWAY.EXPLARA, u"Explara"),
 ]
 
 CURRENCY_CHOICES = [
-    #INR, USD, GBP, EUR, PHP, ZAR
-    (u"INR", u"INR"),
-    (u"USD", u"USD"),
-    (u"GBP", u"GBP"),
-    (u"EUR", u"EUR"),
-    (u"PHP", u"PHP"),
-    (u"ZAR", u"ZAR"),
+    (u"INR", u"INR - India Rupee"),
+    (u"USD", u"USD - United States Dollar"),
+    (u"GBP", u"GBP - Great Britain Pound"),
+    (u"EUR", u"EUR - Euro"),
+    (u"PHP", u"PHP - Philippines Peso"),
+    (u"ZAR", u"ZAR - South Africa Rand"),
 ]
 
 
@@ -80,7 +79,7 @@ class EventForm(Form):
     sync_service = wtforms.SelectField("Sync service name", description="Name of the ticket sync service like doattend", choices=SYNC_CHOICES, validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     sync_eventsid = wtforms.TextField("Sync event ID", description="Sync events id like DoAttend event ID. More than one event ID is allowed separated by ,.", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     sync_credentials = wtforms.TextField("Sync credentials", description="Sync credentials like API Key for the event", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
-    payment_service = wtforms.SelectField("Payment gateway service name", description="Name of the payment gateway service like explara", choices=PAYMENT_GATEWAY_CHOICES, validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
+    payment_service = wtforms.SelectField("Payment service", description="Name of the payment gateway service", choices=PAYMENT_GATEWAY_CHOICES, validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     payment_credentials = wtforms.TextField("Payment gateway credentials", description="Payment gateway credentials like API Key", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
     currency = wtforms.SelectField("Currency", description="Currency in which participant should pay", choices=CURRENCY_CHOICES, validators=[wtforms.validators.Optional(), wtforms.validators.length(max=100)])
 
