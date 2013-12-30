@@ -8,7 +8,7 @@ from jinja2 import Environment, PackageLoader, TemplateNotFound
 from html2text import html2text
 
 from hacknight import app, init_for
-from hacknight.models import EmailCampaign, EmailCampaignUser, Event, User, db
+from hacknight.models import EmailCampaign, EmailCampaignUser, EMAIL_CAMPAIGN_STATUS, Event, User, db
 from hacknight.views.event import send_email
 
 
@@ -42,7 +42,7 @@ def send_emails(event, email_campaign):
     ctx = app.test_request_context('/')
     ctx.push()
     count = 0
-    for user in User.subscribed_to_newsletter():
+    for user in email_campaign.yet_to_send():
         if user.send_newsletter and user.email and user.email != sender.email:
             subject = u"New Hacknight {0}".format(event.title)
             template = get_template()
@@ -68,11 +68,14 @@ def main():
             if not EmailCampaign.sent_for(event):
                 start_datetime = datetime.datetime.now()
                 name = u'-'.join(["Newsletter campaign", event.title])
-                email_campaign = EmailCampaign(name=name, title=name, start_datetime=start_datetime, event=event)
-                db.session.add(email_campaign)
-                db.session.commit()
+                email_campaign = EmailCampaign.get(event)
+                if not email_campaign:
+                    email_campaign = EmailCampaign(name=name, title=name, start_datetime=start_datetime, event=event)
+                    db.session.add(email_campaign)
+                    db.session.commit()
                 send_emails(event, email_campaign)
                 email_campaign.end_datetime = datetime.datetime.now()
+                email_campaign.status = EMAIL_CAMPAIGN_STATUS.COMPLETED
                 db.session.commit()
     except Exception, e:
         logger.exception(e)

@@ -24,6 +24,7 @@ def upgrade():
     op.create_table('email_campaign',
         sa.Column('id', sa.Integer, nullable=False, primary_key=True),
         sa.Column('event_id', sa.Integer, nullable=False),
+        sa.Column('status', sa.Integer, nullable=False),
         sa.Column('start_datetime', sa.DateTime, nullable=False),
         sa.Column('end_datetime', sa.DateTime, nullable=True),
         sa.Column('name', sa.Unicode(250), nullable=False, unique=True),
