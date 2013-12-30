@@ -13,4 +13,4 @@ class ProfileForm(Form):
 
 
 class NewsLetterForm(Form):
-    send_newsletter = wtforms.BooleanField("Send NewsLetter", description="Do you want to receive notification about new hacknight?")
+    send_newsletter = wtforms.BooleanField("Receive NewsLetter", description="Do you want to receive notification about new hacknight?")

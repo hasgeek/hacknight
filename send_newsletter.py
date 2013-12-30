@@ -56,7 +56,7 @@ def send_emails(event, email_campaign):
                 db.session.commit()
                 count += 1
             else:
-                logger.info(u"Unable to load template.")
+                logger.error(u"No HMTL found for {title}.".format(event.title))
                 break
     logger.info(u"Email campaign completed for {0} users.".format(count))
 
@@ -65,11 +65,12 @@ def main():
     try:
         future_events = Event.upcoming_events()
         for event in future_events:
+            email_campaign = EmailCampaign.get(event)
             if not EmailCampaign.sent_for(event):
-                start_datetime = datetime.datetime.now()
-                name = u'-'.join(["Newsletter campaign", event.title])
                 email_campaign = EmailCampaign.get(event)
                 if not email_campaign:
+                    name = u'-'.join(["Newsletter campaign", event.title])
+                    start_datetime = datetime.datetime.now()
                     email_campaign = EmailCampaign(name=name, title=name, start_datetime=start_datetime, event=event)
                     db.session.add(email_campaign)
                     db.session.commit()

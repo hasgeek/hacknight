@@ -54,7 +54,7 @@ def profile_edit(profile):
 def profile_settings(profile):
     user = g.user
     if not user.profile == profile:
-        return render_redirect(user.profile.url_for('unsubscribe'))
+        return render_redirect(user.profile.url_for('settings'))
     form = NewsLetterForm(obj=user)
     action = request.args.get('action')
     if action == "unsubscribe":

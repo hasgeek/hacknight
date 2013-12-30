@@ -29,11 +29,10 @@ class EmailCampaign(BaseNameMixin, db.Model):
             if email_campaign.status == EMAIL_CAMPAIGN_STATUS.COMPLETED:
                 return True
             return False
-        else:
-            return False
+        return False
 
     def yet_to_send(self):
-        return set(User.subscribed_to_newsletter()) - set(self.users)
+        return set(User.subscribed_to_newsletter()) - set([user.user for user in self.users])
 
 
 class EmailCampaignUser(BaseMixin, db.Model):
