@@ -14,15 +14,10 @@
     <div id="page-header-inner">
       <div class="container">
         <div class="row">
-          <div class="span6 logo">
+          <div class="span10 logo">
               <a href="{{ url_for('index') }}" title="Home">
               <img id="inner-page-logo" src="{{ url_for('static', filename='img/hacknightlogo-small.png') }}" alt="Hacknight">
             </a>
-          </div>
-          <div class="span6">
-            <div class="row">
-              <h1 class="countdown-wrapper"><span id="countdown"></span></h1>
-            </div>
           </div>
           <!--<div class="span2 home-buttons" id="start-btn-after-login">
             {% if not g.user %}
@@ -47,31 +42,4 @@
 
 {% block basecontent %}
   {% block content %}{% endblock %}
-{% endblock %}
-
-{% block layoutscripts %}
-  <script>
-    var target_date = new Date("Jan 01, 2014 00:00:00").getTime();
-    var days, hours, minutes, seconds;
-    var countdown = document.getElementById("countdown");
-    setInterval(function () {
-        var current_date = new Date().getTime();
-        var seconds_left = (target_date - current_date) / 1000;
-        days = parseInt(seconds_left / 86400);
-        seconds_left = seconds_left % 86400;
-         
-        hours = parseInt(seconds_left / 3600);
-        seconds_left = seconds_left % 3600;
-         
-        minutes = parseInt(seconds_left / 60);
-        seconds = parseInt(seconds_left % 60);
-         
-        countdown.innerHTML = "<span class='countdown-box'>"+days + "</span><span class='countdown-text'>DAY</span><span class='countdown-box'>" + hours + "</span><span class='countdown-text'>HR</span><span class='countdown-box'>"+ minutes + "</span><span class='countdown-text'>MIN</span><span class='countdown-box'>" + seconds + "</span><span class='countdown-text'>SEC</span>"; 
-
-        if (seconds < 0){
-          clearInterval();
-          countdown.innerHTML = "Happy New Year!";
-        } 
-    }, 1000);
-  </script>
 {% endblock %}
