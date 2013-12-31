@@ -14,23 +14,37 @@
     <div id="page-header">
       <div class="container">
         <div class="row">
-          <div class="span10">
+          <div class="span6">
             <h1 class="masthead"><img src="{{ url_for('static', filename='img/hacknightlogo.png') }}" alt="Hacknight"></h1>
           </div>
-          <div class="span2 home-buttons">
+          <!-- <div class="span2 home-buttons">
             <div class="row">
               <a href="{{ url_for('login') }}" class="btn btn-primary btn-large" id="create" title="You need to be logged in to Join a Hacknight.">Join a hacknight</a>
             </div>
+          </div> -->
+
+          <!-- temp -->
+          <div class="span6">
+            <div class="row">
+              <h1 class="countdown-wrapper"><span id="countdown"></span></h1>
+            </div>
           </div>
+          <!-- /temp -->
+
         </div>
       </div>
     </div>
     {% else %}
-    <div id="page-header-after-login">
+    <div id="page-header">
       <div class="container">
         <div class="row">
-          <div class="span10">
+          <div class="span6">
             <h1 class="masthead"><img src="{{ url_for('static', filename='img/hacknightlogo.png') }}" alt="Hacknight"></h1>
+          </div>
+          <div class="span6">
+            <div class="row">
+              <h1 class="countdown-wrapper"><span id="countdown"></span></h1>
+            </div>
           </div>
         </div>
       </div>
@@ -57,3 +71,4 @@
     {% endblock %}
   {% endblock %}
 {% endblock %}
+
