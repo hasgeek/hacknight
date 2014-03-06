@@ -71,7 +71,7 @@ class Event(BaseScopedNameMixin, db.Model):
     profile_id = db.Column(db.Integer, db.ForeignKey('profile.id'), nullable=False)
     profile = db.relationship(Profile)
     parent = db.synonym('profile')
-    venue_id = db.Column(db.Integer, db.ForeignKey('venue.id'), nullable=False)
+    venue_id = db.Column(db.Integer, db.ForeignKey('venue.id'), nullable=True)
     venue = db.relationship('Venue')
     blurb = db.Column(db.Unicode(250), default=u'', nullable=False)
     description = db.Column(db.UnicodeText, default=u'', nullable=False)

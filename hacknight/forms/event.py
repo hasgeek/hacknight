@@ -54,6 +54,7 @@ class EventForm(Form):
     venue = QuerySelectField("Venue",
         description=Markup('Venue for this event (<a href="/venue/new">make new</a>)'),
         query_factory=lambda: Venue.query, get_label='title',
+        allow_blank=True, blank_text="Online event",
         )
     start_datetime = DateTimeField("Start date/time", description="The date and time at which this event begins", validators=[wtforms.validators.Required()])
     end_datetime = DateTimeField("End date/time", description="The date and time at which this event ends", validators=[wtforms.validators.Required()])
