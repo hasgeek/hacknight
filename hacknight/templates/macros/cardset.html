@@ -18,10 +18,10 @@
             </div>
             <div class="card-title">
               <h2>{{ e.title }}</h2>
-              <h3>{{ e.start_datetime|weekdate(e.venue.timezone) }} 
+              <h3>{{ e.start_datetime|weekdate(e.venue and e.venue.timezone or none) }}
                 {%- if e.end_datetime.day != e.start_datetime.day %}
-                - {{ e.end_datetime|weekdate(e.venue.timezone) }}
-                {%- endif -%}, {{ e.venue.city }}</h3>
+                - {{ e.end_datetime|weekdate(e.venue and e.venue.timezone or none) }}
+                {%- endif -%}, {{ e.venue.city if e.venue else 'Online'}}</h3>
             </div>
             <div class="card-body">
               {{ e.blurb }}

@@ -110,8 +110,12 @@ def event_edit(profile, event):
     if not workflow.can_edit():
         abort(403)
     form = EventForm(obj=event)
-    form.start_datetime.timezone = form.venue.data.timezone
-    form.end_datetime.timezone = form.venue.data.timezone
+    if form.venue.data:
+        form.start_datetime.timezone = form.venue.data.timezone
+        form.end_datetime.timezone = form.venue.data.timezone
+    else:
+        form.start_datetime.timezone = app.config['TIMEZONE']
+        form.end_datetime.timezone = app.config['TIMEZONE']
     if form.validate_on_submit():
         old_name = event.name
         form.populate_obj(event)
