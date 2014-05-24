@@ -43,8 +43,8 @@ class ParticipantWorkflow(DocumentWorkflow):
         """
         base_permissions = super(ParticipantWorkflow, self).permissions()
         # raise
-        base_permissions.append('participant')
-        base_permissions.extend(lastuser.permissions())
+        base_permissions.add('participant')
+        base_permissions.update(lastuser.permissions())
         return base_permissions
 
     @waiting_list.transition(pending, 'owner', title=u'move to pending list',
@@ -122,8 +122,8 @@ class EventWorkflow(DocumentWorkflow):
         base_permissions = super(EventWorkflow,
                                  self).permissions()
         if self.document.owner_is(g.user):
-            base_permissions.append('owner')
-        base_permissions.extend(lastuser.permissions())
+            base_permissions.add('owner')
+        base_permissions.update(lastuser.permissions())
         return base_permissions
 
     @draft.transition(active, 'owner', title=u"Open", category="primary",
