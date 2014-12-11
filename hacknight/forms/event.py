@@ -35,7 +35,7 @@ SYNC_CHOICES = [
 class EventForm(Form):
     title = wtforms.TextField("Title", description="Name of the Event", validators=[wtforms.validators.Required(), wtforms.validators.NoneOf(values=["new"]), wtforms.validators.length(max=250)])
     name = wtforms.TextField("URL name", validators=[wtforms.validators.Optional(), ValidName(),
-        AvailableName(u"There’s another event with the same name", scoped=True), wtforms.validators.length(max=250)],
+        AvailableName(u"There’s another event with the same name"), wtforms.validators.length(max=250)],
         description="URL identifier, leave blank to autogenerate")
     blurb = wtforms.TextField("Blurb", description="Single line blurb introducing the event", validators=[wtforms.validators.length(max=250)])
     description = RichTextField("Description", description="Detailed description of the event", linkify=False,
