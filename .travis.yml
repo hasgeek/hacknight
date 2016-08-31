@@ -8,5 +8,6 @@ install:
 script: python runtests.py 
 notifications:
   email: false
-  slack: hasgeek:HDCoMDj3T4ICB59qFFVorCG8
-  slack: friendsofhasgeek:3bLViYSzhfaThJovFYCVD3fX
+  slack:
+    - hasgeek:HDCoMDj3T4ICB59qFFVorCG8
+    - friendsofhasgeek:3bLViYSzhfaThJovFYCVD3fX
