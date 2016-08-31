@@ -8,4 +8,5 @@ install:
 script: python runtests.py 
 notifications:
   email: false
-  irc: "irc.freenode.net#hasgeek-dev"
+  slack: hasgeek:HDCoMDj3T4ICB59qFFVorCG8
+  slack: friendsofhasgeek:3bLViYSzhfaThJovFYCVD3fX
