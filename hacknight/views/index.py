@@ -38,7 +38,7 @@ def shortdate(date, timezone=None):
         tz = pytz_timezone(timezone)
     else:
         tz = app.config['tz']
-    return tz.normalize(utc.localize(date).astimezone(tz)).strftime("%B %d, %Y")
+    return tz.normalize(utc.localize(date).astimezone(tz)).strftime("%e %B %Y")
 
 
 @app.template_filter('fulldate')
@@ -47,7 +47,7 @@ def fulldate(date, timezone=None):
         tz = pytz_timezone(timezone)
     else:
         tz = app.config['tz']
-    return tz.normalize(utc.localize(date).astimezone(tz)).strftime("%a, %b %e %l:%M %p")
+    return tz.normalize(utc.localize(date).astimezone(tz)).strftime("%a, %e %b %l:%M %p")
 
 
 @app.template_filter('weekdate')
@@ -56,7 +56,7 @@ def weekdate(date, timezone=None):
         tz = pytz_timezone(timezone)
     else:
         tz = app.config['tz']
-    return tz.normalize(utc.localize(date).astimezone(tz)).strftime("%a, %b %e")
+    return tz.normalize(utc.localize(date).astimezone(tz)).strftime("%a, %e %b")
 
 
 @app.template_filter('cleanurl')
