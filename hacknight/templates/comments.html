@@ -41,10 +41,10 @@
 
               <span class="dot">&middot;</span>
               <span class="com-date">
-              {{ comment.created_at.strftime("%a, %b %e") }}
+              {{ comment.created_at.strftime("%a, %e %b") }}
               {%- if comment.edited_at %}
-                <!--(edit {{ comment.edited_at.strftime("%a, %b %e") }})-->
-                <i class="icon-pencil" title="edited {{ comment.edited_at.strftime("%a, %b %e") }}"></i>
+                <!--(edit {{ comment.edited_at.strftime("%a, %e %b") }})-->
+                <i class="icon-pencil" title="edited {{ comment.edited_at.strftime("%a, %e %b") }}"></i>
               {%- endif %}
               </span>
               <a class="collapse" href="#"><i class="icon-caret-up"></i></a><a class="uncollapse hidden" href="#"><i class="icon-caret-down"></i></a>
