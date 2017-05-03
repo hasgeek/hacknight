@@ -5,7 +5,7 @@ import requests
 from datetime import datetime
 
 from flask import url_for, Markup
-from flask.ext.lastuser.sqlalchemy import ProfileMixin
+from flask_lastuser.sqlalchemy import ProfileMixin
 from sqlalchemy.orm import deferred
 from sqlalchemy import not_
 from hacknight.models import db, BaseNameMixin, BaseScopedNameMixin, BaseMixin

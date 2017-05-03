@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import wtforms
-from flask.ext.wtf import Form
+from flask_wtf import Form
 
 __all__ = ['CommentForm', 'DeleteCommentForm', 'ConfirmDeleteForm']
 

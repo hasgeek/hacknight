@@ -4,10 +4,10 @@
 
 from pytz import timezone
 from flask import Flask
-from flask.ext.lastuser import Lastuser
-from flask.ext.lastuser.sqlalchemy import UserManager
-from flask.ext.mail import Mail
-from flask.ext.assets import Environment, Bundle
+from flask_lastuser import Lastuser
+from flask_lastuser.sqlalchemy import UserManager
+from flask_mail import Mail
+from flask_assets import Environment, Bundle
 from baseframe import baseframe, assets, Version
 import coaster.app
 from ._version import __version__

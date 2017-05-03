@@ -3,7 +3,7 @@
 from sqlalchemy.orm import joinedload
 from sqlalchemy import func
 from html2text import html2text
-from flask.ext.mail import Message
+from flask_mail import Message
 from flask import render_template, abort, flash, url_for, g, request, Markup, current_app, Response, stream_with_context
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla

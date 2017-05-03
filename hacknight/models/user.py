@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import url_for
-from flask.ext.lastuser.sqlalchemy import UserBase
+from flask_lastuser.sqlalchemy import UserBase
 from hacknight.models import db
 from hacknight.models.event import Profile
 

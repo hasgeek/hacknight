@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from flask import Response, redirect, flash, g
-from flask.ext.lastuser import LastUser
-from flask.ext.lastuser.sqlalchemy import UserManager
+from flask_lastuser import LastUser
+from flask_lastuser.sqlalchemy import UserManager
 from coaster.views import get_next_url
 
 from hacknight import app, lastuser
