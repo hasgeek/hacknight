@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+#: Debug mode (put this value in development.py only, never in settings.py)
+DEBUG = True
 #: Site title
 SITE_TITLE = 'HasGeek App'
 #: Site id (for network bar)
