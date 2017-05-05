@@ -9,6 +9,7 @@ from flask_lastuser.sqlalchemy import UserManager
 from flask_mail import Mail
 from flask_assets import Environment, Bundle
 from baseframe import baseframe, assets, Version
+from flask_migrate import Migrate
 import coaster.app
 from ._version import __version__
 
@@ -35,6 +36,7 @@ assets['hacknight.js'][version] = 'js/scripts.js'
 
 
 coaster.app.init_app(app)
+migrate = Migrate(app, db)
 baseframe.init_app(app, requires=['baseframe', 'toastr', 'hacknight'], bundle_js=assets.require('leaflet.js'), bundle_css=assets.require('leaflet.css'))
 lastuser.init_app(app)
 lastuser.init_usermanager(UserManager(hacknight.models.db, hacknight.models.User))

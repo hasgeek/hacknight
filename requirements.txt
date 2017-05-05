@@ -12,6 +12,6 @@ markdown
 Flask-WTF
 unicodecsv
 Flask-Script
-https://github.com/jace/flask-alembic/archive/master.zip
 Flask-Mail
 html2text
+Flask-Migrate
