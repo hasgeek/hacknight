@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import wtforms
-from coaster import getbool
+from coaster.utils import getbool
 from baseframe.forms import Form, RichTextField
 
 __all__ = ['ProjectForm']
