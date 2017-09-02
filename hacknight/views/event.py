@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
 
+import requests
+import time
 from sqlalchemy.orm import joinedload
 from sqlalchemy import func
 from html2text import html2text
 from flask_mail import Message
 from flask import render_template, abort, flash, url_for, g, request, Markup, current_app, Response, stream_with_context
 from coaster.views import load_model, load_models
+from baseframe.staticdata import country_codes
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app, mail
-from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS, EventRedirect
+from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS, EventRedirect, PaymentGatewayLog, TRANSACTION_STATUS, transaction_status
 from hacknight.forms.event import EventForm, ConfirmWithdrawForm, SendEmailForm, EmailEventParticipantsForm
-from hacknight.forms.participant import ParticipantForm
+from hacknight.forms.participant import ParticipantForm, ExplaraForm
 from hacknight.views.login import lastuser
 from hacknight.views.workflow import ParticipantWorkflow
 
@@ -196,6 +199,10 @@ def event_update_participant_status(profile, event):
         if participant.status != status:
             if event.confirmed_participants_count() < event.maximum_participants:
                 participant.status = status
+                if status == PARTICIPANT_STATUS.CONFIRMED:
+                    participant.purchased_ticket = True
+                else:
+                    participant.purchased_ticket = False
                 try:
                     text_message = unicode(getattr(event, (participants_email_attrs[status] + '_text')))
                     text_message = text_message.replace("*|FULLNAME|*", participant.user.fullname)
@@ -238,6 +245,8 @@ def event_apply(profile, event):
             participant.status = PARTICIPANT_STATUS.PENDING if event.maximum_participants > total_participants else PARTICIPANT_STATUS.WL
             db.session.add(participant)
             db.session.commit()
+            if event.has_payment_gateway():
+                return render_redirect(event.url_for('purchase_ticket'), code=303)
             flash(u"Your request to participate has been recorded; you will be notified by the event manager", "success")
         else:
             return render_form(form=form, message=Markup(event.apply_instructions) if event.apply_instructions else "",
@@ -403,3 +412,87 @@ def email_template_form(profile, event):
         return render_redirect(event.url_for(), code=303)
     return render_form(form=form, title="Email Participants form", submit=u"Save",
         cancel_url=event.url_for(), ajax=False)
+
+
+@app.route('/<profile>/<event>/purchase_ticket/explara', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'), permission='buy-ticket')
+def purchase_ticket_explara(profile, event):
+    user = g.user
+    participant = Participant.query.filter_by(event=event, user=user).first()
+    if not participant.purchased_ticket:
+        form = ExplaraForm(obj=participant)
+        if form.validate_on_submit():
+            country = u'India'
+            for name in country_codes:
+                if name[0] == form.country.data:
+                    country = name[1]
+                    break
+            data = {
+                'amount': float(event.ticket_price),
+                'orderNo': int(time.time() * 1000000),
+                'bookingKey': event.payment_credentials,
+                'callbackUrl': event.url_for('payment_redirect', _external=True),
+                'name': form.name.data,
+                'emailId': form.email.data,
+                'phoneNo': form.phone_no.data,
+                'country': country,
+                'state': form.state.data,
+                'city': form.city.data,
+                'address': form.address.data,
+                'zipcode': form.zip_code.data,
+                'currency': event.currency,
+                'pg': 'pg2', # find a way to choose between 'pg1' or 'pg2'.
+            }
+            log = PaymentGatewayLog(order_no=data.get('orderNo'), user=user, event=event, status=transaction_status.get('pending'))
+            db.session.add(log)
+            db.session.commit()
+            try:
+                r = requests.post("https://em.explara.com/booking", data=data)
+                return r.content
+            except requests.ConnectionError:
+                flash(u"Oops, something went wrong, please try after sometime", 'error')
+                return render_redirect(event.url_for())
+        return render_form(form=form, title="Buy ticket", submit=u"Buy",
+            cancel_url=event.url_for(), ajax=False)
+    else:
+        flash(u"You have already purchased ticket", u'success')
+        return render_redirect(event.url_for())
+
+
+@app.route('/<profile>/<event>/payment/redirect/explara', methods=['POST'])
+@load_models(
+  (Profile, {'name': 'profile'}, 'profile'),
+  (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
+def payment_redirect_explara(profile, event):
+    if request.method == "POST":
+        user = g.user
+        form = request.form
+        if form:
+            participant = Participant.query.filter_by(event=event, user=user).first()
+            log = PaymentGatewayLog.get_recent_transaction(user=user)
+
+            # Decode base64 response
+            import base64
+            resp = base64.b64decode(form.get('response'))
+
+            try:
+                status = transaction_status[form.get('status')]
+            except ValueError:
+                status = transaction_status.get('failure')
+
+            if status == TRANSACTION_STATUS.SUCCESS:
+                participant.confirm()
+
+            log.status = status
+            log.server_response = resp
+
+            db.session.commit()
+
+            flash(u"Ticket purchase is successful", 'success')
+            return render_redirect(event.url_for())
+        else:
+            flash(u"Surprisingly new problem occured. Try after sometime", 'error')
+            return render_redirect(event.url_for())

@@ -11,7 +11,7 @@ from sqlalchemy import not_
 from hacknight.models import db, BaseNameMixin, BaseScopedNameMixin, BaseMixin
 
 
-__all__ = ['Profile', 'Event', 'EVENT_STATUS', 'SYNC_SERVICE', 'PROFILE_TYPE', 'EventRedirect']
+__all__ = ['Profile', 'Event', 'EVENT_STATUS', 'SYNC_SERVICE', 'PROFILE_TYPE', 'EventRedirect', 'PAYMENT_GATEWAY']
 #need to add EventTurnOut, EventPayment later
 
 
@@ -43,6 +43,10 @@ class EVENT_STATUS:
 
 class SYNC_SERVICE:
     DOATTEND = u"doattend"
+
+
+class PAYMENT_GATEWAY:
+    EXPLARA = u"Explara"
 
 
 class SyncException(Exception):
@@ -95,6 +99,11 @@ class Event(BaseScopedNameMixin, db.Model):
     sync_credentials = db.Column(db.Unicode(100), nullable=True)
     sync_eventsid = db.Column(db.Unicode(100), nullable=True)
 
+    # Payment gateway details
+    payment_service = db.Column(db.Unicode(100), nullable=True)
+    payment_credentials = db.Column(db.Unicode(100), nullable=True)
+    currency = db.Column(db.Unicode(3), nullable=True)
+
     __table_args__ = (db.UniqueConstraint('name', 'profile_id'),)
 
     # List of statuses which are not allowed to be displayed in index page.
@@ -111,6 +120,9 @@ class Event(BaseScopedNameMixin, db.Model):
     def owner_is(self, user):
         """Check if a user is an owner of this event"""
         return user is not None and self.profile.userid in user.user_organizations_owned_ids()
+
+    def has_payment_gateway(self):
+        return self.payment_service and self.payment_credentials and self.currency
 
     def has_sync(self):
         return self.sync_service and self.sync_credentials and self.sync_eventsid
@@ -150,6 +162,13 @@ class Event(BaseScopedNameMixin, db.Model):
             yield u"Sync credentials missing.\n"
             yield Markup(final_msg)
 
+    def is_tickets_available(self):
+        if self.has_payment_gateway():
+            if self.confirmed_participants_count() < self.maximum_participants:
+                return True
+            return False
+        return False
+
     def participant_is(self, user):
         from hacknight.models.participant import Participant
         return Participant.get(user, self) is not None
@@ -161,7 +180,7 @@ class Event(BaseScopedNameMixin, db.Model):
 
     def confirmed_participants_count(self):
         from hacknight.models.participant import Participant, PARTICIPANT_STATUS
-        return Participant.query.filter_by(status=PARTICIPANT_STATUS.CONFIRMED, event=self).count()
+        return Participant.query.filter_by(status=PARTICIPANT_STATUS.CONFIRMED, event=self, purchased_ticket=True).count()
 
     def permissions(self, user, inherited=None):
         perms = super(Event, self).permissions(user, inherited)
@@ -173,6 +192,8 @@ class Event(BaseScopedNameMixin, db.Model):
             perms.add('edit')
             perms.add('delete')
             perms.add('send-email')
+        if self.has_payment_gateway():
+            perms.add('buy-ticket')
         return perms
 
     def url_for(self, action='view', _external=False):
@@ -200,6 +221,10 @@ class Event(BaseScopedNameMixin, db.Model):
             return url_for('email_template_form', profile=self.profile.name, event=self.name, _external=_external)
         elif action == 'sync':
             return url_for('event_sync', profile=self.profile.name, event=self.name, _external=_external)
+        elif action == 'purchase_ticket':
+            return url_for('purchase_ticket_explara', profile=self.profile.name, event=self.name, _external=_external)
+        elif action == 'payment_redirect':
+            return url_for('payment_redirect_explara', profile=self.profile.name, event=self.name, _external=_external)
 
 
 class EventRedirect(BaseMixin, db.Model):

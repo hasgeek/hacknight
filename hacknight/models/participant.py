@@ -24,6 +24,7 @@ class Participant(BaseMixin, db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
     event = db.relationship(Event, backref=db.backref('participants', cascade='all, delete-orphan'))
     status = db.Column(db.Integer, default=PARTICIPANT_STATUS.PENDING, nullable=False)
+    purchased_ticket = db.Column(db.Boolean, default=False, nullable=False)
     mentor = db.Column(db.Boolean, default=False, nullable=False)
     reason_to_join = db.Column(db.UnicodeText, default=u'', nullable=False)
     email = db.Column(db.Unicode(80), default=u'', nullable=False)
@@ -46,6 +47,7 @@ class Participant(BaseMixin, db.Model):
 
     def confirm(self):
         self.status = PARTICIPANT_STATUS.CONFIRMED
+        self.purchased_ticket = True
 
     @classmethod
     def get(cls, user, event):
