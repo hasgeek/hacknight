@@ -13,13 +13,13 @@ from hacknight.views.login import lastuser
 @app.route('/venue')
 def venue_list():
     venues = Venue.query.order_by('title').all()
-    return render_template('venuelist.html', venues=venues)
+    return render_template('venuelist.html.jinja2', venues=venues)
 
 
 @app.route('/venue/<venue>')
 @load_model(Venue, {'name': 'venue'}, 'venue')
 def venue_view(venue):
-    return render_template('venue.html', venue=venue)
+    return render_template('venue.html.jinja2', venue=venue)
 
 
 @app.route('/venue/new', methods=['GET', 'POST'])

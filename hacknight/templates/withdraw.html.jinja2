@@ -1,5 +1,5 @@
-{% extends "layout.html" %}
-{% from "forms.html" import renderform, ajaxform %}
+{% extends "layout.html.jinja2" %}
+{% from "forms.html.jinja2" import renderform, ajaxform %}
 {% block content %}
 <p>{{ message }}</p>
 <form id="delete" method="POST">
@@ -8,7 +8,7 @@
   {% if form.csrf_token.errors %}
     {% for error in form.csrf_token.errors %}<div class="error">{{ error }}</div>{% endfor %}
   {% endif %}
-  <input class="btn btn-danger" type="submit" name="delete" value="Delete"/>
+  <input class="btn btn-danger" type="submit" name="delete" value="Withdraw"/>
   <input class="btn" type="submit" name="cancel" value="Cancel"/>
 </form>
 

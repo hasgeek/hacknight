@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "layout.html.jinja2" %}
 {% block title %}{{ event.title }}{% endblock %}
 
 {% block baseheadline -%}
@@ -76,22 +76,22 @@
             newStatus = el.attr('data-status'),
             statusLabels = {{statuslabels | tojson | safe}},
             isFull = "{{ event.confirmed_participants_count() < event.maximum_participants }}";
-        if (newStatus == 2){ //if the new status is confirmed 
+        if (newStatus == 2){ //if the new status is confirmed
           if (isFull === "True") {
-            $('div#contact-info').html("");  
+            $('div#contact-info').html("");
           }
         } else {
           e.stopPropagation();
           participantEl.children('.participant-status-label').text(statusLabels[newStatus]);
         }
-        if (isFull === "True" || (isFull === "False" && newStatus != 2)){ 
+        if (isFull === "True" || (isFull === "False" && newStatus != 2)){
         //Send Ajax request to accept participant incase of vacancy.
           $.ajax({
             type: "POST",
             url: "{{ event.url_for('update') }}",
             data: {participantid: id, status: newStatus},
             success: function(){ window.location.reload(true);},
-            error: function(msg){ toastr.error("Unable to send request");} 
+            error: function(msg){ toastr.error("Unable to send request");}
           });
         } else {
           toastr.error("Venue capacity is full.");

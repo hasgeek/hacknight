@@ -1,5 +1,5 @@
-{% extends "layout.html" %}
-{% from "macros/cardset.html" import cardset with context %}
+{% extends "layout.html.jinja2" %}
+{% from "macros/cardset.html.jinja2" import cardset with context %}
 {% block title %}{{ profile.title }}{% endblock %}
 
 {% block content %}

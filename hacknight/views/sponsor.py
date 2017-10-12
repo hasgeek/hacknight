@@ -78,4 +78,4 @@ def sponsor_delete(profile, event, sponsor):
     (Sponsor, {'name': 'sponsor', 'event': 'event'}, 'sponsor'),
     )
 def sponsor_view(profile, event, sponsor):
-    return render_template('sponsor.html', sponsor=sponsor, profile=profile, event=event)
+    return render_template('sponsor.html.jinja2', sponsor=sponsor, profile=profile, event=event)
