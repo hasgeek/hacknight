@@ -1,6 +1,6 @@
-{% extends "layout.html" %}
-{% from "baseframe/components.html" import networkbar with context %}
-{% from "macros/cardset.html" import cardset with context %}
+{% extends "layout.html.jinja2" %}
+{% from "baseframe/components.html.jinja2" import networkbar with context %}
+{% from "macros/cardset.html.jinja2" import cardset with context %}
 {% block titletags -%}
   <title>{% block title %}{{ config['SITE_TITLE'] }}{% endblock %}</title>
   <meta name="DC.title" content="{{ config['SITE_TITLE'] }}"/>

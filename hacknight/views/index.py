@@ -11,7 +11,7 @@ def index():
     # TODO: Filter events by status
     upcoming_events = Event.upcoming_events()
     past_events = Event.past_events()
-    return render_template('index.html', upcoming_events=upcoming_events, past_events=past_events)
+    return render_template('index.html.jinja2', upcoming_events=upcoming_events, past_events=past_events)
 
 
 @app.template_filter('startdate')
@@ -81,4 +81,4 @@ def page_not_found(e):
             redirect_to = EventRedirect.query.filter_by(profile=profile, name=r['event']).first()
             if redirect_to:
                 return redirect(redirect_to.event.url_for(), 302)
-    return render_template('404.html'), 404
+    return render_template('404.html.jinja2'), 404

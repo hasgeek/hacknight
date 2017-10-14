@@ -105,7 +105,7 @@ def project_delete(profile, project, event):
             return render_redirect(event.url_for(), code=303)
         elif 'cancel' in request.form:
             return render_redirect(project.url_for(), code=303)
-    return render_template('baseframe/delete.html', form=form, title=u"Confirm delete",
+    return render_template('baseframe/delete.html.jinja2', form=form, title=u"Confirm delete",
         message=u"Delete '%s' ? It will remove comments, votes and all information related to the project. This operation cannot be undone." % (project.title))
 
 
@@ -237,7 +237,7 @@ def project_view(profile, event, project):
             else:
                 flash("No such comment.", "error")
             return redirect(project.url_for())
-    return render_template('project.html', event=event, project=project, profile=profile,
+    return render_template('project.html.jinja2', event=event, project=project, profile=profile,
         comments=comments, commentform=commentform, delcommentform=delcommentform,
         breadcrumbs=[(url_for('index'), "home")], user_is_member=user_is_member)
 
@@ -461,7 +461,7 @@ def project_leave(profile, project, event):
         else:
             flash("You need to be a participant to leave this team.", "fail")
         return redirect(project.url_for(), code=303)
-    return render_template('baseframe/delete.html', form=form, title=u"Confirm delete",
+    return render_template('baseframe/delete.html.jinja2', form=form, title=u"Confirm delete",
         message=u"Leave project '%s'? It will remove your participation from this project. This operation cannot be undone." % (project.title))
 
 
@@ -489,7 +489,7 @@ def event_export(profile, event):
             "Job": p.job_title,
             "City": "",
             "Twitter": "",
-            "Tshirt": 0, #tshirt size is integer in peopleflow 
+            "Tshirt": 0, #tshirt size is integer in peopleflow
             "Date": p.created_at,
             "Order ID": "",
             "Skill Level": p.skill_level,

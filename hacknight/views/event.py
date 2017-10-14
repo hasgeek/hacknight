@@ -61,7 +61,7 @@ def event_view(profile, event):
             applied = True
             break
     current_participant = Participant.get(user=g.user, event=event) if g.user else None
-    return render_template('event.html', profile=profile, event=event,
+    return render_template('event.html.jinja2', profile=profile, event=event,
         projects=event.projects,
         accepted_participants=accepted_participants,
         rest_participants=rest_participants,
@@ -161,7 +161,7 @@ def event_open(profile, event):
     participants = Participant.query.filter(
         Participant.status != PARTICIPANT_STATUS.WITHDRAWN,
         Participant.event == event).order_by(Participant.status).order_by(Participant.created_at)
-    return render_template('manage_event.html', profile=profile, event=event,
+    return render_template('manage_event.html.jinja2', profile=profile, event=event,
         participants=participants, statuslabels=participant_status_labels, enumerate=enumerate)
 
 
@@ -172,7 +172,7 @@ def event_open(profile, event):
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'), permission='edit')
 def event_sync(profile, event):
     participants = Participant.unconfirmed_for(event)
-    return Response(stream_template('stream.html',
+    return Response(stream_template('stream.html.jinja2',
             stream=stream_with_context(event.sync_participants(participants)),
             title="Syncing participants..."))
 
@@ -285,7 +285,7 @@ def event_withdraw(profile, event):
                 flash(u"Your request to withdraw from {0} is recorded".format(event.title), "success")
             values = {'profile': profile.name, 'event': event.name}
             return render_redirect(event.url_for(), code=303)
-        return render_template('withdraw.html', form=form, title=u"Confirm withdraw",
+        return render_template('withdraw.html.jinja2', form=form, title=u"Confirm withdraw",
             message=u"Withdraw from '%s' ? You can come back anytime." % (event.title))
     else:
         abort(404)

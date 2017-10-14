@@ -1,6 +1,6 @@
-{% extends "layout.html" %}
-{% from "comments.html" import commenttree %}
-{% from "forms.html" import renderform, ajaxform %}
+{% extends "layout.html.jinja2" %}
+{% from "comments.html.jinja2" import commenttree %}
+{% from "forms.html.jinja2" import renderform, ajaxform %}
 
 {% block title %}{{ project.title }} &mdash; {{ event.title }}{% endblock %}
 {% block headline %}{% endblock %}

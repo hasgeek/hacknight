@@ -1,5 +1,5 @@
-{% extends "baseframe.html" %}
-{% from "baseframe/components.html" import networkbar with context %}
+{% extends "baseframe.html.jinja2" %}
+{% from "baseframe/components.html.jinja2" import networkbar with context %}
 
 {%- block image_src %}
   <!-- Overriding so that facebook can pickup hacknight logo rather than HasGeek logo-->

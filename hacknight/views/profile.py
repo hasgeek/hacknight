@@ -20,7 +20,7 @@ def profile_view(profile):
         # User profile. Show all events this user owns or is participating in.
         events = list(set(events + [p.event for p in Participant.query.filter_by(user=user).all()]))
         events.sort(key=lambda item: item.start_datetime, reverse=True)
-    return render_template('profile.html', profile=profile, events=events, is_user=True if user else False)
+    return render_template('profile.html.jinja2', profile=profile, events=events, is_user=True if user else False)
 
 
 @app.route('/<profile>/edit', methods=['GET', 'POST'])
