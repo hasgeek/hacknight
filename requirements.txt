@@ -12,6 +12,6 @@ markdown==2.6.11
 Flask-WTF==0.14.2
 unicodecsv==0.14.1
 Flask-Script==2.0.6
-Flask-Mail
+Flask-Mail==0.9.1
 html2text
 Flask-Migrate
