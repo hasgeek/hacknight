@@ -8,7 +8,7 @@ pytz==2018.5
 https://github.com/jace/pydocflow/zipball/master
 ordereddict==1.1
 fabric==2.3.1
-markdown==3.0
+markdown==3.0.1
 Flask-WTF==0.14.2
 unicodecsv==0.14.1
 Flask-Script==2.0.6
