@@ -14,4 +14,4 @@ unicodecsv==0.14.1
 Flask-Script==2.0.6
 Flask-Mail==0.9.1
 html2text==2018.1.9
-Flask-Migrate==2.5.0
+Flask-Migrate==2.5.1
