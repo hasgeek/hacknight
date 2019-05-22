@@ -3,7 +3,6 @@
 import wtforms
 from coaster.utils import sorted_timezones
 from baseframe.forms import Form, RichTextField
-from baseframe.staticdata import country_codes
 
 __all__ = ['VenueForm']
 
