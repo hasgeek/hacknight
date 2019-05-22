@@ -2,6 +2,7 @@
 
 import wtforms
 from coaster.utils import sorted_timezones
+from baseframe import localized_country_list
 from baseframe.forms import Form, RichTextField
 
 __all__ = ['VenueForm']
@@ -16,8 +17,11 @@ class VenueForm(Form):
     city = wtforms.TextField("City", validators=[wtforms.validators.Required(), wtforms.validators.length(max=30)])
     state = wtforms.TextField("State", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=30)])
     postcode = wtforms.TextField("Post code", validators=[wtforms.validators.Optional(), wtforms.validators.length(max=20)])
-    country = wtforms.SelectField("Country", validators=[wtforms.validators.Required(), wtforms.validators.length(max=2)], choices=country_codes, default="IN")
+    country = wtforms.SelectField("Country", validators=[wtforms.validators.Required(), wtforms.validators.length(max=2)], default="IN")
     timezone = wtforms.SelectField('Timezone', validators=[wtforms.validators.Required()], choices=sorted_timezones())
     latitude = wtforms.DecimalField("Latitude", places=None, validators=[wtforms.validators.Optional(), wtforms.validators.NumberRange(-90, 90)])
     longitude = wtforms.DecimalField("Longitude", places=None, validators=[wtforms.validators.Optional(), wtforms.validators.NumberRange(-180, 180)])
     profile_id = wtforms.SelectField("Owner", description="The owner of this listing", coerce=int, validators=[wtforms.validators.Required()])
+
+    def set_queries(self):
+        self.country.choices = [('', '')] + localized_country_list()
