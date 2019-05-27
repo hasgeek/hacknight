@@ -64,6 +64,10 @@ class Profile(ProfileMixin, BaseNameMixin, db.Model):
             return url_for('profile_view', profile=self.name, _external=_external)
         elif action == 'new-event':
             return url_for('event_new', profile=self.name, _external=_external)
+        elif action == 'settings':
+            return url_for('profile_settings', profile=self.name, _external=_external)
+        elif action == 'unsubscribe':
+            return url_for('profile_settings', action='unsubscribe', profile=self.name, _external=_external)
 
 
 class Event(BaseScopedNameMixin, db.Model):

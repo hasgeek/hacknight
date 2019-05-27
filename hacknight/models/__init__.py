@@ -12,3 +12,4 @@ from hacknight.models.venue import *
 from hacknight.models.project import *
 from hacknight.models.participant import *
 from hacknight.models.sponsor import *
+from hacknight.models.campaign import *

@@ -14,6 +14,7 @@ class User(UserBase, db.Model):
     phone_no = db.Column(db.Unicode(15), default=u'', nullable=True)
     job_title = db.Column(db.Unicode(120), default=u'', nullable=True)
     company = db.Column(db.Unicode(1200), default=u'', nullable=True)
+    send_newsletter = db.Column(db.Boolean, default=True, nullable=False)
 
     @property
     def profile_url(self):
@@ -27,6 +28,10 @@ class User(UserBase, db.Model):
     def profiles(self):
         return [self.profile] + Profile.query.filter(
             Profile.userid.in_(self.organizations_owned_ids())).order_by('title').all()
+
+    @classmethod
+    def subscribed_to_newsletter(cls):
+        return cls.query.filter_by(send_newsletter=True).all()
 
     def projects_in(self, event):
         return [member.project for member in self.project_memberships if member.project.event == event]
