@@ -3,7 +3,7 @@
 
 from hacknight.models import db
 from hacknight.models.user import User
-from test_data import USERS
+from .test_data import USERS
 from nose.tools import ok_, assert_raises
 import sqlalchemy
 

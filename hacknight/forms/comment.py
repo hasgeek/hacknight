@@ -21,5 +21,5 @@ class ConfirmDeleteForm(Form):
     Confirm a delete operation
     """
     # The labels on these widgets are not used. See delete.html.
-    delete = wtforms.SubmitField(u"Delete")
-    cancel = wtforms.SubmitField(u"Cancel")
+    delete = wtforms.SubmitField("Delete")
+    cancel = wtforms.SubmitField("Cancel")

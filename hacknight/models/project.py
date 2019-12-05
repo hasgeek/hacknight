@@ -93,7 +93,7 @@ class ProjectMember(BaseMixin, db.Model):
     user = db.relationship(User, backref=db.backref('project_memberships', cascade='all, delete-orphan'))
 
     status = db.Column(db.Integer, nullable=False, default=0)
-    role = db.Column(db.Unicode(250), nullable=False, default=u'')
+    role = db.Column(db.Unicode(250), nullable=False, default='')
 
     __table_args__ = (db.UniqueConstraint('project_id', 'user_id'),)
 

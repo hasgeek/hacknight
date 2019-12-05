@@ -15,7 +15,7 @@ import sqlalchemy as sa
 
 
 def upgrade():
-    op.add_column('venue', sa.Column('timezone', sa.Unicode(length=40), nullable=False, server_default=u'UTC'))
+    op.add_column('venue', sa.Column('timezone', sa.Unicode(length=40), nullable=False, server_default='UTC'))
     op.alter_column('venue', 'timezone', server_default=None)
 
 

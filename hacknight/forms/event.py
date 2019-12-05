@@ -27,15 +27,15 @@ STATUS_CHOICES = [
 
 SYNC_CHOICES = [
     # Empty value for opting out.
-    (u"", u""),
-    (SYNC_SERVICE.DOATTEND, u"DoAttend"),
+    ("", ""),
+    (SYNC_SERVICE.DOATTEND, "DoAttend"),
 ]
 
 
 class EventForm(Form):
     title = wtforms.TextField("Title", description="Name of the Event", validators=[wtforms.validators.Required(), wtforms.validators.NoneOf(values=["new"]), wtforms.validators.length(max=250)])
     name = wtforms.TextField("URL name", validators=[wtforms.validators.Optional(), ValidName(),
-        AvailableName(u"There’s another event with the same name"), wtforms.validators.length(max=250)],
+        AvailableName("There’s another event with the same name"), wtforms.validators.length(max=250)],
         description="URL identifier, leave blank to autogenerate")
     blurb = wtforms.TextField("Blurb", description="Single line blurb introducing the event", validators=[wtforms.validators.length(max=250)])
     description = RichTextField("Description", description="Detailed description of the event", linkify=False,
@@ -68,7 +68,7 @@ class EventForm(Form):
     
     def validate_end_datetime(self, field):
         if field.data < self.start_datetime.data:
-            raise wtforms.ValidationError(u"Your event can’t end before it starts.")
+            raise wtforms.ValidationError("Your event can’t end before it starts.")
 
     def validate_sync_credentials(self, field):
         # Remove extra space in front and end.
@@ -82,7 +82,7 @@ class EventForm(Form):
             events_id = field.data.strip().split(',')
             for event_id in events_id:
                 if not re.match(event_id_pattern, event_id.strip()):
-                    raise wtforms.ValidationError(u"Event id {event_id} is invalid".format(event_id=event_id))
+                    raise wtforms.ValidationError("Event id {event_id} is invalid".format(event_id=event_id))
             if events_id:
                 field.data = ",".join(events_id)
 
@@ -98,8 +98,8 @@ class ConfirmWithdrawForm(Form):
     """
     Confirm a delete operation
     """
-    delete = wtforms.SubmitField(u"Withdraw")
-    cancel = wtforms.SubmitField(u"Cancel")
+    delete = wtforms.SubmitField("Withdraw")
+    cancel = wtforms.SubmitField("Cancel")
 
 
 class SendEmailForm(Form):

@@ -10,7 +10,7 @@ __all__ = ['SponsorForm']
 class SponsorForm(Form):
     title = wtforms.TextField("Title", description="Title of the project",
         validators=[wtforms.validators.Required("A title is required"), wtforms.validators.length(max=250)])
-    description = RichTextField(u"Description",
+    description = RichTextField("Description",
         description="Detailed description of your project",
         content_css="/static/css/editor.css")
     website = wtforms.fields.html5.URLField("Home Page",

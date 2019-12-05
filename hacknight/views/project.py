@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import unicodecsv
-from cStringIO import StringIO
+from io import StringIO
 from datetime import datetime
 from flask import render_template, g, abort, flash, url_for, request, redirect, make_response
 from coaster.views import load_models, jsonp
@@ -46,7 +46,7 @@ def project_new(profile, event, form=None):
         db.session.commit()
         flash("Project saved")
         return render_redirect(project.url_for())
-    return render_form(form=form, title=u"New Project", submit=u"Save",
+    return render_form(form=form, title="New Project", submit="Save",
         cancel_url=profile.url_for(), ajax=False)
 
 
@@ -68,9 +68,9 @@ def project_edit(profile, project, event):
             form.populate_obj(project)
             project.make_name()
             db.session.commit()
-            flash(u"Your changes have been saved", 'success')
+            flash("Your changes have been saved", 'success')
             return render_redirect(project.url_for(), code=303)
-        return render_form(form=form, title=u"Edit project", submit=u"Save",
+        return render_form(form=form, title="Edit project", submit="Save",
             cancel_url=project.url_for(), ajax=False)
 
 
@@ -105,8 +105,8 @@ def project_delete(profile, project, event):
             return render_redirect(event.url_for(), code=303)
         elif 'cancel' in request.form:
             return render_redirect(project.url_for(), code=303)
-    return render_template('baseframe/delete.html.jinja2', form=form, title=u"Confirm delete",
-        message=u"Delete '%s' ? It will remove comments, votes and all information related to the project. This operation cannot be undone." % (project.title))
+    return render_template('baseframe/delete.html.jinja2', form=form, title="Confirm delete",
+        message="Delete '%s' ? It will remove comments, votes and all information related to the project. This operation cannot be undone." % (project.title))
 
 
 @app.route('/<profile>/<event>/projects', methods=["GET", "POST"])
@@ -461,8 +461,8 @@ def project_leave(profile, project, event):
         else:
             flash("You need to be a participant to leave this team.", "fail")
         return redirect(project.url_for(), code=303)
-    return render_template('baseframe/delete.html.jinja2', form=form, title=u"Confirm delete",
-        message=u"Leave project '%s'? It will remove your participation from this project. This operation cannot be undone." % (project.title))
+    return render_template('baseframe/delete.html.jinja2', form=form, title="Confirm delete",
+        message="Leave project '%s'? It will remove your participation from this project. This operation cannot be undone." % (project.title))
 
 
 @app.route('/<profile>/<event>/export')
@@ -511,7 +511,7 @@ def event_export(profile, event):
     (ProjectMember, {'user': 'project_user', 'project_id': 'project.id'}, 'project_member'), permission='remove-member'
     )
 def project_member_remove(profile, project, event, project_user, project_member):
-    return render_delete_sqla(project_member, db, title=u"Confirm remove",
-                message=u"Remove Project Member '%s'? This cannot be undone." % project_user.username,
-                success=u"You have removed Project Member '%s'." % project_user.username,
+    return render_delete_sqla(project_member, db, title="Confirm remove",
+                message="Remove Project Member '%s'? This cannot be undone." % project_user.username,
+                success="You have removed Project Member '%s'." % project_user.username,
                 next=project.url_for())

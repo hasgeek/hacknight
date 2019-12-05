@@ -35,9 +35,9 @@ def venue_new():
         venue.make_name()
         db.session.add(venue)
         db.session.commit()
-        flash(u"You have created a new venue", "success")
+        flash("You have created a new venue", "success")
         return render_redirect(venue.url_for(), code=303)
-    return render_form(form=form, title="New Venue", submit=u"Create", cancel_url=url_for('index'), ajax=False)
+    return render_form(form=form, title="New Venue", submit="Create", cancel_url=url_for('index'), ajax=False)
 
 
 @app.route('/venue/<venue>/edit', methods=['GET', 'POST'])
@@ -53,9 +53,9 @@ def venue_edit(venue):
         form.populate_obj(venue)
         venue.make_name()
         db.session.commit()
-        flash(u"You have edited details for venue %s" % venue.title, "success")
+        flash("You have edited details for venue %s" % venue.title, "success")
         return render_redirect(url_for('venue_view', venue=venue.name), code=303)
-    return render_form(form=form, title="Edit Venue", submit=u"Save",
+    return render_form(form=form, title="Edit Venue", submit="Save",
         cancel_url=url_for('venue_view', venue=venue.name), ajax=False)
 
 
@@ -65,7 +65,7 @@ def venue_edit(venue):
 def venue_delete(venue):
     if not lastuser.has_permission('siteadmin') and venue.profile.userid not in g.user.user_organizations_owned_ids():
         abort(403)
-    return render_delete_sqla(venue, db, title=u"Confirm delete",
-        message=u"Delete venue '%s'? This cannot be undone." % venue.title,
-        success=u"You have deleted playlist '%s'." % venue.title,
+    return render_delete_sqla(venue, db, title="Confirm delete",
+        message="Delete venue '%s'? This cannot be undone." % venue.title,
+        success="You have deleted playlist '%s'." % venue.title,
         next=url_for('venue_list'))
