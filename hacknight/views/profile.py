@@ -34,7 +34,7 @@ def profile_edit(profile):
     if profile.userid == g.user.userid:
         form.type.choices = [(1, profile_types[1])]
     else:
-        choices = profile_types.items()
+        choices = list(profile_types.items())
         choices.sort()
         choices.pop(0)
         choices.pop(0)
@@ -42,7 +42,7 @@ def profile_edit(profile):
     if form.validate_on_submit():
         form.populate_obj(profile)
         db.session.commit()
-        flash(u"Edited description for profile", 'success')
+        flash("Edited description for profile", 'success')
         return render_redirect(profile.url_for(), code=303)
-    return render_form(form=form, title=u"Edit profile", submit=u"Save",
+    return render_form(form=form, title="Edit profile", submit="Save",
         cancel_url=profile.url_for(), ajax=True)

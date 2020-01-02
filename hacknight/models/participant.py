@@ -25,12 +25,12 @@ class Participant(BaseMixin, db.Model):
     event = db.relationship(Event, backref=db.backref('participants', cascade='all, delete-orphan'))
     status = db.Column(db.Integer, default=PARTICIPANT_STATUS.PENDING, nullable=False)
     mentor = db.Column(db.Boolean, default=False, nullable=False)
-    reason_to_join = db.Column(db.UnicodeText, default=u'', nullable=False)
-    email = db.Column(db.Unicode(80), default=u'', nullable=False)
-    phone_no = db.Column(db.Unicode(15), default=u'', nullable=False)
-    job_title = db.Column(db.Unicode(120), default=u'', nullable=False)
-    company = db.Column(db.Unicode(1200), default=u'', nullable=False)
-    skill_level = db.Column(db.Unicode(120), default=u'', nullable=False)
+    reason_to_join = db.Column(db.UnicodeText, default='', nullable=False)
+    email = db.Column(db.Unicode(80), default='', nullable=False)
+    phone_no = db.Column(db.Unicode(15), default='', nullable=False)
+    job_title = db.Column(db.Unicode(120), default='', nullable=False)
+    company = db.Column(db.Unicode(1200), default='', nullable=False)
+    skill_level = db.Column(db.Unicode(120), default='', nullable=False)
 
     NON_CONFIRMED_STATUSES = (PARTICIPANT_STATUS.PENDING, PARTICIPANT_STATUS.WL)
 

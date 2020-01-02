@@ -22,10 +22,10 @@ class PROFILE_TYPE:
     EVENTSERIES = 3
 
 profile_types = {
-    0: u"Undefined",
-    1: u"Person",
-    2: u"Organization",
-    3: u"Event Series",
+    0: "Undefined",
+    1: "Person",
+    2: "Organization",
+    3: "Event Series",
     }
 
 
@@ -42,7 +42,7 @@ class EVENT_STATUS:
 
 
 class SYNC_SERVICE:
-    DOATTEND = u"doattend"
+    DOATTEND = "doattend"
 
 
 class SyncException(Exception):
@@ -53,7 +53,7 @@ class Profile(ProfileMixin, BaseNameMixin, db.Model):
     __tablename__ = 'profile'
 
     userid = db.Column(db.Unicode(22), nullable=False, unique=True)
-    description = db.Column(db.UnicodeText, default=u'', nullable=False)
+    description = db.Column(db.UnicodeText, default='', nullable=False)
     type = db.Column(db.Integer, default=PROFILE_TYPE.UNDEFINED, nullable=False)
 
     def type_label(self):
@@ -73,23 +73,23 @@ class Event(BaseScopedNameMixin, db.Model):
     parent = db.synonym('profile')
     venue_id = db.Column(db.Integer, db.ForeignKey('venue.id'), nullable=True)
     venue = db.relationship('Venue')
-    blurb = db.Column(db.Unicode(250), default=u'', nullable=False)
-    description = db.Column(db.UnicodeText, default=u'', nullable=False)
-    apply_instructions = db.Column(db.UnicodeText, default=u'', nullable=False)
+    blurb = db.Column(db.Unicode(250), default='', nullable=False)
+    description = db.Column(db.UnicodeText, default='', nullable=False)
+    apply_instructions = db.Column(db.UnicodeText, default='', nullable=False)
     start_datetime = db.Column(db.DateTime, nullable=False)
     end_datetime = db.Column(db.DateTime, nullable=False)
     maximum_participants = db.Column(db.Integer, default=0, nullable=False)
-    website = db.Column(db.Unicode(250), default=u'', nullable=False)
+    website = db.Column(db.Unicode(250), default='', nullable=False)
     status = db.Column(db.Integer, nullable=False, default=EVENT_STATUS.DRAFT)
-    ticket_price = db.Column(db.Unicode(250), nullable=False, default=u'')
-    confirmation_message = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
-    confirmation_message_text = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
-    waitlisted_message = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
-    waitlisted_message_text = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
-    rejected_message = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
-    rejected_message_text = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
-    pending_message = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
-    pending_message_text = deferred(db.Column(db.UnicodeText, nullable=False, default=u''))
+    ticket_price = db.Column(db.Unicode(250), nullable=False, default='')
+    confirmation_message = deferred(db.Column(db.UnicodeText, nullable=False, default=''))
+    confirmation_message_text = deferred(db.Column(db.UnicodeText, nullable=False, default=''))
+    waitlisted_message = deferred(db.Column(db.UnicodeText, nullable=False, default=''))
+    waitlisted_message_text = deferred(db.Column(db.UnicodeText, nullable=False, default=''))
+    rejected_message = deferred(db.Column(db.UnicodeText, nullable=False, default=''))
+    rejected_message_text = deferred(db.Column(db.UnicodeText, nullable=False, default=''))
+    pending_message = deferred(db.Column(db.UnicodeText, nullable=False, default=''))
+    pending_message_text = deferred(db.Column(db.UnicodeText, nullable=False, default=''))
     # Sync details
     sync_service = db.Column(db.Unicode(100), nullable=True)
     sync_credentials = db.Column(db.Unicode(100), nullable=True)
@@ -119,35 +119,35 @@ class Event(BaseScopedNameMixin, db.Model):
         """Fetch data from external service like doattend"""
         from hacknight import lastuser
         if self.sync_service == SYNC_SERVICE.DOATTEND:
-            data_url = u"http://doattend.com/api/events/{event_id}/participants_list.json?api_key={credentials}".format(event_id=event_id, credentials=self.sync_credentials)
+            data_url = "http://doattend.com/api/events/{event_id}/participants_list.json?api_key={credentials}".format(event_id=event_id, credentials=self.sync_credentials)
             try:
                 r = requests.get(data_url)
             except requests.ConnectionError:
-                raise SyncException(u"Unable to connect to internet")
+                raise SyncException("Unable to connect to internet")
             if r.status_code == 200:
                 registered_participants = r.json() if callable(r.json) else r.json
                 emails = set([p.get('Email') for p in registered_participants['participants']])
                 for participant in participants:
                     if participant.email in emails or emails.intersection(set(lastuser.user_emails(participant.user))):
                         participant.confirm()
-                        yield u"{email} is confirmed.\n".format(email=participant.email)
-                yield u"Synced all participants.\n"
+                        yield "{email} is confirmed.\n".format(email=participant.email)
+                yield "Synced all participants.\n"
             else:
-                raise SyncException(u"Sync service failed with status code {code}".format(code=r.status_code))
+                raise SyncException("Sync service failed with status code {code}".format(code=r.status_code))
 
     def sync_participants(self, participants):
-        final_msg = u"<a href=\"{url}\">Click here for hacknight page.</a>\n".format(url=self.url_for())
+        final_msg = "<a href=\"{url}\">Click here for hacknight page.</a>\n".format(url=self.url_for())
         if self.has_sync():
             for event_id in self.sync_eventsid.split(','):
                 try:
                     for msg in self._fetch_and_sync(event_id.strip(), participants):
                         yield msg
-                except SyncException, e:
-                    yield unicode(e)
+                except SyncException as e:
+                    yield str(e)
             db.session.commit()
             yield Markup(final_msg)
         else:
-            yield u"Sync credentials missing.\n"
+            yield "Sync credentials missing.\n"
             yield Markup(final_msg)
 
     def participant_is(self, user):

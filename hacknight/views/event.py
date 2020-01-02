@@ -94,9 +94,9 @@ def event_new(profile):
         participant.status = PARTICIPANT_STATUS.CONFIRMED
         db.session.add(participant)
         db.session.commit()
-        flash(u"New event created", "success")
+        flash("New event created", "success")
         return render_redirect(url_for('event_view', profile=profile.name, event=event.name), code=303)
-    return render_form(form=form, title="New Event", submit=u"Create",
+    return render_form(form=form, title="New Event", submit="Create",
         cancel_url=profile.url_for(), ajax=False)
 
 
@@ -129,9 +129,9 @@ def event_edit(profile, event):
                 redirect_to = EventRedirect(name=old_name, profile=profile, event=event)
                 db.session.add(redirect_to)
         db.session.commit()
-        flash(u"Your edits to %s are saved" % event.title, "success")
+        flash("Your edits to %s are saved" % event.title, "success")
         return render_redirect(event.url_for(), code=303)
-    return render_form(form=form, title="Edit Event", submit=u"Save",
+    return render_form(form=form, title="Edit Event", submit="Save",
         cancel_url=event.url_for(), ajax=False)
 
 
@@ -197,9 +197,9 @@ def event_update_participant_status(profile, event):
             if event.confirmed_participants_count() < event.maximum_participants:
                 participant.status = status
                 try:
-                    text_message = unicode(getattr(event, (participants_email_attrs[status] + '_text')))
+                    text_message = str(getattr(event, (participants_email_attrs[status] + '_text')))
                     text_message = text_message.replace("*|FULLNAME|*", participant.user.fullname)
-                    message = unicode(getattr(event, participants_email_attrs[status]))
+                    message = str(getattr(event, participants_email_attrs[status]))
                     message = message.replace("*|FULLNAME|*", participant.user.fullname)
                     if message and g.user.email:
                         send_email(sender=(g.user.fullname, g.user.email), to=participant.email,
@@ -238,18 +238,18 @@ def event_apply(profile, event):
             participant.status = PARTICIPANT_STATUS.PENDING if event.maximum_participants > total_participants else PARTICIPANT_STATUS.WL
             db.session.add(participant)
             db.session.commit()
-            flash(u"Your request to participate has been recorded; you will be notified by the event manager", "success")
+            flash("Your request to participate has been recorded; you will be notified by the event manager", "success")
         else:
             return render_form(form=form, message=Markup(event.apply_instructions) if event.apply_instructions else "",
-                title="Participant Details", submit=u"Participate",
+                title="Participant Details", submit="Participate",
                 cancel_url=event.url_for(), ajax=False)
     # FIXME: Don't change anything unless this is a POST request
     elif participant.status == PARTICIPANT_STATUS.WITHDRAWN:
         participant.status = PARTICIPANT_STATUS.PENDING
         db.session.commit()
-        flash(u"Your request to participate has been recorded; you will be notified by the event manager", "success")
+        flash("Your request to participate has been recorded; you will be notified by the event manager", "success")
     else:
-        flash(u"Your request is pending", "error")
+        flash("Your request is pending", "error")
     return render_redirect(event.url_for(), code=303)
 
 
@@ -282,11 +282,11 @@ def event_withdraw(profile, event):
                     pass
 
                 db.session.commit()
-                flash(u"Your request to withdraw from {0} is recorded".format(event.title), "success")
+                flash("Your request to withdraw from {0} is recorded".format(event.title), "success")
             values = {'profile': profile.name, 'event': event.name}
             return render_redirect(event.url_for(), code=303)
-        return render_template('withdraw.html.jinja2', form=form, title=u"Confirm withdraw",
-            message=u"Withdraw from '%s' ? You can come back anytime." % (event.title))
+        return render_template('withdraw.html.jinja2', form=form, title="Confirm withdraw",
+            message="Withdraw from '%s' ? You can come back anytime." % (event.title))
     else:
         abort(404)
 
@@ -303,7 +303,7 @@ def event_publish(profile, event):
     workflow.openit()
     db.session.add(event)
     db.session.commit()
-    flash(u"You have published the event %s" % event.title, "success")
+    flash("You have published the event %s" % event.title, "success")
     return render_redirect(event.url_for(), code=303)
 
 
@@ -328,7 +328,7 @@ def event_cancel(profile, event):
 
     db.session.add(event)
     db.session.commit()
-    flash(u"You have cancelled event %s" % event.title, "success")
+    flash("You have cancelled event %s" % event.title, "success")
     return render_redirect(profile.url_for(), code=303)
 
 
@@ -341,9 +341,9 @@ def event_delete(profile, event):
     workflow = event.workflow()
     if not workflow.can_delete():
         abort(403)
-    return render_delete_sqla(event, db, title=u"Confirm delete",
-        message=u"Delete Event '%s'? This cannot be undone." % event.title,
-        success=u"You have deleted an event '%s'." % event.title,
+    return render_delete_sqla(event, db, title="Confirm delete",
+        message="Delete Event '%s'? This cannot be undone." % event.title,
+        success="You have deleted an event '%s'." % event.title,
         next=profile.url_for())
 
 
@@ -373,7 +373,7 @@ def event_send_email(profile, event):
         flash("Your message was sent to %d participant(s)." % count)
         return render_redirect(event.url_for())
     return render_form(form=form, title="Send email to participants",
-            submit=u"Send", cancel_url=event.url_for(), ajax=False)
+            submit="Send", cancel_url=event.url_for(), ajax=False)
 
 
 @app.route('/<profile>/<event>/email_template', methods=['GET', 'POST'])
@@ -399,7 +399,7 @@ def email_template_form(profile, event):
         event.waitlisted_message_text = html2text(event.waitlisted_message)
         event.rejected_message_text = html2text(event.rejected_message)
         db.session.commit()
-        flash(u"Participants Email template for %s is saved" % event.title, "success")
+        flash("Participants Email template for %s is saved" % event.title, "success")
         return render_redirect(event.url_for(), code=303)
-    return render_form(form=form, title="Email Participants form", submit=u"Save",
+    return render_form(form=form, title="Email Participants form", submit="Save",
         cancel_url=event.url_for(), ajax=False)
