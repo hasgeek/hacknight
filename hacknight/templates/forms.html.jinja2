@@ -50,7 +50,7 @@
 {% endmacro %}
 
 {% macro ajaxform(formid, request, force=False) -%}
-{% if force or request.is_xhr -%}
+{% if force or request_is_xhr() -%}
 <script type="text/javascript">
   $(function() {
     $("#{{ formid }}").ajaxForm({

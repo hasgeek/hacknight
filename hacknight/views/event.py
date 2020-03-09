@@ -6,6 +6,7 @@ from html2text import html2text
 from flask_mail import Message
 from flask import render_template, abort, flash, url_for, g, request, Markup, current_app, Response, stream_with_context
 from coaster.views import load_model, load_models
+from baseframe import request_is_xhr
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hacknight import app, mail
 from hacknight.models import db, Profile, Event, User, Participant, PARTICIPANT_STATUS, EventRedirect
@@ -183,7 +184,7 @@ def event_sync(profile, event):
   (Profile, {'name': 'profile'}, 'profile'),
   (Event, {'name': 'event', 'profile': 'profile'}, 'event'))
 def event_update_participant_status(profile, event):
-    if request.is_xhr:
+    if request_is_xhr():
         if profile.userid not in g.user.user_organizations_owned_ids():
             abort(403)
         participantid = int(request.form['participantid'])
